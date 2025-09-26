@@ -20,8 +20,8 @@
 namespace adxl {
 class BufferTransferService {
  public:
-  BufferTransferService(std::vector<llm::LlmMemPool *> npu_mem_pools, uint64_t buffer_size)
-      : npu_mem_pools_(npu_mem_pools), buffer_size_(buffer_size) {}
+  BufferTransferService(llm::LlmMemPool *llm_mem_pool, uint64_t buffer_size)
+      : npu_mem_pool_(llm_mem_pool), buffer_size_(buffer_size) {}
 
   Status Initialize();
 
@@ -35,11 +35,8 @@ class BufferTransferService {
   void PushBufferResp(const BufferResp &buffer_resp);
 
  private:
-  Status TryGetBuffer(void *&buffer_addr, uint64_t timeout, size_t pool_index = 0U);
-  void ReleaseBuffer(void *buffer_addr, size_t pool_index = 0U);
-
-  Status TryGetServerBuffer(void *&buffer_addr, uint64_t timeout);
-  void ReleaseServerBuffer(void *buffer_addr);
+  Status TryGetBuffer(void *&buffer_addr, uint64_t timeout);
+  void ReleaseBuffer(void *buffer_addr);
 
   void ProcessBufferReqFirstStep();
   Status HandleBufferD2D(const ChannelPtr &channel, BufferReq &buffer_req);
@@ -81,7 +78,7 @@ class BufferTransferService {
 
   bool CheckTimeout(const BufferReq &req);
 
-  std::vector<llm::LlmMemPool*> npu_mem_pools_;
+  llm::LlmMemPool *npu_mem_pool_;
   uint64_t buffer_size_;
 
   rtStream_t stream_{nullptr};
@@ -90,6 +87,7 @@ class BufferTransferService {
   int32_t device_id_{-1};
   bool support_batch_copy_batch_ = true;
 
+  std::thread reverse_transfer_req_processor_;
   std::thread buffer_req_processor_;
   std::thread buffer_resp_processor_;
   std::thread buffer_second_step_processor_;
@@ -117,8 +115,7 @@ class BufferTransferService {
   std::atomic<uint64_t> next_req_id_{0};
 
   std::mutex buff_idle_mutex_;
-  std::mutex server_buff_idle_mutex_;
-  std::vector<std::map<void *, bool>> buff_addr_idles_;
+  std::map<void *, bool> buff_addr_idle_;
 
   std::map<TransferType, TransferType> reverse_transfer_type_;
 };

@@ -15,14 +15,13 @@ add_custom_command(
         && cp -r ${CMAKE_CURRENT_SOURCE_DIR}/setup.py ${CMAKE_CURRENT_BINARY_DIR}/wheel1/setup.py
         && cp -r ${CMAKE_CURRENT_SOURCE_DIR}/MANIFEST.in ${CMAKE_CURRENT_BINARY_DIR}/wheel1/
         && cp -r ${CMAKE_CURRENT_SOURCE_DIR}/llm_datadist ${CMAKE_CURRENT_BINARY_DIR}/wheel1/
-        && cp -r ${CMAKE_CURRENT_BINARY_DIR}/../llm_wrapper/llm_wrapper.so ${CMAKE_CURRENT_BINARY_DIR}/wheel1/llm_datadist/
         && cp -r ${CMAKE_CURRENT_BINARY_DIR}/../llm_wrapper/llm_datadist_wrapper.so ${CMAKE_CURRENT_BINARY_DIR}/wheel1/llm_datadist/
         && cp -r ${CMAKE_CURRENT_BINARY_DIR}/../metadef_wrapper/metadef_wrapper.so ${CMAKE_CURRENT_BINARY_DIR}/wheel1/llm_datadist/
         && cd ${CMAKE_CURRENT_BINARY_DIR}/wheel1
         && ${HI_PYTHON} setup.py bdist_wheel >/dev/null
         && cp -f dist/llm_datadist-0.0.1-py3-none-any.whl ${CMAKE_CURRENT_BINARY_DIR}/
         && echo "package llm datadist whl end"
-        DEPENDS llm_wrapper llm_datadist_wrapper metadef_wrapper
+        DEPENDS llm_datadist_wrapper metadef_wrapper
 )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/llm_datadist-0.0.1-py3-none-any.whl OPTIONAL
         DESTINATION ${INSTALL_LIBRARY_DIR}

@@ -14,7 +14,6 @@
 #include "runtime/rt.h"
 #include "adxl/adxl_types.h"
 #include "adxl_checker.h"
-#include "common/ge_common/debug/ge_log.h"
 
 namespace adxl {
 const uint32_t kMagicNumber = 0xA1B2C3D4;

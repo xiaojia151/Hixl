@@ -23,7 +23,6 @@ constexpr uint64_t kDefaultBufferNum = 4U;
 constexpr uint64_t kDefaultBufferSize = 8U;
 constexpr const char *kDisabledPoolConfig = "0:0";
 constexpr uint64_t kNeedUseBufferThresh = 256 * 1024U;
-constexpr size_t kMemPoolNum = 2U;
 }
 Status AdxlInnerEngine::Initialize(const std::map<AscendString, AscendString> &options) {
   std::lock_guard<std::mutex> lk(mutex_);
@@ -69,63 +68,35 @@ Status AdxlInnerEngine::InitBufferTransferService(const std::map<ge::AscendStrin
   llm::ScalableConfig config{};
   config.page_idem_num = kDefaultPageShift;
   config.page_mem_size_total_threshold = npu_pool_size;
-  npu_mem_pools_.resize(kMemPoolNum);
-  npu_pool_memorys_.resize(kMemPoolNum);
-  pool_mem_handles_.resize(kMemPoolNum);
-  LLM_DISMISSABLE_GUARD(failed_guard, [this]() {
-    for (auto &mem_handle : pool_mem_handles_) {
-      if (mem_handle != nullptr) {
-        msg_handler_.DeregisterMem(mem_handle);
-      }
-    }
-    for (auto &mem : npu_pool_memorys_) {
-      if (mem != nullptr) {
-        rtFree(mem);
-      }
-    }
-    npu_pool_memorys_.clear();
-    pool_mem_handles_.clear();
-    npu_mem_pools_.clear();
-  });
-  for (size_t i = 0; i < kMemPoolNum; ++i) {
-    npu_mem_pools_[i] = llm::MakeUnique<llm::LlmMemPool>(config);
-    ADXL_CHECK_NOTNULL(npu_mem_pools_[i], "Failed to create memory pool");
-    ADXL_CHK_BOOL_RET_STATUS(rtMalloc(&npu_pool_memorys_[i], npu_pool_size, RT_MEMORY_HBM | RT_MEM_MALLOC_HUGE_FIRST,
-                                      GE_MODULE_NAME_U16) == RT_ERROR_NONE,
-                             FAILED, "Failed to allocate memory for memory_pool, pool size = %lu.", npu_pool_size);
-    ADXL_CHK_LLM_RET(npu_mem_pools_[i]->Initialize(npu_pool_memorys_[i], npu_pool_size),
-                     "Failed to initialize memory pool, pool size = %lu.", npu_pool_size);
-    MemDesc pool_mem_desc{};
-    pool_mem_desc.addr = reinterpret_cast<uintptr_t>(npu_pool_memorys_[i]);
-    pool_mem_desc.len = npu_pool_size;
-    ADXL_CHK_STATUS_RET(msg_handler_.RegisterMem(pool_mem_desc, MemType::MEM_DEVICE, pool_mem_handles_[i]),
-                        "Failed to register mem");
-  }
-  std::vector<llm::LlmMemPool *> mem_pools;
-  mem_pools.reserve(kMemPoolNum);
-  for (auto &mem_pool : npu_mem_pools_) {
-    mem_pools.emplace_back(mem_pool.get());
-  }
-  buffer_transfer_service_ = llm::MakeUnique<BufferTransferService>(mem_pools, buffer_size * kBaseBufferSize);
+  npu_mem_pool_ = llm::MakeUnique<llm::LlmMemPool>(config);
+  ADXL_CHECK_NOTNULL(npu_mem_pool_, "Failed to create memory pool");
+  ADXL_CHK_BOOL_RET_STATUS(rtMalloc(&npu_pool_memory_, npu_pool_size, RT_MEMORY_HBM | RT_MEM_MALLOC_HUGE_FIRST,
+                                    LLM_MODULE_NAME_U16) == RT_ERROR_NONE,
+                           FAILED, "Failed to allocate memory for memory_pool, pool size = %lu.", npu_pool_size);
+  LLM_DISMISSABLE_GUARD(failed_guard, [this]() { rtFree(npu_pool_memory_); });
+  ADXL_CHK_LLM_RET(npu_mem_pool_->Initialize(npu_pool_memory_, npu_pool_size),
+                   "Failed to initialize memory pool, pool size = %lu.", npu_pool_size);
+  buffer_transfer_service_ =
+      llm::MakeUnique<BufferTransferService>(npu_mem_pool_.get(), buffer_size * kBaseBufferSize);
   ADXL_CHK_STATUS_RET(buffer_transfer_service_->Initialize(), "Failed to initialize buffer transfer service.");
-  LLM_DISMISS_GUARD(failed_guard);
+  MemDesc pool_mem_desc{};
+  pool_mem_desc.addr = reinterpret_cast<uintptr_t>(npu_pool_memory_);
+  pool_mem_desc.len = npu_pool_size;
+  ADXL_CHK_STATUS_RET(msg_handler_.RegisterMem(pool_mem_desc, MemType::MEM_DEVICE, pool_mem_handle_),
+                      "Failed to register mem");
   LLMLOGI("Init buffer transfer service suc.");
+  LLM_DISMISS_GUARD(failed_guard);
   return SUCCESS;
 }
 
 void AdxlInnerEngine::Finalize() {
   channel_manager_.Finalize();
   msg_handler_.Finalize();
-  for (auto &mem_handle : pool_mem_handles_) {
-    if (mem_handle != nullptr) {
-      msg_handler_.DeregisterMem(mem_handle);
-    }
-  }
-  for (auto &mem : npu_pool_memorys_) {
-    if (mem != nullptr) {
-      auto ret = rtFree(mem);
-      LLMLOGI("Call rtFree ret:%d.", ret);
-    }
+  if (npu_pool_memory_ != nullptr) {
+    // hccl need all mems is deregistered, user registered mems are all deregistered in msg_handler_
+    (void)msg_handler_.DeregisterMem(pool_mem_handle_);
+    auto ret = rtFree(npu_pool_memory_);
+    LLMLOGI("Call rtFree ret:%d.", ret);
   }
   if (buffer_transfer_service_ != nullptr) {
     buffer_transfer_service_->Finalize();

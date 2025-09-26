@@ -1,0 +1,204 @@
+#!/bin/bash
+# Copyright (c) 2024 Huawei Technologies Co., Ltd.
+# This file is a part of the CANN Open Software.
+# Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+# ======================================================================================================================
+
+set -e
+
+BASEPATH=$(cd "$(dirname $0)/.."; pwd)
+
+# print usage message
+usage() {
+  echo "Usage:"
+  echo "sh run_test.sh [-c | --cov] [-j<N>] [-h | --help] [-v | --verbose]"
+  echo "               [--ascend_install_path=<PATH>] [--ascend_3rd_lib_path=<PATH>]"
+  echo ""
+  echo "Options:"
+  echo "    -h, --help     Print usage"
+  echo "    -c, --cov      Build ut/st with coverage tag"
+  echo "                   Please ensure that the environment has correctly installed lcov, gcov, and genhtml."
+  echo "                   and the version matched gcc/g++."
+  echo "    -v, --verbose  Display build command"
+  echo "    -j<N>          Set the number of threads used for building Parser, default 8"
+  echo "        --ascend_install_path=<PATH>"
+  echo "                   Set ascend package install path, default /usr/local/Ascend/ascend-toolkit/latest"
+  echo "        --ascend_3rd_lib_path=<PATH>"
+  echo "                   Set ascend third_party package install path, default ./output/third_party"
+  echo ""
+}
+
+mk_dir() {
+  local create_dir="$1"  # the target to make
+  mkdir -pv "${create_dir}"
+  echo "created ${create_dir}"
+}
+
+# parse and set options
+checkopts() {
+  VERBOSE=""
+  THREAD_NUM=8
+  COVERAGE=""
+  CMAKE_BUILD_TYPE="DT"
+
+  if [ -n "$ASCEND_INSTALL_PATH" ]; then
+    ASCEND_INSTALL_PATH="$ASCEND_INSTALL_PATH"
+  else
+    ASCEND_INSTALL_PATH="/usr/local/Ascend/ascend-toolkit/latest"
+  fi
+
+  ASCEND_3RD_LIB_PATH="$BASEPATH/output/third_party"
+
+  parsed_args=$(getopt -a -o cj:hv -l cov,help,verbose,ascend_install_path:,ascend_3rd_lib_path: -- "$@") || {
+    usage
+    exit 1
+  }
+
+  eval set -- "$parsed_args"
+
+  while true; do
+    case "$1" in
+      -c | --cov)
+        CMAKE_BUILD_TYPE="GCOV"
+        shift
+        ;;
+      -h | --help)
+        usage
+        exit 1
+        ;;
+      -j)
+        THREAD_NUM=$2
+        shift 2
+        ;;
+      -v | --verbose)
+        VERBOSE="-v"
+        shift
+        ;;
+      --ascend_install_path)
+        ASCEND_INSTALL_PATH="$(realpath $2)"
+        shift 2
+        ;;
+      --ascend_3rd_lib_path)
+        ASCEND_3RD_LIB_PATH="$(realpath $2)"
+        shift 2
+        ;;
+      --)
+        shift
+        break
+        ;;
+      *)
+        echo "Undefined option: $1"
+        usage
+        exit 1
+        ;;
+    esac
+  done
+}
+
+build()
+{
+  cd "${BUILD_PATH}"
+  cmake -D ENABLE_TEST="on" \
+        -D ASCEND_INSTALL_PATH=${ASCEND_INSTALL_PATH} \
+        -D ASCEND_3RD_LIB_PATH=${ASCEND_3RD_LIB_PATH} \
+        -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
+        -D CMAKE_INSTALL_PREFIX=${OUTPUT_PATH} \
+        ..
+  if [ $? -ne 0 ]
+  then
+    echo "execute command: cmake ${CMAKE_ARGS} .. failed."
+    return 1
+  fi
+  make ${VERBOSE} select_targets -j${THREAD_NUM}
+
+  if [ $? -ne 0 ]
+  then
+    echo "execute command: make ${VERBOSE} -j${THREAD_NUM} && make install failed."
+    return 1
+  fi
+  make install
+  echo "build success!"
+}
+
+generate_inc_coverage() {
+  echo "Generating inc coverage, please wait..."
+  rm -rf ${BASEPATH}/diff
+  mk_dir ${BASEPATH}/cov/diff
+
+  git diff --src-prefix=${BASEPATH}/ --dst-prefix=${BASEPATH}/ HEAD^ > ${BASEPATH}/cov/diff/inc_change_diff.txt
+  addlcov --diff ${BASEPATH}/cov/coverage.info ${BASEPATH}/cov/diff/inc_change_diff.txt -o ${BASEPATH}/cov/diff/inc_coverage.info
+  genhtml --prefix ${BASEPATH} -o ${BASEPATH}/cov/diff/html ${BASEPATH}/cov/diff/inc_coverage.info --legend -t CHG --no-branch-coverage --no-function-coverage
+}
+
+run() {
+  if [ -z "${OUTPUT_PATH}" ] ; then
+    OUTPUT_PATH="${BASEPATH}/output"
+  fi
+
+  BUILD_RELATIVE_PATH="build_test"
+  BUILD_PATH="${BASEPATH}/${BUILD_RELATIVE_PATH}/"
+  USE_ASAN=$(gcc -print-file-name=libasan.so)
+
+  g++ -v
+  mk_dir ${OUTPUT_PATH}
+  mk_dir ${BUILD_PATH}
+  report_dir="${OUTPUT_PATH}/report"
+
+  build || { echo "build failed."; exit 1; }
+  echo "---------------- build finished ----------------"
+  rm -f ${OUTPUT_PATH}/libgmock*.so
+  rm -f ${OUTPUT_PATH}/libgtest*.so
+  rm -f ${OUTPUT_PATH}/lib*_stub.so
+
+  chmod -R 750 ${OUTPUT_PATH}
+  find ${OUTPUT_PATH} -name "*.so*" -print0 | xargs -0 -r chmod 500
+
+  echo "Run tests with leaks check"
+  RUN_TEST_CASE="${BUILD_PATH}/tests/cpp/llm_datadist/llm_datadist_test --gtest_output=xml:${report_dir}/llm_datadist_test.xml" && ${RUN_TEST_CASE}
+  if [[ "$?" -ne 0 ]]; then
+      echo "!!! ST FAILED, PLEASE CHECK YOUR CHANGES !!!"
+      echo -e "\033[31m${RUN_TEST_CASE}\033[0m"
+      exit 1;
+  fi
+
+  unset LD_PRELOAD
+  cp ${BUILD_PATH}/tests/depends/python/llm_datadist_wrapper.so ${BASEPATH}/src/python/llm_datadist/llm_datadist/
+  cp ${BUILD_PATH}/tests/depends/python/metadef_wrapper.so ${BASEPATH}/src/python/llm_datadist/llm_datadist/
+  cp -r ${BASEPATH}/tests/python ./
+  PYTHON_ORIGINAL_PATH=$PYTHONPATH
+  export PYTHONPATH=$PYTHON_ORIGINAL_PATH:${BASEPATH}/src/python/llm_datadist/
+  export LD_PRELOAD=${USE_ASAN}
+  echo "----------st start----------"
+  ASAN_OPTIONS=detect_leaks=0 coverage run -m unittest discover python
+  unset LD_PRELOAD
+
+
+  if [[ "X$CMAKE_BUILD_TYPE" = "XGCOV" ]]; then
+      echo "Generating coverage statistics, please wait..."
+      cd ${BASEPATH}
+      rm -rf ${BASEPATH}/cov
+      mk_dir ${BASEPATH}/cov
+      mv ${BUILD_PATH}/.coverage ${BASEPATH}/cov/
+      lcov -c -d ${BUILD_PATH}/tests/cpp/llm_datadist/CMakeFiles/llm_datadist_test.dir \
+              -o cov/tmp.info
+      lcov -r cov/tmp.info '*/output/*' '*/include/*' \
+                           '*/third_party/*' '*/tests/*' '/usr/local/*' \
+                           '/usr/include/*' \
+                           "${ASCEND_INSTALL_PATH}/*" "${ASCEND_3RD_LIB_PATH}/*" -o cov/coverage.info
+      cd ${BASEPATH}/cov
+      genhtml coverage.info
+      generate_inc_coverage
+  fi
+}
+
+main() {
+  cd "${BASEPATH}"
+  checkopts "$@"
+  run || { echo "run failed."; return; }
+}
+
+main "$@"
