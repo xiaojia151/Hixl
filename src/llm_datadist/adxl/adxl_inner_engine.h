@@ -57,9 +57,9 @@ class AdxlInnerEngine {
   ChannelMsgHandler msg_handler_;
   std::mutex mutex_;
   std::atomic<bool> is_initialized_;
-  std::vector<std::unique_ptr<llm::LlmMemPool>> npu_mem_pools_;
-  std::vector<void *> npu_pool_memorys_{};
-  std::vector<MemHandle> pool_mem_handles_{};
+  std::unique_ptr<llm::LlmMemPool> npu_mem_pool_ = nullptr;
+  void *npu_pool_memory_{};
+  MemHandle pool_mem_handle_{};
   std::unique_ptr<BufferTransferService> buffer_transfer_service_ = nullptr;
   std::unique_ptr<SegmentTable> segment_table_ = nullptr;
   bool user_config_buffer_pool_{false};

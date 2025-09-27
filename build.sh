@@ -1,0 +1,164 @@
+#!/bin/bash
+# Copyright (c) 2024 Huawei Technologies Co., Ltd.
+# This file is a part of the CANN Open Software.
+# Licensed under CANN Open Software License Agreement Version 1.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+# ======================================================================================================================
+
+set -e
+
+BASEPATH=$(cd "$(dirname $0)"; pwd)
+OUTPUT_PATH="${BASEPATH}/output"
+BUILD_RELATIVE_PATH="build"
+BUILD_PATH="${BASEPATH}/${BUILD_RELATIVE_PATH}/"
+
+# print usage message
+usage() {
+  echo "Usage:"
+  echo "  sh build.sh [-h | --help] [-v | --verbose] [-j<N>]"
+  echo "              [--build_type=<Release|Debug>]"
+  echo "              [--ascend_install_path=<PATH>] [--ascend_3rd_lib_path=<PATH>] [--output_path=<PATH>]"
+  echo ""
+  echo "Options:"
+  echo "    -h, --help        Print usage"
+  echo "    -v, --verbose     Display build command"
+  echo "    -j<N>             Set the number of threads used for building AIR, default is 8"
+  echo "    --build_type=<Release|Debug>"
+  echo "                      Set build type, default Release"
+  echo "    --ascend_install_path=<PATH>"
+  echo "                      Set ascend package install path, default /usr/local/Ascend/ascend-toolkit/latest"
+  echo "    --ascend_3rd_lib_path=<PATH>"
+  echo "                      Set ascend third_party package install path, default ./output/third_party"
+  echo "    --output_path=<PATH>"
+  echo "                      Set output path, default ./output"
+  echo ""
+}
+
+# check value of build_type option
+# usage: check_build_type build_type
+check_build_type() {
+  arg_value="$1"
+  if [ "X$arg_value" != "XRelease" ] && [ "X$arg_value" != "XDebug" ]; then
+    echo "Invalid value $arg_value for option --$2"
+    usage
+    exit 1
+  fi
+}
+
+# parse and set options
+checkopts() {
+  VERBOSE=""
+  THREAD_NUM=8
+
+  OUTPUT_PATH="${BASEPATH}/output"
+  ASCEND_3RD_LIB_PATH="$BASEPATH/output/third_party"
+  CMAKE_BUILD_TYPE="Release"
+
+  if [ -n "$ASCEND_INSTALL_PATH" ]; then
+    ASCEND_INSTALL_PATH="$ASCEND_INSTALL_PATH"
+  else
+    ASCEND_INSTALL_PATH="/usr/local/Ascend/ascend-toolkit/latest"
+  fi
+
+  # Process the options
+  parsed_args=$(getopt -a -o j:hv -l help,verbose,ascend_install_path:,ascend_3rd_lib_path:,output_path:,build_type: -- "$@") || {
+    usage
+    exit 1
+  }
+
+  eval set -- "$parsed_args"
+
+  while true; do
+    case "$1" in
+      -h | --help)
+        usage
+        exit 0
+        ;;
+      -j)
+        THREAD_NUM="$2"
+        shift 2
+        ;;
+      -v | --verbose)
+        VERBOSE="VERBOSE=1"
+        shift
+        ;;
+      --ascend_install_path)
+        ASCEND_INSTALL_PATH="$(realpath $2)"
+        shift 2
+        ;;
+      --ascend_3rd_lib_path)
+        ASCEND_3RD_LIB_PATH="$(realpath $2)"
+        shift 2
+        ;;
+      --output_path)
+        OUTPUT_PATH="$(realpath $2)"
+        shift 2
+        ;;
+      --build_type)
+        check_build_type "$2" build_type
+        CMAKE_BUILD_TYPE="$2"
+        shift 2
+        ;;
+      --)
+        shift
+        break
+        ;;
+      *)
+        echo "Undefined option: $1"
+        usage
+        exit 1
+        ;;
+    esac
+  done
+}
+
+mk_dir() {
+  local create_dir="$1"  # the target to make
+  mkdir -pv "${create_dir}"
+  echo "created ${create_dir}"
+}
+
+build() {
+  echo "create build directory and build AIR";
+  mk_dir "${BUILD_PATH}"
+  cd "${BUILD_PATH}"
+  cmake -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
+        -D CMAKE_INSTALL_PREFIX=${OUTPUT_PATH} \
+        -D ASCEND_INSTALL_PATH=${ASCEND_INSTALL_PATH} \
+        -D ASCEND_3RD_LIB_PATH=${ASCEND_3RD_LIB_PATH} \
+        ..
+
+  make ${VERBOSE} select_targets -j${THREAD_NUM} && make install
+  if [ $? -ne 0 ]
+  then
+    echo "execute command: make ${VERBOSE} -j${THREAD_NUM} && make install failed."
+    return 1
+  fi
+  echo "Build success!"
+
+  make generate_install_script_air package
+  if [ $? -ne 0 ]
+  then
+    echo "execute command: make package failed."
+    return 1
+  fi
+  [ -n "$(ls ${OUTPUT_PATH}/CANN-*.run 2>/dev/null)" ] && mv -f ${OUTPUT_PATH}/CANN-*.run ${OUTPUT_PATH}/package/
+  echo "AIR package success!"
+}
+
+main() {
+  cd "${BASEPATH}"
+  checkopts "$@"
+
+  env
+  g++ -v
+
+  mk_dir ${OUTPUT_PATH}
+  build || { echo "Build failed."; exit 1; }
+  echo "---------------- Build finished ----------------"
+}
+
+main "$@"

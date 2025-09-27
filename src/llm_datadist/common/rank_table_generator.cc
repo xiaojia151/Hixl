@@ -83,34 +83,33 @@ ge::Status LocalCommResGenerator::Generate(const std::string &server_id,
 ge::Status LocalCommResGenerator::GetDeviceIp(uint32_t phy_device_id, std::string &device_ip) {
   constexpr const char *kFilePath = "/etc/hccn.conf";
   char_t resolved_path[MMPA_MAX_PATH] = {};
-  auto mm_ret = mmRealPath(kFilePath, &(resolved_path[0U]), MMPA_MAX_PATH);
-  if (mm_ret == EN_OK) {
-    LLM_CHK_BOOL_RET_STATUS(mmAccess(resolved_path) == EN_OK,
-                            ge::FAILED, "Can not access file:%s, reason:%s", resolved_path, strerror(errno));
+  LLM_CHK_BOOL_RET_STATUS(mmRealPath(kFilePath, &(resolved_path[0U]), MMPA_MAX_PATH) == EN_OK,
+                         ge::FAILED, "File:%s realpath not found, reason:%s", kFilePath, strerror(errno));
+  LLM_CHK_BOOL_RET_STATUS(mmAccess(resolved_path) == EN_OK,
+                         ge::FAILED, "Can not access file:%s, reason:%s", resolved_path, strerror(errno));
 
-    std::ifstream file(resolved_path);
-    LLM_CHK_BOOL_RET_STATUS(file.is_open(), ge::FAILED, "Faile to open file:%s", kFilePath);
+  std::ifstream file(resolved_path);
+  LLM_CHK_BOOL_RET_STATUS(file.is_open(), ge::FAILED, "Faile to open file:%s", kFilePath);
 
-    std::string line;
-    std::string target_key = "address_" + std::to_string(phy_device_id) + "=";
-    constexpr size_t kValidItemNum = 2U;
+  std::string line;
+  std::string target_key = "address_" + std::to_string(phy_device_id) + "=";
+  constexpr size_t kValidItemNum = 2U;
 
-    while (std::getline(file, line)) {
-      LLMLOGI("read file:%s, get line:%s", resolved_path, line.c_str());
-      if (line.find(target_key) != 0) {
-        continue;
-      }
-      const auto addess_val = LLMUtils::Split(line, '=');
-      LLM_CHK_BOOL_RET_STATUS(addess_val.size() == kValidItemNum, ge::FAILED,
-                            "address format is invalid: %s, expect address_${phy_device_id}=${device_ip}",
-                            line.c_str());
-      device_ip = addess_val.back();
-      LLM_CHK_STATUS_RET(LLMUtils::CheckIp(device_ip), "device ip:%s is invalid.", device_ip.c_str());
-      return ge::SUCCESS;
+  while (std::getline(file, line)) {
+    LLMLOGI("read file:%s, get line:%s", resolved_path, line.c_str());
+    if (line.find(target_key) != 0) {
+      continue;
     }
+    const auto addess_val = LLMUtils::Split(line, '=');
+    LLM_CHK_BOOL_RET_STATUS(addess_val.size() == kValidItemNum, ge::FAILED,
+                           "address format is invalid: %s, expect address_${phy_device_id}=${device_ip}",
+                           line.c_str());
+    device_ip = addess_val.back();
+    LLM_CHK_STATUS_RET(LLMUtils::CheckIp(device_ip), "device ip:%s is invalid.", device_ip.c_str());
+    return ge::SUCCESS;
   }
 
-  // hccs does not require device_ip, device_ip will be empty
-  return ge::SUCCESS;
+  LLMLOGE(ge::FAILED, "No address found for phy_device_id: %u", phy_device_id);
+  return ge::FAILED;
 }
 }  // namespace llm

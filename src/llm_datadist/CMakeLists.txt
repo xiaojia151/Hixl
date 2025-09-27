@@ -10,8 +10,7 @@
 cmake_minimum_required(VERSION 3.7)
 project(llm_datadist)
 set(INC_DIR
-        "${AIR_CODE_DIR}/inc/external"
-        "${METADEF_DIR}/inc/external"
+        "${AIR_CODE_DIR}/include"
         "${CMAKE_CURRENT_LIST_DIR}"
         "${CMAKE_CURRENT_LIST_DIR}/link_mgr"
         "${CMAKE_CURRENT_LIST_DIR}/cache_mgr"

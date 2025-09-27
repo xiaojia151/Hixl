@@ -166,9 +166,11 @@ ge::Status LLMUtils::FindContiguousBlockIndexPair(const std::vector<uint64_t> &s
 }
 
 ge::Status LLMUtils::IpToInt(const std::string &ip, uint32_t &ip_int) {
+  const std::string
+      kIpPatternStr = R"(^(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)$)";
   constexpr uint32_t kNumBits = 8U;
-  struct in_addr addr;
-  LLM_CHK_BOOL_RET_STATUS(inet_pton(AF_INET, ip.c_str(), &addr) == 1, ge::LLM_PARAM_INVALID,
+  std::regex ip_pattern(kIpPatternStr);
+  LLM_CHK_BOOL_RET_STATUS(std::regex_match(ip, ip_pattern), ge::LLM_PARAM_INVALID,
                          "%s is not a valid ip address", ip.c_str());
   const auto items = LLMUtils::Split(ip, '.');
   ip_int = 0;
@@ -181,8 +183,10 @@ ge::Status LLMUtils::IpToInt(const std::string &ip, uint32_t &ip_int) {
 }
 
 ge::Status LLMUtils::CheckIp(const std::string &ip) {
-  struct in_addr addr;
-  LLM_CHK_BOOL_RET_STATUS(inet_pton(AF_INET, ip.c_str(), &addr) == 1, ge::LLM_PARAM_INVALID,
+  const std::string
+      kIpPatternStr = R"(^(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)$)";
+  std::regex ip_pattern(kIpPatternStr);
+  LLM_CHK_BOOL_RET_STATUS(std::regex_match(ip, ip_pattern), ge::LLM_PARAM_INVALID,
                          "%s is not a valid ip address", ip.c_str());
   return ge::SUCCESS;
 }
