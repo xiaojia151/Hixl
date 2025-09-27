@@ -79,10 +79,11 @@ target_link_libraries(llm_datadist_test
         slog_stub
         mmpa_stub
         runtime_stub
-        error_manager_stub
         msprof_headers
         GTest::gtest GTest::gtest_main
-        GTest::gmock)
+        GTest::gmock
+        -Wl,--no-as-need
+        error_manager_stub)
 
 include(CTest)
 enable_testing()
