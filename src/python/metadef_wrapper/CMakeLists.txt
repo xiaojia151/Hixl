@@ -16,8 +16,8 @@ if (NOT ENABLE_TEST)
     target_include_directories(metadef_wrapper PRIVATE
             ${HI_PYTHON_INC}
             ${pybind11_INCLUDE_DIR}
-            ${AIR_CODE_DIR}/inc
-            ${AIR_CODE_DIR}/include
+            ${DXL_CODE_DIR}/inc
+            ${DXL_CODE_DIR}/include
     )
 
     target_link_libraries(metadef_wrapper PRIVATE

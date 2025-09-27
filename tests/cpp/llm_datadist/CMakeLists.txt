@@ -21,28 +21,28 @@ set(LLM_DATADIST_TEST_FILES
         segment_table_unittest.cc
 )
 set(LLM_DATADIST_STUB_SRC_FILES
-        "${AIR_CODE_DIR}/tests/depends/llm_datadist/src/data_cache_engine_test_helper.cc"
-        "${AIR_CODE_DIR}/tests/depends/llm_datadist/src/ascend_string_stub.cc"
-        "${AIR_CODE_DIR}/tests/depends/llm_datadist/src/hccl_stub.cc"
+        "${DXL_CODE_DIR}/tests/depends/llm_datadist/src/data_cache_engine_test_helper.cc"
+        "${DXL_CODE_DIR}/tests/depends/llm_datadist/src/ascend_string_stub.cc"
+        "${DXL_CODE_DIR}/tests/depends/llm_datadist/src/hccl_stub.cc"
 )
 
 file(GLOB LLM_V2_SRC_LIST
-        "${AIR_CODE_DIR}/src/llm_datadist/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/api/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/adxl/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/common/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/cache_mgr/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/link_mgr/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/hccl/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/fsm/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/utils/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/data_transfer/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/memory/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/memory/allocator/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/memory/config/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/memory/span/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/memory/type/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/memory/util/*.cc")
+        "${DXL_CODE_DIR}/src/llm_datadist/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/api/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/adxl/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/common/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/cache_mgr/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/link_mgr/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/hccl/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/fsm/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/utils/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/data_transfer/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/memory/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/memory/allocator/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/memory/config/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/memory/span/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/memory/type/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/memory/util/*.cc")
 
 add_executable(llm_datadist_test
         ${LLM_DATADIST_TEST_FILES}
@@ -58,10 +58,10 @@ target_compile_options(llm_datadist_test PRIVATE
 
 target_include_directories(llm_datadist_test PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
-        ${AIR_CODE_DIR}/include
-        ${AIR_CODE_DIR}/src/llm_datadist
-        ${AIR_CODE_DIR}/tests
-        ${AIR_CODE_DIR}/tests/depends/llm_datadist/src
+        ${DXL_CODE_DIR}/include
+        ${DXL_CODE_DIR}/src/llm_datadist
+        ${DXL_CODE_DIR}/tests
+        ${DXL_CODE_DIR}/tests/depends/llm_datadist/src
         )
 
 set_target_properties(llm_datadist_test PROPERTIES CXX_STANDARD 17)

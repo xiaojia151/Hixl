@@ -11,9 +11,9 @@
 add_library(mmpa_stub SHARED src/mmpa_stub.cc)
 target_compile_options(mmpa_stub PRIVATE -g)
 target_include_directories(mmpa_stub PRIVATE
-    ${AIR_CODE_DIR}/inc
-    ${AIR_CODE_DIR}/include
-    ${AIR_CODE_DIR}/inc/framework
+    ${DXL_CODE_DIR}/inc
+    ${DXL_CODE_DIR}/include
+    ${DXL_CODE_DIR}/inc/framework
 )
 target_link_libraries(mmpa_stub
     PRIVATE
