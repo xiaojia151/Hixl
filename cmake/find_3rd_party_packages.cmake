@@ -8,6 +8,5 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
-#find_package(json MODULE REQUIRED)
 include(${PROJECT_SOURCE_DIR}/cmake/third_party/json.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/third_party/pybind11.cmake)
