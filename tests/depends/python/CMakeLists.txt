@@ -9,8 +9,8 @@
 # ----------------------------------------------------------------------------
 
 set(LLM_DATADIST_WRAPPER_SRC_FILES
-        "${AIR_CODE_DIR}/src/python/llm_wrapper/llm_wrapper_v2.cc"
-        "${AIR_CODE_DIR}/src/python/llm_wrapper/llm_datadist_v2_wrapper.cc")
+        "${DXL_CODE_DIR}/src/python/llm_wrapper/llm_wrapper_v2.cc"
+        "${DXL_CODE_DIR}/src/python/llm_wrapper/llm_datadist_v2_wrapper.cc")
 
 add_library(llm_datadist_wrapper MODULE
         ${LLM_DATADIST_WRAPPER_SRC_FILES}
@@ -19,9 +19,9 @@ add_library(llm_datadist_wrapper MODULE
 target_include_directories(llm_datadist_wrapper PRIVATE
         ${HI_PYTHON_INC}
         ${pybind11_INCLUDE_DIR}
-        ${AIR_CODE_DIR}/include
-        ${AIR_CODE_DIR}/src/llm_datadist
-        ${AIR_CODE_DIR}/tests/depends/llm_datadist/src
+        ${DXL_CODE_DIR}/include
+        ${DXL_CODE_DIR}/src/llm_datadist
+        ${DXL_CODE_DIR}/tests/depends/llm_datadist/src
 )
 
 target_link_libraries(llm_datadist_wrapper PRIVATE
@@ -44,13 +44,13 @@ target_compile_options(llm_datadist_wrapper PRIVATE
 )
 
 add_library(metadef_wrapper MODULE
-        "${AIR_CODE_DIR}/src/python/metadef_wrapper/metadef_wrapper.cc"
+        "${DXL_CODE_DIR}/src/python/metadef_wrapper/metadef_wrapper.cc"
 )
 
 target_include_directories(metadef_wrapper PRIVATE
         ${HI_PYTHON_INC}
         ${pybind11_INCLUDE_DIR}
-        ${AIR_CODE_DIR}/include
+        ${DXL_CODE_DIR}/include
 )
 
 target_link_libraries(metadef_wrapper PRIVATE

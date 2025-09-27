@@ -16,8 +16,8 @@ if (NOT ENABLE_TEST)
     target_include_directories(llm_datadist_wrapper PRIVATE
             ${HI_PYTHON_INC}
             ${pybind11_INCLUDE_DIR}
-            ${AIR_CODE_DIR}/include
-            ${AIR_CODE_DIR}/src/llm_datadist
+            ${DXL_CODE_DIR}/include
+            ${DXL_CODE_DIR}/src/llm_datadist
     )
 
     target_link_libraries(llm_datadist_wrapper PRIVATE
@@ -26,6 +26,7 @@ if (NOT ENABLE_TEST)
             $<BUILD_INTERFACE:mmpa_headers>
             $<BUILD_INTERFACE:hccl_headers>
             $<BUILD_INTERFACE:metadef_headers>
+            $<BUILD_INTERFACE:msprof_headers>
             alog
             llm_datadist
     )

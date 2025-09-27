@@ -9,26 +9,26 @@
 # ----------------------------------------------------------------------------
 
 file(GLOB LLM_V2_SRC_LIST
-        "${AIR_CODE_DIR}/src/llm_datadist/api/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/adxl/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/common/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/link_mgr/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/cache_mgr/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/hccl/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/common/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/fsm/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/utils/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/data_transfer/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/memory/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/memory/allocator/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/memory/config/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/memory/span/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/memory/type/*.cc"
-        "${AIR_CODE_DIR}/src/llm_datadist/memory/util/*.cc"
-        "${AIR_CODE_DIR}/tests/depends/llm_datadist/src/mmpa_stub.cc"
-        "${AIR_CODE_DIR}/tests/depends/llm_datadist/src/hccl_stub.cc"
-        "${AIR_CODE_DIR}/tests/depends/llm_datadist/src/ascend_string_stub.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/api/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/adxl/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/common/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/link_mgr/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/cache_mgr/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/hccl/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/common/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/fsm/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/utils/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/data_transfer/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/memory/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/memory/allocator/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/memory/config/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/memory/span/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/memory/type/*.cc"
+        "${DXL_CODE_DIR}/src/llm_datadist/memory/util/*.cc"
+        "${DXL_CODE_DIR}/tests/depends/llm_datadist/src/mmpa_stub.cc"
+        "${DXL_CODE_DIR}/tests/depends/llm_datadist/src/hccl_stub.cc"
+        "${DXL_CODE_DIR}/tests/depends/llm_datadist/src/ascend_string_stub.cc"
 )
 message("LLM_V2_SRC_LIST = ${LLM_V2_SRC_LIST}")
 
@@ -37,12 +37,12 @@ add_library(llm_datadist_base SHARED
 )
 
 target_include_directories(llm_datadist_base PRIVATE
-        ${AIR_CODE_DIR}/include
-        ${AIR_CODE_DIR}/tests/framework/ge_running_env/include
-        ${AIR_CODE_DIR}/src/llm_datadist
-        ${AIR_CODE_DIR}/src/llm_datadist/common
-        ${AIR_CODE_DIR}/tests/
-        ${AIR_CODE_DIR}/tests/depends/llm_datadist/src
+        ${DXL_CODE_DIR}/include
+        ${DXL_CODE_DIR}/tests/framework/ge_running_env/include
+        ${DXL_CODE_DIR}/src/llm_datadist
+        ${DXL_CODE_DIR}/src/llm_datadist/common
+        ${DXL_CODE_DIR}/tests/
+        ${DXL_CODE_DIR}/tests/depends/llm_datadist/src
 )
 
 target_link_libraries(llm_datadist_base PRIVATE

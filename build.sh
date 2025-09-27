@@ -60,8 +60,6 @@ checkopts() {
 
   if [ -n "$ASCEND_INSTALL_PATH" ]; then
     ASCEND_INSTALL_PATH="$ASCEND_INSTALL_PATH"
-  else
-    ASCEND_INSTALL_PATH="/usr/local/Ascend/ascend-toolkit/latest"
   fi
 
   # Process the options
@@ -128,8 +126,8 @@ build() {
   cd "${BUILD_PATH}"
   cmake -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
         -D CMAKE_INSTALL_PREFIX=${OUTPUT_PATH} \
-        -D ASCEND_INSTALL_PATH=${ASCEND_INSTALL_PATH} \
-        -D ASCEND_3RD_LIB_PATH=${ASCEND_3RD_LIB_PATH} \
+        ${ASCEND_INSTALL_PATH:+-D ASCEND_INSTALL_PATH=${ASCEND_INSTALL_PATH}} \
+        ${ASCEND_3RD_LIB_PATH:+-D ASCEND_3RD_LIB_PATH=${ASCEND_3RD_LIB_PATH}} \
         ..
 
   make ${VERBOSE} select_targets -j${THREAD_NUM} && make install

@@ -8,8 +8,6 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
-# todo 整改后，不再因为XX_DT导致重新configure cmake工程，测试工程的打桩策略保持一致
-# todo 整改后，gcov模式下不需要打桩的package,挪到`find_common_cann_packages`中
 if (ENABLE_TEST)
     message(STATUS "GE DT mode")
     include(cmake/create_headers.cmake)

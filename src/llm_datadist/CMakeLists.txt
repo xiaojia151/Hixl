@@ -11,7 +11,7 @@
 cmake_minimum_required(VERSION 3.7)
 project(llm_datadist)
 set(INC_DIR
-        "${AIR_CODE_DIR}/include"
+        "${DXL_CODE_DIR}/include"
         "${CMAKE_CURRENT_LIST_DIR}"
         "${CMAKE_CURRENT_LIST_DIR}/link_mgr"
         "${CMAKE_CURRENT_LIST_DIR}/cache_mgr"
@@ -41,10 +41,6 @@ file(GLOB LLM_SRC_LIST
         "${CMAKE_CURRENT_LIST_DIR}/memory/util/*.cc"
         )
 
-message("llm_datadist utils: ${CMAKE_CURRENT_LIST_DIR}")
-message("llm_datadist CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
-message("llm_datadist AIR_CODE_DIR: ${AIR_CODE_DIR}")
-
 add_library(llm_datadist SHARED ${LLM_SRC_LIST})
 
 target_include_directories(llm_datadist PRIVATE ${INC_DIR})
@@ -63,16 +59,16 @@ target_link_libraries(llm_datadist PRIVATE
         $<BUILD_INTERFACE:slog_headers>
         $<BUILD_INTERFACE:mmpa_headers>
         $<BUILD_INTERFACE:hccl_headers>
+        $<BUILD_INTERFACE:runtime_headers>
+        $<BUILD_INTERFACE:msprof_headers>
         PUBLIC c_sec
         static_mmpa
         alog
         error_manager
         metadef # for acend string
-        json
         runtime
+        json
         -ldl
-        runtime_headers
-        msprof_headers
         -O2 -fPIC -Wextra -Wfloat-equal
         )
 
