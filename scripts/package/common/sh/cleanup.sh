@@ -1,3 +1,4 @@
+#!/bin/sh
 # ----------------------------------------------------------------------------
 # This program is free software, you can redistribute it and/or modify.
 # Copyright (c) 2025 Huawei Technologies Co., Ltd.
@@ -8,9 +9,6 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
-if (ENABLE_TEST)
-    message(STATUS "GE DT mode")
-    include(cmake/create_headers.cmake)
-else ()
-    message(WARNING "GCOV general mode")
-endif ()
+set -e
+
+rm -rf $(pwd)

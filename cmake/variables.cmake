@@ -37,30 +37,66 @@ set(CMAKE_MODULE_PATH
 )
 message("CMAKE_MODULE_PATH:${CMAKE_MODULE_PATH}")
 
-set(CMAKE_PREFIX_PATH
-    ${ASCEND_INSTALL_PATH}
-)
+set(CMAKE_PREFIX_PATH ${ASCEND_INSTALL_PATH})
 message("CMAKE_PREFIX_PATH:${CMAKE_PREFIX_PATH}")
 
 if (NOT DEFINED CMAKE_INSTALL_PREFIX)
-    set(CMAKE_INSTALL_PREFIX
-        ${PROJECT_SOURCE_DIR}/output
-    )
+    set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/output)
 endif()
 message("CMAKE_INSTALL_PREFIX:${CMAKE_INSTALL_PREFIX}")
 
 if (NOT DEFINED CMAKE_BUILD_TYPE)
-    set(CMAKE_INSTALL_PREFIX
-        ${PROJECT_SOURCE_DIR}/output
-    )
+    if (ENABLE_TEST)
+        set(CMAKE_BUILD_TYPE "DT")
+    else ()
+        set(CMAKE_BUILD_TYPE "Release")
+    endif()
 endif()
-message("CMAKE_INSTALL_PREFIX:${CMAKE_INSTALL_PREFIX}")
+message("CMAKE_BUILD_TYPE:${CMAKE_BUILD_TYPE}")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_VERBOSE_MAKEFILE True)
-set(INSTALL_LIBRARY_DIR lib)
-set(INSTALL_INCLUDE_DIR include)
+set(INSTALL_LIBRARY_DIR ops_dxl/lib)
 set(DXL_CODE_DIR ${PROJECT_SOURCE_DIR})
 set(HI_PYTHON python3)
 set(TARGET_SYSTEM_NAME "Linux")
+
+if (CMAKE_BUILD_TYPE MATCHES GCOV)
+    set(COMMON_COMPILE_OPTION
+            -O0
+            -g
+            --coverage -fprofile-arcs -ftest-coverage
+            -fsanitize=address -fsanitize=leak -fsanitize-recover=address
+            )
+    set(COV_COMPILE_OPTION
+            --coverage -fprofile-arcs -ftest-coverage
+            )
+    if (TARGET_SYSTEM_NAME STREQUAL "Android")
+        set(COMMON_LINK_OPTION
+                -fsanitize=address -fsanitize=leak -fsanitize-recover=address
+                -ldl -lgcov
+                )
+    else ()
+        set(COMMON_LINK_OPTION
+                -fsanitize=address -fsanitize=leak -fsanitize-recover=address
+                -lrt -ldl -lgcov
+                )
+    endif ()
+elseif(CMAKE_BUILD_TYPE MATCHES DT)
+    set(COMMON_COMPILE_OPTION -O0 -g)
+    set(COV_COMPILE_OPTION ${COMMON_COMPILE_OPTION})
+else ()
+    if (TARGET_SYSTEM_NAME STREQUAL "Windows")
+        if (CMAKE_CONFIGURATION_TYPES STREQUAL "Debug")
+            set(COMMON_COMPILE_OPTION /MTd)
+        else ()
+            set(COMMON_COMPILE_OPTION /MT)
+        endif ()
+
+    else ()
+        set(COMMON_COMPILE_OPTION -fvisibility=hidden -O2 -Werror -fno-common -Wextra -Wfloat-equal)
+    endif ()
+endif ()
+message("common compile options ${COMMON_COMPILE_OPTION}")
+message("common link options ${COMMON_LINK_OPTION}")
 

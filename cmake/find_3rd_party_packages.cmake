@@ -10,3 +10,16 @@
 
 include(${PROJECT_SOURCE_DIR}/cmake/third_party/json.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/third_party/pybind11.cmake)
+
+include(CMakePrintHelpers)
+find_package(Python3 COMPONENTS Interpreter Development)
+if (Python3_FOUND)
+    set(HI_PYTHON_INC ${Python3_INCLUDE_DIRS})
+    cmake_print_variables(HI_PYTHON_INC)
+endif ()
+cmake_print_variables(HI_PYTHON_INC)
+cmake_print_variables(pybind11_INCLUDE_DIR)
+
+if (ENABLE_TEST)
+    include(${PROJECT_SOURCE_DIR}/cmake/third_party/gtest.cmake)
+endif()
