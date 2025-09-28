@@ -32,201 +32,201 @@ set(common_compile_definitions
         _GLIBCXX_USE_CXX11_ABI=0
 )
 
-add_executable(prompt_sample2 "prompt_sample2.cpp")
+add_executable(prompt_pull_cache_and_blocks "prompt_pull_cache_and_blocks.cpp")
 
-target_compile_options(prompt_sample2 PRIVATE
+target_compile_options(prompt_pull_cache_and_blocks PRIVATE
         ${common_compile_options}
 )
 
-target_compile_definitions(prompt_sample2 PRIVATE
+target_compile_definitions(prompt_pull_cache_and_blocks PRIVATE
         ${common_compile_definitions}
 )
 
-target_include_directories(prompt_sample2 PRIVATE
+target_include_directories(prompt_pull_cache_and_blocks PRIVATE
         ${INCLUDE_DIR}
         ${INCLUDE_DIR}/external/ge_common
 )
 
-target_link_directories(prompt_sample2 PRIVATE
+target_link_directories(prompt_pull_cache_and_blocks PRIVATE
         ${ASCEND_PATH}/lib64
 )
 
-target_link_libraries(prompt_sample2 PRIVATE
+target_link_libraries(prompt_pull_cache_and_blocks PRIVATE
         llm_datadist
         graph
         ascendcl
 )
 
-add_executable(decoder_sample2 "decoder_sample2.cpp")
+add_executable(decoder_pull_cache_and_blocks "decoder_pull_cache_and_blocks.cpp")
 
-target_compile_options(decoder_sample2 PRIVATE
+target_compile_options(decoder_pull_cache_and_blocks PRIVATE
         ${common_compile_options}
 )
 
-target_compile_definitions(decoder_sample2 PRIVATE
+target_compile_definitions(decoder_pull_cache_and_blocks PRIVATE
         ${common_compile_definitions}
 )
 
-target_include_directories(decoder_sample2 PRIVATE
+target_include_directories(decoder_pull_cache_and_blocks PRIVATE
         ${INCLUDE_DIR}
         ${INCLUDE_DIR}/external/ge_common
 )
 
-target_link_directories(decoder_sample2 PRIVATE
+target_link_directories(decoder_pull_cache_and_blocks PRIVATE
         ${ASCEND_PATH}/lib64
 )
 
-target_link_libraries(decoder_sample2 PRIVATE
+target_link_libraries(decoder_pull_cache_and_blocks PRIVATE
         llm_datadist
         graph
         ascendcl
 )
 
-add_executable(prompt_sample3 "prompt_sample3.cpp")
+add_executable(prompt_push_cache_and_blocks "prompt_push_cache_and_blocks.cpp")
 
-target_compile_options(prompt_sample3 PRIVATE
+target_compile_options(prompt_push_cache_and_blocks PRIVATE
         ${common_compile_options}
 )
 
-target_compile_definitions(prompt_sample3 PRIVATE
+target_compile_definitions(prompt_push_cache_and_blocks PRIVATE
         ${common_compile_definitions}
 )
 
-target_include_directories(prompt_sample3 PRIVATE
+target_include_directories(prompt_push_cache_and_blocks PRIVATE
         ${INCLUDE_DIR}
         ${INCLUDE_DIR}/external/ge_common
 )
 
-target_link_directories(prompt_sample3 PRIVATE
+target_link_directories(prompt_push_cache_and_blocks PRIVATE
         ${ASCEND_PATH}/lib64
 )
 
-target_link_libraries(prompt_sample3 PRIVATE
+target_link_libraries(prompt_push_cache_and_blocks PRIVATE
         llm_datadist
         graph
         ascendcl
 )
 
-add_executable(decoder_sample3 "decoder_sample3.cpp")
+add_executable(decoder_push_cache_and_blocks "decoder_push_cache_and_blocks.cpp")
 
-target_compile_options(decoder_sample3 PRIVATE
+target_compile_options(decoder_push_cache_and_blocks PRIVATE
         ${common_compile_options}
 )
 
-target_compile_definitions(decoder_sample3 PRIVATE
+target_compile_definitions(decoder_push_cache_and_blocks PRIVATE
         ${common_compile_definitions}
 )
 
-target_include_directories(decoder_sample3 PRIVATE
+target_include_directories(decoder_push_cache_and_blocks PRIVATE
         ${INCLUDE_DIR}
         ${INCLUDE_DIR}/external/ge_common
 )
 
-target_link_directories(decoder_sample3 PRIVATE
+target_link_directories(decoder_push_cache_and_blocks PRIVATE
         ${ASCEND_PATH}/lib64
 )
 
-target_link_libraries(decoder_sample3 PRIVATE
+target_link_libraries(decoder_push_cache_and_blocks PRIVATE
         llm_datadist
         graph
         ascendcl
 )
 
-add_executable(prompt_sample4 "prompt_sample4.cpp")
+add_executable(prompt_switch_roles "prompt_switch_roles.cpp")
 
-target_compile_options(prompt_sample4 PRIVATE
+target_compile_options(prompt_switch_roles PRIVATE
         ${common_compile_options}
 )
 
-target_compile_definitions(prompt_sample4 PRIVATE
+target_compile_definitions(prompt_switch_roles PRIVATE
         ${common_compile_definitions}
 )
 
-target_include_directories(prompt_sample4 PRIVATE
+target_include_directories(prompt_switch_roles PRIVATE
         ${INCLUDE_DIR}
         ${INCLUDE_DIR}/external/ge_common
 )
 
-target_link_directories(prompt_sample4 PRIVATE
+target_link_directories(prompt_switch_roles PRIVATE
         ${ASCEND_PATH}/lib64
 )
 
-target_link_libraries(prompt_sample4 PRIVATE
+target_link_libraries(prompt_switch_roles PRIVATE
         llm_datadist
         graph
         ascendcl
 )
 
-add_executable(decoder_sample4 "decoder_sample4.cpp")
+add_executable(decoder_switch_roles "decoder_switch_roles.cpp")
 
-target_compile_options(decoder_sample4 PRIVATE
+target_compile_options(decoder_switch_roles PRIVATE
         ${common_compile_options}
 )
 
-target_compile_definitions(decoder_sample4 PRIVATE
+target_compile_definitions(decoder_switch_roles PRIVATE
         ${common_compile_definitions}
 )
 
-target_include_directories(decoder_sample4 PRIVATE
+target_include_directories(decoder_switch_roles PRIVATE
         ${INCLUDE_DIR}
         ${INCLUDE_DIR}/external/ge_common
 )
 
-target_link_directories(decoder_sample4 PRIVATE
+target_link_directories(decoder_switch_roles PRIVATE
         ${ASCEND_PATH}/lib64
 )
 
-target_link_libraries(decoder_sample4 PRIVATE
+target_link_libraries(decoder_switch_roles PRIVATE
         llm_datadist
         graph
         ascendcl
 )
 
-add_executable(adxl_engine_sample "adxl_engine_sample.cpp")
+add_executable(client_server_h2d "client_server_h2d.cpp")
 
-target_compile_options(adxl_engine_sample PRIVATE
+target_compile_options(client_server_h2d PRIVATE
         ${common_compile_options}
 )
 
-target_compile_definitions(adxl_engine_sample PRIVATE
+target_compile_definitions(client_server_h2d PRIVATE
         ${common_compile_definitions}
 )
 
-target_include_directories(adxl_engine_sample PRIVATE
+target_include_directories(client_server_h2d PRIVATE
         ${INCLUDE_DIR}
         ${INCLUDE_DIR}/external/ge_common
 )
 
-target_link_directories(adxl_engine_sample PRIVATE
+target_link_directories(client_server_h2d PRIVATE
         ${ASCEND_PATH}/lib64
 )
 
-target_link_libraries(adxl_engine_sample PRIVATE
+target_link_libraries(client_server_h2d PRIVATE
         llm_datadist
         graph
         ascendcl
 )
 
-add_executable(adxl_engine_sample2 "adxl_engine_sample2.cpp")
+add_executable(server_server_d2d "server_server_d2d.cpp")
 
-target_compile_options(adxl_engine_sample2 PRIVATE
+target_compile_options(server_server_d2d PRIVATE
         ${common_compile_options}
 )
 
-target_compile_definitions(adxl_engine_sample2 PRIVATE
+target_compile_definitions(server_server_d2d PRIVATE
         ${common_compile_definitions}
 )
 
-target_include_directories(adxl_engine_sample2 PRIVATE
+target_include_directories(server_server_d2d PRIVATE
         ${INCLUDE_DIR}
         ${INCLUDE_DIR}/external/ge_common
 )
 
-target_link_directories(adxl_engine_sample2 PRIVATE
+target_link_directories(server_server_d2d PRIVATE
         ${ASCEND_PATH}/lib64
 )
 
-target_link_libraries(adxl_engine_sample2 PRIVATE
+target_link_libraries(server_server_d2d PRIVATE
         llm_datadist
         graph
         ascendcl
