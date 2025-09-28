@@ -72,7 +72,7 @@ target_link_libraries(llm_datadist PRIVATE
         -O2 -fPIC -Wextra -Wfloat-equal
         )
 
-set(INSTALL_LIBRARY_DIR lib)
+#set(INSTALL_LIBRARY_DIR lib)
 install(TARGETS llm_datadist OPTIONAL
         EXPORT llm_datadist-targets
         LIBRARY DESTINATION ${INSTALL_LIBRARY_DIR}

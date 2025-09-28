@@ -121,7 +121,7 @@ mk_dir() {
 }
 
 build() {
-  echo "create build directory and build AIR";
+  echo "create build directory and build ops-dxl";
   mk_dir "${BUILD_PATH}"
   cd "${BUILD_PATH}"
   cmake -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
@@ -130,29 +130,29 @@ build() {
         ${ASCEND_3RD_LIB_PATH:+-D ASCEND_3RD_LIB_PATH=${ASCEND_3RD_LIB_PATH}} \
         ..
 
-  make ${VERBOSE} select_targets -j${THREAD_NUM} && make install
+  make ${VERBOSE} -j${THREAD_NUM} && make package
   if [ $? -ne 0 ]
   then
-    echo "execute command: make ${VERBOSE} -j${THREAD_NUM} && make install failed."
+    echo "execute command: make ${VERBOSE} -j${THREAD_NUM} && make package failed."
     return 1
   fi
   echo "Build success!"
 
-  make generate_install_script_air package
-  if [ $? -ne 0 ]
-  then
-    echo "execute command: make package failed."
+  OUTPUT_PKG_PATH="${BASEPATH}/output/package"
+  if [ -f _CPack_Packages/makeself_staging/cann*.run ];then
+    mkdir -pv ${OUTPUT_PKG_PATH}
+    mv _CPack_Packages/makeself_staging/cann*.run ${OUTPUT_PKG_PATH}
+  else
+    echo "package ops_dxl run failed"
     return 1
   fi
-  [ -n "$(ls ${OUTPUT_PATH}/CANN-*.run 2>/dev/null)" ] && mv -f ${OUTPUT_PATH}/CANN-*.run ${OUTPUT_PATH}/package/
-  echo "AIR package success!"
+
+  echo "ops-dxl package success!"
 }
 
 main() {
   cd "${BASEPATH}"
   checkopts "$@"
-
-  env
   g++ -v
 
   mk_dir ${OUTPUT_PATH}
