@@ -1,6 +1,13 @@
 #!/bin/bash
-# Perform custom create softlink script for hccl package
-# Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved.
+# ----------------------------------------------------------------------------
+# This program is free software, you can redistribute it and/or modify.
+# Copyright (c) 2025 Huawei Technologies Co., Ltd.
+# This file is a part of the CANN Open Software.
+# Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+# ----------------------------------------------------------------------------
 
 curpath=$(dirname $(readlink -f "$0"))
 common_func_path="${curpath}/common_func.inc"
@@ -99,8 +106,8 @@ WHL_SOFTLINK_INSTALL_DIR_PATH="$install_path/$latest_dir/python/site-packages"
 mkdir -p "$WHL_SOFTLINK_INSTALL_DIR_PATH"
 python_dir_chmod_reset "$WHL_SOFTLINK_INSTALL_DIR_PATH"
 
-create_softlink_if_exists "${WHL_INSTALL_DIR_PATH}" "$WHL_SOFTLINK_INSTALL_DIR_PATH" "hccl"
-create_softlink_if_exists "${WHL_INSTALL_DIR_PATH}" "$WHL_SOFTLINK_INSTALL_DIR_PATH" "hccl-*.dist-info"
+create_softlink_if_exists "${WHL_INSTALL_DIR_PATH}" "$WHL_SOFTLINK_INSTALL_DIR_PATH" "llm_datadist"
+create_softlink_if_exists "${WHL_INSTALL_DIR_PATH}" "$WHL_SOFTLINK_INSTALL_DIR_PATH" "llm_datadist-*.dist-info"
 
 python_dir_chmod_set "$WHL_SOFTLINK_INSTALL_DIR_PATH"
 python_dir_chmod_set "$(dirname $WHL_SOFTLINK_INSTALL_DIR_PATH)"

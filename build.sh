@@ -12,7 +12,7 @@
 set -e
 
 BASEPATH=$(cd "$(dirname $0)"; pwd)
-OUTPUT_PATH="${BASEPATH}/output"
+OUTPUT_PATH="${BASEPATH}/build_out"
 BUILD_RELATIVE_PATH="build"
 BUILD_PATH="${BASEPATH}/${BUILD_RELATIVE_PATH}/"
 
@@ -32,9 +32,9 @@ usage() {
   echo "    --ascend_install_path=<PATH>"
   echo "                      Set ascend package install path, default /usr/local/Ascend/ascend-toolkit/latest"
   echo "    --ascend_3rd_lib_path=<PATH>"
-  echo "                      Set ascend third_party package install path, default ./output/third_party"
+  echo "                      Set ascend third_party package install path, default ./build/third_party"
   echo "    --output_path=<PATH>"
-  echo "                      Set output path, default ./output"
+  echo "                      Set output path, default ./build_out"
   echo ""
 }
 
@@ -54,8 +54,8 @@ checkopts() {
   VERBOSE=""
   THREAD_NUM=8
 
-  OUTPUT_PATH="${BASEPATH}/output"
-  ASCEND_3RD_LIB_PATH="$BASEPATH/output/third_party"
+  OUTPUT_PATH="${BASEPATH}/build_out"
+  ASCEND_3RD_LIB_PATH="$BASEPATH/build/third_party"
   CMAKE_BUILD_TYPE="Release"
 
   if [ -n "$ASCEND_INSTALL_PATH" ]; then
@@ -138,10 +138,8 @@ build() {
   fi
   echo "Build success!"
 
-  OUTPUT_PKG_PATH="${BASEPATH}/output/package"
   if [ -f _CPack_Packages/makeself_staging/cann*.run ];then
-    mkdir -pv ${OUTPUT_PKG_PATH}
-    mv _CPack_Packages/makeself_staging/cann*.run ${OUTPUT_PKG_PATH}
+    mv _CPack_Packages/makeself_staging/cann*.run ${OUTPUT_PATH}
   else
     echo "package ops_dxl run failed"
     return 1

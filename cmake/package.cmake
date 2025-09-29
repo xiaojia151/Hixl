@@ -109,8 +109,6 @@ install(DIRECTORY ${dxl_include}/
 )
 install(TARGETS llm_datadist
         LIBRARY DESTINATION ops_dxl/lib)
-# install(TARGETS llm_datadist_python
-#         ARCHIVE DESTINATION ops_dxl/lib)
 
 # ============= CPack =============
 set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
