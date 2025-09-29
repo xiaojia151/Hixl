@@ -18,7 +18,6 @@ set(INC_DIR
         "${CMAKE_CURRENT_LIST_DIR}/hccl"
         "${CMAKE_CURRENT_LIST_DIR}/common"
         "${CMAKE_CURRENT_LIST_DIR}/fsm"
-        "${CMAKE_BINARY_DIR}/proto/graphengine_protos/"
         )
 add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 
