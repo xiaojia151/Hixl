@@ -8,6 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
+#include "data_transfer/d2d_data_transfer_job.h"
 #include "utils/extern_math_util.h"
 #include "llm_datadist/llm_error_codes.h"
 #include "common/def_types.h"
@@ -15,7 +16,6 @@
 #include "cache_mgr/cache_manager.h"
 #include "statistic_manager.h"
 #include "data_transfer/data_transfer_utils.h"
-#include "data_transfer/d2d_data_transfer_job.h"
 #include "runtime/rt_error_codes.h"
 #include "common/llm_scope_guard.h"
 

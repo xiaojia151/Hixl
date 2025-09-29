@@ -8,8 +8,8 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-#include <netinet/tcp.h>
 #include "msg_handler_plugin.h"
+#include <netinet/tcp.h>
 #include "common/llm_utils.h"
 #include "common/llm_checker.h"
 #include "common/llm_scope_guard.h"

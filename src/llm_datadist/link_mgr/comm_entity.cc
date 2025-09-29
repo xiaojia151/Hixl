@@ -159,8 +159,8 @@ EntityMemInfo::~EntityMemInfo() {
   }
 }
 
-EntityCommInfo::EntityCommInfo(const CommParams &params)
-    : params_(params), comm_{}, comm_inited_(false) {};
+EntityCommInfo::EntityCommInfo(const CommParams &comm_params)
+    : params_(comm_params), comm_{}, comm_inited_(false) {};
 
 EntityCommInfo::EntityCommInfo(const HcclComm &comm, std::vector<void *> mem_handles, int32_t link_total_time, int32_t link_retry_count)
     : params_({0, {}, "", mem_handles, link_total_time, link_retry_count}), comm_(comm), comm_inited_(true) {};
