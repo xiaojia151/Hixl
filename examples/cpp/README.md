@@ -54,14 +54,10 @@ export ASCEND_INSTALL_PATH=xxxx
 ## 样例运行
 
 ### 1. prompt/decoder样例
+ - 说明：
+    - 所有样例需要成对运行，prompt侧和decoder侧执行间隔时间不要过长，样例中decoder侧设置WAIT_PROMPT_TIME为5s，prompt侧设置WAIT_TIME为10s，用户可根据实际情况自行修改这两个变量的值以保证用例成功运行。
+    - 下面所有样例是以prompt和decoder运行在不同机器上为前提编写，如果只有一台机器只需要将local_host_ip和remote_host_ip设为相同即可。
 
- - 执行前准备：
-
-    - 在Prompt与Decoder的主机分别执行以下命令，查询该主机的device ip信息
-        ```
-        for i in {0..7}; do hccn_tool -i $i -ip -g; done
-        ```
-        **注: 如果出现hccn_tool命令找不到的情况，可在CANN包安装目录下搜索hccn_tool，找到可执行文件执行**
  - 配置环境变量
     - 若运行环境上安装的“Ascend-cann-toolkit”包，环境变量设置如下：
 
@@ -80,7 +76,6 @@ export ASCEND_INSTALL_PATH=xxxx
         “$HOME/Ascend”请替换相关软件包的实际安装路径。
 
  - 在运行环境执行可执行文件。
-
 
     (1) 执行pull_cache_and_blocks
 
@@ -124,6 +119,9 @@ export ASCEND_INSTALL_PATH=xxxx
         ./decoder_switch_roles 2 10.170.10.2 10.170.10.1
 
 ### 2. adxl_engine样例
+  - 说明：
+    - 所有样例需要成对运行，client侧和server侧执行间隔时间不要过长，client-server用例中设置WAIT_REG_TIME为5s，WAIT_TRANS_TIME为10s，server-server用例中设置WAIT_TIME为5s，用户可根据实际情况自行修改这两个变量的值以保证用例成功运行。
+    - 下面所有样例是以client和server运行在不同机器上为前提编写，如果只有一台机器只需要将local_engine和remote_engine设为相同即可。
 
   - 配置环境变量
     - 若运行环境上安装的“Ascend-cann-toolkit”包，环境变量设置如下：
