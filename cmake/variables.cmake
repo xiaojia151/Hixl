@@ -41,7 +41,7 @@ set(CMAKE_PREFIX_PATH ${ASCEND_INSTALL_PATH})
 message("CMAKE_PREFIX_PATH:${CMAKE_PREFIX_PATH}")
 
 if (NOT DEFINED CMAKE_INSTALL_PREFIX)
-    set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/output)
+    set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/build_out)
 endif()
 message("CMAKE_INSTALL_PREFIX:${CMAKE_INSTALL_PREFIX}")
 
@@ -62,7 +62,7 @@ set(HI_PYTHON python3)
 set(TARGET_SYSTEM_NAME "Linux")
 
 if (CMAKE_BUILD_TYPE MATCHES GCOV)
-    set(COMMON_COMPILE_OPTION
+    set(DT_COMMON_COMPILE_OPTION
             -O0
             -g
             --coverage -fprofile-arcs -ftest-coverage
@@ -83,7 +83,7 @@ if (CMAKE_BUILD_TYPE MATCHES GCOV)
                 )
     endif ()
 elseif(CMAKE_BUILD_TYPE MATCHES DT)
-    set(COMMON_COMPILE_OPTION -O0 -g)
+    set(DT_COMMON_COMPILE_OPTION -O0 -g)
     set(COV_COMPILE_OPTION ${COMMON_COMPILE_OPTION})
 else ()
     if (TARGET_SYSTEM_NAME STREQUAL "Windows")

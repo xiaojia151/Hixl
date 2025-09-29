@@ -30,7 +30,7 @@ else()
 endif()
 
 option(ENABLE_TEST "Enable test" OFF)
-option(ASCEND_3RD_LIB_PATH "Acend third party library path" "./output/third_party")
+option(ASCEND_3RD_LIB_PATH "Acend third party library path" "./build/third_party")
 
 include(cmake/variables.cmake)
 include(cmake/intf_pub_linux.cmake)
@@ -39,8 +39,8 @@ include(cmake/dependencies.cmake)
 add_custom_target(select_targets)
 if (ENABLE_TEST)
     add_subdirectory(tests)
-    add_dependencies(select_targets llm_datadist_wrapper
-                                    metadef_wrapper
+    add_dependencies(select_targets llm_datadist_wrapper_stub
+                                    metadef_wrapper_stub
                                     llm_datadist_test)
 else ()
     add_subdirectory(src)

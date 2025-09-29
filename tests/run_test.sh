@@ -29,7 +29,7 @@ usage() {
   echo "        --ascend_install_path=<PATH>"
   echo "                   Set ascend package install path, default /usr/local/Ascend/ascend-toolkit/latest"
   echo "        --ascend_3rd_lib_path=<PATH>"
-  echo "                   Set ascend third_party package install path, default ./output/third_party"
+  echo "                   Set ascend third_party package install path, default ./build/third_party"
   echo ""
 }
 
@@ -50,7 +50,7 @@ checkopts() {
     ASCEND_INSTALL_PATH="$ASCEND_INSTALL_PATH"
   fi
 
-  ASCEND_3RD_LIB_PATH="$BASEPATH/output/third_party"
+  ASCEND_3RD_LIB_PATH="$BASEPATH/build_out/third_party"
 
   parsed_args=$(getopt -a -o cj:hv -l cov,help,verbose,ascend_install_path:,ascend_3rd_lib_path: -- "$@") || {
     usage
@@ -123,19 +123,9 @@ build()
   echo "build success!"
 }
 
-generate_inc_coverage() {
-  echo "Generating inc coverage, please wait..."
-  rm -rf ${BASEPATH}/diff
-  mk_dir ${BASEPATH}/cov/diff
-
-  git diff --src-prefix=${BASEPATH}/ --dst-prefix=${BASEPATH}/ HEAD^ > ${BASEPATH}/cov/diff/inc_change_diff.txt
-  addlcov --diff ${BASEPATH}/cov/coverage.info ${BASEPATH}/cov/diff/inc_change_diff.txt -o ${BASEPATH}/cov/diff/inc_coverage.info
-  genhtml --prefix ${BASEPATH} -o ${BASEPATH}/cov/diff/html ${BASEPATH}/cov/diff/inc_coverage.info --legend -t CHG --no-branch-coverage --no-function-coverage
-}
-
 run() {
   if [ -z "${OUTPUT_PATH}" ] ; then
-    OUTPUT_PATH="${BASEPATH}/output"
+    OUTPUT_PATH="${BASEPATH}/build_out"
   fi
 
   BUILD_RELATIVE_PATH="build_test"
@@ -159,7 +149,7 @@ run() {
   echo "Run tests with leaks check"
   RUN_TEST_CASE="${BUILD_PATH}/tests/cpp/llm_datadist/llm_datadist_test --gtest_output=xml:${report_dir}/llm_datadist_test.xml" && ${RUN_TEST_CASE}
   if [[ "$?" -ne 0 ]]; then
-      echo "!!! ST FAILED, PLEASE CHECK YOUR CHANGES !!!"
+      echo "!!! CPP TEST FAILED, PLEASE CHECK YOUR CHANGES !!!"
       echo -e "\033[31m${RUN_TEST_CASE}\033[0m"
       exit 1;
   fi
@@ -169,10 +159,16 @@ run() {
   cp ${BUILD_PATH}/tests/depends/python/metadef_wrapper.so ${BASEPATH}/src/python/llm_datadist/llm_datadist/
   cp -r ${BASEPATH}/tests/python ./
   PYTHON_ORIGINAL_PATH=$PYTHONPATH
-  export PYTHONPATH=$PYTHON_ORIGINAL_PATH:${BASEPATH}/src/python/llm_datadist/
+  export PYTHONPATH=${BASEPATH}/src/python/llm_datadist/:$PYTHON_ORIGINAL_PATH
   export LD_PRELOAD=${USE_ASAN}
   echo "----------st start----------"
   ASAN_OPTIONS=detect_leaks=0 coverage run -m unittest discover python
+  if [[ "$?" -ne 0 ]]; then
+      echo "!!! PY TEST FAILED, PLEASE CHECK YOUR CHANGES !!!"
+      rm -f ${BASEPATH}/src/python/llm_datadist/llm_datadist/*.so
+      exit 1;
+  fi
+  rm -f ${BASEPATH}/src/python/llm_datadist/llm_datadist/*.so
   unset LD_PRELOAD
 
 
@@ -184,13 +180,12 @@ run() {
       mv ${BUILD_PATH}/.coverage ${BASEPATH}/cov/
       lcov -c -d ${BUILD_PATH}/tests/cpp/llm_datadist/CMakeFiles/llm_datadist_test.dir \
               -o cov/tmp.info
-      lcov -r cov/tmp.info '*/output/*' '*/include/*' \
+      lcov -r cov/tmp.info '*/build_out/*' '*/include/*' \
                            '*/third_party/*' '*/tests/*' '/usr/local/*' \
                            '/usr/include/*' \
                            "${ASCEND_INSTALL_PATH}/*" "${ASCEND_3RD_LIB_PATH}/*" -o cov/coverage.info
       cd ${BASEPATH}/cov
       genhtml coverage.info
-      generate_inc_coverage
   fi
 }
 

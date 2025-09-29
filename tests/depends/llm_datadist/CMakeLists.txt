@@ -61,5 +61,5 @@ target_link_libraries(llm_datadist_base PRIVATE
 )
 
 target_compile_options(llm_datadist_base PRIVATE
-        ${COMMON_COMPILE_OPTION}
+        ${DT_COMMON_COMPILE_OPTION}
 )

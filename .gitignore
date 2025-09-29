@@ -6,7 +6,8 @@ cmake-build-debugindocker/
 # distribution and packaging
 build/
 build_out/
-output/
+build_test/
+cov/
 
 # vim cache
 *.swp

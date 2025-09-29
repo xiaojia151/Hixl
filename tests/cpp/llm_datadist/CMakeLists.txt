@@ -51,7 +51,7 @@ add_executable(llm_datadist_test
         )
 
 target_compile_options(llm_datadist_test PRIVATE
-        ${COMMON_COMPILE_OPTION}
+        ${DT_COMMON_COMPILE_OPTION}
         -Wno-deprecated-declarations
         -Wall -Wfloat-equal
         )

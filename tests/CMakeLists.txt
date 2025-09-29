@@ -8,7 +8,7 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
-set(COMMON_COMPILE_OPTION ${COMMON_COMPILE_OPTION} -fno-access-control)
+set(DT_COMMON_COMPILE_OPTION ${DT_COMMON_COMPILE_OPTION} -fno-access-control)
 
 add_subdirectory(depends/slog)
 add_subdirectory(depends/mmpa)

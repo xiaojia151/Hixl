@@ -12,11 +12,11 @@ set(LLM_DATADIST_WRAPPER_SRC_FILES
         "${DXL_CODE_DIR}/src/python/llm_wrapper/llm_wrapper_v2.cc"
         "${DXL_CODE_DIR}/src/python/llm_wrapper/llm_datadist_v2_wrapper.cc")
 
-add_library(llm_datadist_wrapper MODULE
+add_library(llm_datadist_wrapper_stub MODULE
         ${LLM_DATADIST_WRAPPER_SRC_FILES}
 )
 
-target_include_directories(llm_datadist_wrapper PRIVATE
+target_include_directories(llm_datadist_wrapper_stub PRIVATE
         ${HI_PYTHON_INC}
         ${pybind11_INCLUDE_DIR}
         ${DXL_CODE_DIR}/include
@@ -24,7 +24,7 @@ target_include_directories(llm_datadist_wrapper PRIVATE
         ${DXL_CODE_DIR}/tests/depends/llm_datadist/src
 )
 
-target_link_libraries(llm_datadist_wrapper PRIVATE
+target_link_libraries(llm_datadist_wrapper_stub PRIVATE
         intf_pub
         metadef_headers
         runtime_headers
@@ -33,38 +33,42 @@ target_link_libraries(llm_datadist_wrapper PRIVATE
         ${COMMON_LINK_OPTION}
 )
 
-set_target_properties(llm_datadist_wrapper
+set_target_properties(llm_datadist_wrapper_stub
         PROPERTIES
         PREFIX ""
 )
 
-target_compile_options(llm_datadist_wrapper PRIVATE
-        ${COMMON_COMPILE_OPTION}
+set_target_properties(llm_datadist_wrapper_stub PROPERTIES OUTPUT_NAME "llm_datadist_wrapper")
+
+target_compile_options(llm_datadist_wrapper_stub PRIVATE
+        ${DT_COMMON_COMPILE_OPTION}
         -Xlinker -export-dynamic
 )
 
-add_library(metadef_wrapper MODULE
+add_library(metadef_wrapper_stub MODULE
         "${DXL_CODE_DIR}/src/python/metadef_wrapper/metadef_wrapper.cc"
 )
 
-target_include_directories(metadef_wrapper PRIVATE
+target_include_directories(metadef_wrapper_stub PRIVATE
         ${HI_PYTHON_INC}
         ${pybind11_INCLUDE_DIR}
         ${DXL_CODE_DIR}/include
 )
 
-target_link_libraries(metadef_wrapper PRIVATE
+target_link_libraries(metadef_wrapper_stub PRIVATE
         intf_pub
         metadef_headers
         ${COMMON_LINK_OPTION}
 )
 
-set_target_properties(metadef_wrapper
+set_target_properties(metadef_wrapper_stub
         PROPERTIES
         PREFIX ""
 )
 
-target_compile_options(metadef_wrapper PRIVATE
-        ${COMMON_COMPILE_OPTION}
+set_target_properties(metadef_wrapper_stub PROPERTIES OUTPUT_NAME "metadef_wrapper")
+
+target_compile_options(metadef_wrapper_stub PRIVATE
+        ${DT_COMMON_COMPILE_OPTION}
         -Xlinker -export-dynamic
 )
