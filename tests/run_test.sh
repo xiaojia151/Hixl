@@ -21,7 +21,10 @@ usage() {
   echo ""
   echo "Options:"
   echo "    -h, --help     Print usage"
-  echo "    -c, --cov      Build ut/st with coverage tag"
+  echo "    -t, --test     Build all test"
+  echo "        =cpp               Build all cpp test"
+  echo "        =py                Build all py test"
+  echo "    -c, --cov      Build test with coverage tag"
   echo "                   Please ensure that the environment has correctly installed lcov, gcov, and genhtml."
   echo "                   and the version matched gcc/g++."
   echo "    -v, --verbose  Display build command"
@@ -45,6 +48,8 @@ checkopts() {
   THREAD_NUM=8
   COVERAGE=""
   CMAKE_BUILD_TYPE="DT"
+  ENABLE_CPP_TEST="on"
+  ENABLE_PY_TEST="on"
 
   if [ -n "$ASCEND_INSTALL_PATH" ]; then
     ASCEND_INSTALL_PATH="$ASCEND_INSTALL_PATH"
@@ -52,7 +57,7 @@ checkopts() {
 
   ASCEND_3RD_LIB_PATH="$BASEPATH/build_out/third_party"
 
-  parsed_args=$(getopt -a -o cj:hv -l cov,help,verbose,ascend_install_path:,ascend_3rd_lib_path: -- "$@") || {
+  parsed_args=$(getopt -a -o t::cj:hv -l test::,cov,help,verbose,ascend_install_path:,ascend_3rd_lib_path: -- "$@") || {
     usage
     exit 1
   }
@@ -61,6 +66,28 @@ checkopts() {
 
   while true; do
     case "$1" in
+      -t | --test)
+        case "$2" in
+          "")
+            ENABLE_CPP_TEST="on"
+            ENABLE_PY_TEST="on"
+            shift 2
+            ;;
+          "cpp")
+            ENABLE_CPP_TEST="on"
+            ENABLE_PY_TEST="off"
+            shift 2
+            ;;
+          "py")
+            ENABLE_PY_TEST="on"
+            ENABLE_CPP_TEST="off"
+            shift 2
+            ;;
+          *)
+            usage
+            exit 1
+        esac
+        ;;
       -c | --cov)
         CMAKE_BUILD_TYPE="GCOV"
         shift
@@ -147,39 +174,47 @@ run() {
   find ${OUTPUT_PATH} -name "*.so*" -print0 | xargs -0 -r chmod 500
 
   echo "Run tests with leaks check"
-  RUN_TEST_CASE="${BUILD_PATH}/tests/cpp/llm_datadist/llm_datadist_test --gtest_output=xml:${report_dir}/llm_datadist_test.xml" && ${RUN_TEST_CASE}
-  if [[ "$?" -ne 0 ]]; then
-      echo "!!! CPP TEST FAILED, PLEASE CHECK YOUR CHANGES !!!"
-      echo -e "\033[31m${RUN_TEST_CASE}\033[0m"
-      exit 1;
+  if [[ "X$ENABLE_CPP_TEST" = "Xon" ]]; then
+      RUN_TEST_CASE="${BUILD_PATH}/tests/cpp/llm_datadist/llm_datadist_test --gtest_output=xml:${report_dir}/llm_datadist_test.xml" && ${RUN_TEST_CASE}
+      if [[ "$?" -ne 0 ]]; then
+          echo "!!! CPP TEST FAILED, PLEASE CHECK YOUR CHANGES !!!"
+          echo -e "\033[31m${RUN_TEST_CASE}\033[0m"
+          exit 1;
+      fi
   fi
 
-  unset LD_PRELOAD
-  cp ${BUILD_PATH}/tests/depends/python/llm_datadist_wrapper.so ${BASEPATH}/src/python/llm_datadist/llm_datadist/
-  cp ${BUILD_PATH}/tests/depends/python/metadef_wrapper.so ${BASEPATH}/src/python/llm_datadist/llm_datadist/
-  cp -r ${BASEPATH}/tests/python ./
-  PYTHON_ORIGINAL_PATH=$PYTHONPATH
-  export PYTHONPATH=${BASEPATH}/src/python/llm_datadist/:$PYTHON_ORIGINAL_PATH
-  export LD_PRELOAD=${USE_ASAN}
-  echo "----------st start----------"
-  ASAN_OPTIONS=detect_leaks=0 coverage run -m unittest discover python
-  if [[ "$?" -ne 0 ]]; then
-      echo "!!! PY TEST FAILED, PLEASE CHECK YOUR CHANGES !!!"
+  if [[ "X$ENABLE_PY_TEST" = "Xon" ]]; then
+      unset LD_PRELOAD
+      cp ${BUILD_PATH}/tests/depends/python/llm_datadist_wrapper.so ${BASEPATH}/src/python/llm_datadist/llm_datadist/
+      cp ${BUILD_PATH}/tests/depends/python/metadef_wrapper.so ${BASEPATH}/src/python/llm_datadist/llm_datadist/
+      cp -r ${BASEPATH}/tests/python ./
+      PYTHON_ORIGINAL_PATH=$PYTHONPATH
+      export PYTHONPATH=${BASEPATH}/src/python/llm_datadist/:$PYTHON_ORIGINAL_PATH
+      export LD_PRELOAD=${USE_ASAN}
+      echo "----------st start----------"
+      ASAN_OPTIONS=detect_leaks=0 coverage run -m unittest discover python
+      if [[ "$?" -ne 0 ]]; then
+          echo "!!! PY TEST FAILED, PLEASE CHECK YOUR CHANGES !!!"
+          rm -f ${BASEPATH}/src/python/llm_datadist/llm_datadist/*.so
+          exit 1;
+      fi
       rm -f ${BASEPATH}/src/python/llm_datadist/llm_datadist/*.so
-      exit 1;
+      unset LD_PRELOAD
   fi
-  rm -f ${BASEPATH}/src/python/llm_datadist/llm_datadist/*.so
-  unset LD_PRELOAD
-
 
   if [[ "X$CMAKE_BUILD_TYPE" = "XGCOV" ]]; then
       echo "Generating coverage statistics, please wait..."
       cd ${BASEPATH}
       rm -rf ${BASEPATH}/cov
       mk_dir ${BASEPATH}/cov
-      mv ${BUILD_PATH}/.coverage ${BASEPATH}/cov/
-      lcov -c -d ${BUILD_PATH}/tests/cpp/llm_datadist/CMakeFiles/llm_datadist_test.dir \
-              -o cov/tmp.info
+      if [[ "X$ENABLE_CPP_TEST" = "Xon" ]]; then
+          lcov -c -d ${BUILD_PATH}/tests/cpp/llm_datadist/CMakeFiles/llm_datadist_test.dir \
+               -o cov/tmp.info
+      fi
+
+      if [[ "X$ENABLE_PY_TEST" = "Xon" ]]; then
+          mv ${BUILD_PATH}/.coverage ${BASEPATH}/cov/
+      fi
       lcov -r cov/tmp.info '*/build_out/*' '*/include/*' \
                            '*/third_party/*' '*/tests/*' '/usr/local/*' \
                            '/usr/include/*' \

@@ -28,7 +28,7 @@ if (NOT DEFINED ASCEND_INSTALL_PATH)
     endif()
     message("auto detect ASCEND_INSTALL_PATH:${ASCEND_INSTALL_PATH}")
 else()
-    message("use defined ASCEND_INSTALL_PATH:${ASCEND_INSTALL_PATH}")
+    message("use defined env:ASCEND_INSTALL_PATH or ascend_install_path, path=${ASCEND_INSTALL_PATH}")
 endif()
 
 set(CMAKE_MODULE_PATH
