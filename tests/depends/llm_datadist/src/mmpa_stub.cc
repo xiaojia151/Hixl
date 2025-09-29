@@ -13,7 +13,7 @@
 #include <cstdio>  // for std::remove
 #include <iostream>
 #include "depends/runtime/src/runtime_stub.h"
-#include "hccl_mem_comm.h"
+#include "hccl/hccl_mem_comm.h"
 #include "runtime/rt.h"
 #include "hccl_stub.h"
 #include "common/llm_log.h"
@@ -57,7 +57,7 @@ HcclResult HcclBatchGet1(HcclComm comm, uint32_t remoteRank, HcclOneSideOpDesc *
   return HCCL_SUCCESS;
 }
 
-// Ð´Èë/tmp/hccn.confÎÄ¼þ
+// Ð´ï¿½ï¿½/tmp/hccn.confï¿½Ä¼ï¿½
 void WriteHccnConfFile() {
   const std::string file_path = "/tmp/hccn.conf";
   std::ofstream file(file_path);
@@ -66,7 +66,7 @@ void WriteHccnConfFile() {
     return;
   }
 
-  // Ð´ÈëÔ¤¶¨ÒåµÄÍøÂçÅäÖÃ
+  // Ð´ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   file << "netmask_0=1.2.3.4\n"
         << "address_0=1.1.1.0\n"
         << "netmask_1=1.2.3.4\n"
@@ -87,7 +87,7 @@ void WriteHccnConfFile() {
   file.close();
 }
 
-// É¾³ý/tmp/hccn.confÎÄ¼þ
+// É¾ï¿½ï¿½/tmp/hccn.confï¿½Ä¼ï¿½
 void RemoveHccnConfFile() {
   const std::string file_path = "/tmp/hccn.conf";
   if (std::remove(file_path.c_str()) != 0) {

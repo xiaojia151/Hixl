@@ -174,7 +174,7 @@ class AutoCommResRuntimeMock : public ge::RuntimeStub {
   }
 
  private:
-  // 写入/etc/hccn.conf文件
+  // 写入/tmp/hccn.conf文件
   static void WriteHccnConfFile() {
     const std::string file_path = "/tmp/hccn.conf";
     std::ofstream file(file_path);
@@ -204,7 +204,7 @@ class AutoCommResRuntimeMock : public ge::RuntimeStub {
     file.close();
   }
 
-  // 删除/etc/hccn.conf文件
+  // 删除/tmp/hccn.conf文件
   static void RemoveHccnConfFile() {
     const std::string file_path = "/tmp/hccn.conf";
     if (std::remove(file_path.c_str()) != 0) {

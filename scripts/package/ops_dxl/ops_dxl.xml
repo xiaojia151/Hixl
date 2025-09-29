@@ -38,7 +38,13 @@
     </file_info>
     <file_info copy_type="source" src_path="" dst_path="ops_dxl/include" install_path="$(TARGET_ENV)/include" install_type="all">
         <file value="adxl" install_mod="550" entity="true" pkg_inner_softlink="ops_dxl/include/adxl"/>
-        <file value="llm_datadist" install_mod="550" entity="true" pkg_inner_softlink="ops_dxl/include/llm_datadist"/>
+    </file_info>
+    <file_info copy_type="source" src_path="" dst_path="ops_dxl/include/llm_datadist" install_path="$(TARGET_ENV)/include/llm_datadist" install_type="all">
+        <file value="llm_datadist.h" install_mod="550" entity="true" pkg_inner_softlink="ops_dxl/include/llm_datadist/llm_datadist.h"/>
+    </file_info>
+    <file_info copy_type="source" src_path="" dst_path="ops_dxl/include/llm_datadist" install_path="$(TARGET_ENV)/include/ge" install_type="all">
+        <file value="llm_engine_types.h" install_mod="550" entity="true" pkg_inner_softlink="ops_dxl/include/ge/llm_engine_types.h"/>
+        <file value="llm_error_codes.h" install_mod="550" entity="true" pkg_inner_softlink="ops_dxl/include/ge/llm_error_codes.h"/>
     </file_info>
     <file_info value="ops_dxl_lib" copy_type="delivery" src_path="" dst_path="ops_dxl/lib" install_path="$(TARGET_ENV)/lib64" install_mod="440">
         <file value="libllm_datadist.so" file_type="shared" pkg_inner_softlink="ops_dxl/lib64/libllm_datadist.so"/>
@@ -53,8 +59,12 @@
         <path value="ops_dxl/bin"/>
         <path value="ops_dxl/lib64"/>
         <path value="ops_dxl/include"/>
+        <path value="ops_dxl/include/llm_datadist"/>
+        <path value="ops_dxl/include/ge"/>
     </dir_info>
     <dir_info value="ops_dxl" install_path="" install_mod="550" install_type="all">
         <path value="$(TARGET_ENV)/include"/>
+        <path value="$(TARGET_ENV)/include/llm_datadist"/>
+        <path value="$(TARGET_ENV)/include/ge"/>
     </dir_info>
 </config>
