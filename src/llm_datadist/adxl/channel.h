@@ -51,7 +51,7 @@ class BufferedTransfer {
   std::function<Status(HcclOneSideOpDesc *descs, uint32_t desc_num)> trans_func_;
 };
 
-enum RecvState {
+enum class RecvState {
   WAITING_FOR_HEADER,  // 等待接收协议头
   WAITING_FOR_BODY     // 已收到头，等待接收完整数据体
 };
@@ -89,7 +89,7 @@ class Channel {
   static int64_t timeout_in_millis_;
 
   int32_t fd_;
-  RecvState recv_state_ = WAITING_FOR_HEADER;
+  RecvState recv_state_ = RecvState::WAITING_FOR_HEADER;
   std::vector<char> recv_buffer_;
   size_t expected_body_size_ = 0;
   size_t bytes_received_ = 0;

@@ -11,9 +11,9 @@
 #ifndef CANN_GRAPH_ENGINE_RUNTIME_ADXL_SEGMENT_TABLE_H_
 #define CANN_GRAPH_ENGINE_RUNTIME_ADXL_SEGMENT_TABLE_H_
 
-#include "adxl/adxl_types.h"
 #include <vector>
 #include <unordered_map>
+#include "adxl/adxl_types.h"
 
 namespace adxl {
 class Segment {
