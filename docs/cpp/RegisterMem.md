@@ -106,7 +106,6 @@ Status RegisterMem(const MemDesc &mem, MemType type, MemHandle &mem_handle)
 -   在调用[Connect](Connect.md)与对端建链之前需要完成所有local内存的注册。
 -   单进程支持注册的内存个数上限是256。
 -   最大注册50GB的Device内存，20GB的Host内存。注册内存越大，占用的OS内存越多。
--   注册Host内存需使用“[aclrtMallocHost](zh-cn_topic_0000001312641801.md)”进行申请，该接口申请的内存地址自动对齐。
--   注册Device内存使用“[aclrtMalloc](zh-cn_topic_0000001265241682.md)”进行申请，如通过HCCS传输，则内存分配规则需配置为ACL\_MEM\_MALLOC\_HUGE\_ONLY。
--   该接口需要和[Initialize\(adxl\)](Initialize(adxl).md)运行在同一个线程上，如需切换线程调用该接口，需要在[Initialize\(adxl\)](Initialize(adxl).md)所在线程调用“[aclrtGetCurrentContext](zh-cn_topic_0000001265400198.md)”获取context，并在新线程调用“[aclrtSetCurrentContext](zh-cn_topic_0000001312721561.md)”设置context。
-
+-   注册Host内存需使用“aclrtMallocHost”进行申请，该接口申请的内存地址自动对齐。
+-   注册Device内存使用“aclrtMalloc”进行申请，如通过HCCS传输，则内存分配规则需配置为ACL\_MEM\_MALLOC\_HUGE\_ONLY。
+-   该接口需要和[Initialize\(adxl\)](Initialize(adxl).md)运行在同一个线程上，如需切换线程调用该接口，需要在[Initialize\(adxl\)](Initialize(adxl).md)所在线程调用“aclrtGetCurrentContext”获取context，并在新线程调用“aclrtSetCurrentContext”设置context。

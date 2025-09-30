@@ -90,5 +90,5 @@ Status DeregisterMem(MemHandle mem_handle)
 ## 约束说明<a name="zh-cn_topic_0000001461072801_zh-cn_topic_0000001265240866_section2021419196520"></a>
 
 -   调用该接口前需要先调用[Disconnect](Disconnect.md)将所有链路进行断链，确保所有内存不再使用。
--   该接口需要和[Initialize\(adxl\)](Initialize(adxl).md)运行在同一个线程上，如需切换线程调用该接口，需要在[Initialize\(adxl\)](Initialize(adxl).md)所在线程调用“[aclrtGetCurrentContext](zh-cn_topic_0000001265400198.md)”获取context，并在新线程调用“[aclrtSetCurrentContext](zh-cn_topic_0000001312721561.md)”设置context。
+-   该接口需要和[Initialize\(adxl\)](Initialize(adxl).md)运行在同一个线程上，如需切换线程调用该接口，需要在[Initialize\(adxl\)](Initialize(adxl).md)所在线程调用“aclrtGetCurrentContext”获取context，并在新线程调用“aclrtSetCurrentContext”设置context。
 

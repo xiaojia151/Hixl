@@ -112,8 +112,7 @@ Status TransferSync(const AscendString &remote_engine,
 ## 约束说明<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section28090371"></a>
 
 -   调用该接口之前，需要先调用[Connect](Connect.md)接口完成与对端的建链。
--   该接口需要和[Initialize\(adxl\)](Initialize(adxl).md)运行在同一个线程上，如需切换线程调用该接口，需要在[Initialize\(adxl\)](Initialize(adxl).md)所在线程调用“[aclrtGetCurrentContext](zh-cn_topic_0000001265400198.md)”获取context，并在新线程调用“[aclrtSetCurrentContext](zh-cn_topic_0000001312721561.md)”设置context。
+-   该接口需要和[Initialize\(adxl\)](Initialize(adxl).md)运行在同一个线程上，如需切换线程调用该接口，需要在[Initialize\(adxl\)](Initialize(adxl).md)所在线程调用“aclrtGetCurrentContext”获取context，并在新线程调用“aclrtSetCurrentContext”设置context。
 -   系统默认开启中转内存池，如果op\_desc内包含<256K的，则默认使用中转传输模式来提升性能，否则会通过判断是否有未注册的内存来决定走中转还是直传；
 -   在开启中转内存池情况下，op\_desc中本地内存和远端内存有一个未注册就会判断为需要走中转传输模式，且没有注册过的内存判断为Host内存，用户需保证地址合法；
 -   在中转传输模式下，所有op\_desc的传输类型需要相同，举例：所有的op\_desc都是本地Host内存往远端Host内存写；
-

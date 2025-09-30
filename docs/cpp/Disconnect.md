@@ -94,5 +94,5 @@ Status Disconnect(const AscendString &remote_engine, int32_t timeout_in_millis =
 ## 约束说明<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section28090371"></a>
 
 -   调用该接口之前，需要先调用[Initialize\(adxl\)](Initialize(adxl).md)接口完成初始化。
--   该接口需要和[Initialize\(adxl\)](Initialize(adxl).md)运行在同一个线程上，如需切换线程调用该接口，需要在[Initialize\(adxl\)](Initialize(adxl).md)所在线程调用“[aclrtGetCurrentContext](zh-cn_topic_0000001265400198.md)”获取context，并在新线程调用“[aclrtSetCurrentContext](zh-cn_topic_0000001312721561.md)”设置context。
+-   该接口需要和[Initialize\(adxl\)](Initialize(adxl).md)运行在同一个线程上，如需切换线程调用该接口，需要在[Initialize\(adxl\)](Initialize(adxl).md)所在线程调用“aclrtGetCurrentContext”获取context，并在新线程调用“aclrtSetCurrentContext”设置context。
 

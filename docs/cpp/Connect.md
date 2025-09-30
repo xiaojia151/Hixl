@@ -109,5 +109,4 @@ Status Connect(const AscendString &remote_engine, int32_t timeout_in_millis = 10
     hccn_tool -i ${device_id} -tls -s enable 1
     ```
 
--   该接口需要和[Initialize\(adxl\)](Initialize(adxl).md)运行在同一个线程上，如需切换线程调用该接口，需要在[Initialize\(adxl\)](Initialize(adxl).md)所在线程调用“[aclrtGetCurrentContext](zh-cn_topic_0000001265400198.md)”获取context，并在新线程调用“[aclrtSetCurrentContext](zh-cn_topic_0000001312721561.md)”设置context。
-
+-   该接口需要和[Initialize\(adxl\)](Initialize(adxl).md)运行在同一个线程上，如需切换线程调用该接口，需要在[Initialize\(adxl\)](Initialize(adxl).md)所在线程调用“aclrtGetCurrentContext”获取context，并在新线程调用“aclrtSetCurrentContext”设置context。

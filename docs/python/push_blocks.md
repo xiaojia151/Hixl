@@ -124,41 +124,6 @@ push_blocks(self,
 </tbody>
 </table>
 
-**表 1**  \*\*kwargs的可选参数
-
-<a name="table37855712016"></a>
-<table><thead align="left"><tr id="zh-cn_topic_0000001893731694_row16785471104"><th class="cellrowborder" valign="top" width="22.220000000000002%" id="mcps1.2.4.1.1"><p id="zh-cn_topic_0000001893731694_p47851972000"><a name="zh-cn_topic_0000001893731694_p47851972000"></a><a name="zh-cn_topic_0000001893731694_p47851972000"></a><strong id="zh-cn_topic_0000001893731694_b12785571609"><a name="zh-cn_topic_0000001893731694_b12785571609"></a><a name="zh-cn_topic_0000001893731694_b12785571609"></a>参数名称</strong></p>
-</th>
-<th class="cellrowborder" valign="top" width="35.870000000000005%" id="mcps1.2.4.1.2"><p id="zh-cn_topic_0000001893731694_p147851671508"><a name="zh-cn_topic_0000001893731694_p147851671508"></a><a name="zh-cn_topic_0000001893731694_p147851671508"></a>数据类型</p>
-</th>
-<th class="cellrowborder" valign="top" width="41.91%" id="mcps1.2.4.1.3"><p id="zh-cn_topic_0000001893731694_p137859712019"><a name="zh-cn_topic_0000001893731694_p137859712019"></a><a name="zh-cn_topic_0000001893731694_p137859712019"></a><strong id="zh-cn_topic_0000001893731694_b20785137501"><a name="zh-cn_topic_0000001893731694_b20785137501"></a><a name="zh-cn_topic_0000001893731694_b20785137501"></a>取值说明</strong></p>
-</th>
-</tr>
-</thead>
-<tbody><tr id="zh-cn_topic_0000001893731694_row1854190202411"><td class="cellrowborder" valign="top" width="22.220000000000002%" headers="mcps1.2.4.1.1 "><p id="zh-cn_topic_0000001893731694_p1254219052410"><a name="zh-cn_topic_0000001893731694_p1254219052410"></a><a name="zh-cn_topic_0000001893731694_p1254219052410"></a>src_layer_range</p>
-</td>
-<td class="cellrowborder" valign="top" width="35.870000000000005%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001893731694_p654212019249"><a name="zh-cn_topic_0000001893731694_p654212019249"></a><a name="zh-cn_topic_0000001893731694_p654212019249"></a>Optional[range]</p>
-</td>
-<td class="cellrowborder" valign="top" width="41.91%" headers="mcps1.2.4.1.3 "><p id="zh-cn_topic_0000002374411972_zh-cn_topic_0000001893731694_p05421012411"><a name="zh-cn_topic_0000002374411972_zh-cn_topic_0000001893731694_p05421012411"></a><a name="zh-cn_topic_0000002374411972_zh-cn_topic_0000001893731694_p05421012411"></a>可选参数，用于按层pull kv场景。传输源的layer的范围，step只支持1。不设置时为传输所有layer。需要注意这里是layer的index，而不是tensor的index，即1个layer对应连续<span id="zh-cn_topic_0000002374411972_ph1391373715362"><a name="zh-cn_topic_0000002374411972_ph1391373715362"></a><a name="zh-cn_topic_0000002374411972_ph1391373715362"></a>N</span>个tensor(K/V)，这里要求分配内存时，必须是KV,...,KV排布，不支持其他场景。<span id="zh-cn_topic_0000002374411972_ph0588012123212"><a name="zh-cn_topic_0000002374411972_ph0588012123212"></a><a name="zh-cn_topic_0000002374411972_ph0588012123212"></a>N为</span><span id="zh-cn_topic_0000002374411972_ph16257111853215"><a name="zh-cn_topic_0000002374411972_ph16257111853215"></a><a name="zh-cn_topic_0000002374411972_ph16257111853215"></a>tensor_num_per_layer</span><span id="zh-cn_topic_0000002374411972_ph7205151910326"><a name="zh-cn_topic_0000002374411972_ph7205151910326"></a><a name="zh-cn_topic_0000002374411972_ph7205151910326"></a>的取值，默认为2。</span></p>
-</td>
-</tr>
-<tr id="zh-cn_topic_0000001893731694_row8974238247"><td class="cellrowborder" valign="top" width="22.220000000000002%" headers="mcps1.2.4.1.1 "><p id="zh-cn_topic_0000001893731694_p497533142411"><a name="zh-cn_topic_0000001893731694_p497533142411"></a><a name="zh-cn_topic_0000001893731694_p497533142411"></a>dst_layer_range</p>
-</td>
-<td class="cellrowborder" valign="top" width="35.870000000000005%" headers="mcps1.2.4.1.2 "><p id="zh-cn_topic_0000001893731694_p397511332418"><a name="zh-cn_topic_0000001893731694_p397511332418"></a><a name="zh-cn_topic_0000001893731694_p397511332418"></a>Optional[range]</p>
-</td>
-<td class="cellrowborder" valign="top" width="41.91%" headers="mcps1.2.4.1.3 "><p id="zh-cn_topic_0000002374411972_zh-cn_topic_0000001893731694_p199753318246"><a name="zh-cn_topic_0000002374411972_zh-cn_topic_0000001893731694_p199753318246"></a><a name="zh-cn_topic_0000002374411972_zh-cn_topic_0000001893731694_p199753318246"></a>可选参数，用于按层pull kv场景。传输目标的layer的范围，step只支持1。不设置时为传输所有layer。需要注意这里是layer的index，而不是tensor的index，即1个layer对应连续<span id="zh-cn_topic_0000002374411972_ph20486744153619"><a name="zh-cn_topic_0000002374411972_ph20486744153619"></a><a name="zh-cn_topic_0000002374411972_ph20486744153619"></a>N</span>个tensor(K/V)，这里要求分配内存时，必须是KV,...,KV排布，不支持其他场景。<span id="zh-cn_topic_0000002374411972_ph112854468366"><a name="zh-cn_topic_0000002374411972_ph112854468366"></a><a name="zh-cn_topic_0000002374411972_ph112854468366"></a>N为</span><span id="zh-cn_topic_0000002374411972_ph8285846133618"><a name="zh-cn_topic_0000002374411972_ph8285846133618"></a><a name="zh-cn_topic_0000002374411972_ph8285846133618"></a>tensor_num_per_layer</span><span id="zh-cn_topic_0000002374411972_ph19285194615367"><a name="zh-cn_topic_0000002374411972_ph19285194615367"></a><a name="zh-cn_topic_0000002374411972_ph19285194615367"></a>的取值，默认为2。</span></p>
-</td>
-</tr>
-<tr id="row830023416289"><td class="cellrowborder" valign="top" width="22.220000000000002%" headers="mcps1.2.4.1.1 "><p id="p1709929141119"><a name="p1709929141119"></a><a name="p1709929141119"></a>tensor_num_per_layer</p>
-</td>
-<td class="cellrowborder" valign="top" width="35.870000000000005%" headers="mcps1.2.4.1.2 "><p id="p6947331141115"><a name="p6947331141115"></a><a name="p6947331141115"></a>Optional[int]</p>
-</td>
-<td class="cellrowborder" valign="top" width="41.91%" headers="mcps1.2.4.1.3 "><p id="zh-cn_topic_0000002374411972_p1017074311111_1"><a name="zh-cn_topic_0000002374411972_p1017074311111_1"></a><a name="zh-cn_topic_0000002374411972_p1017074311111_1"></a>可选参数，表示每层的tensor的数量，默认值是2，取值范围是[1,cache的tensor总数]。当src_layer_range或dst_layer_range取值为非默认值时， tensor_num_per_layer可以保持默认值，也可以输入其他值，输入其他值的时，tensor_num_per_layer的取值还需要被当前cache的tensor总数整除。</p>
-</td>
-</tr>
-</tbody>
-</table>
-
 ## 调用示例<a name="section17821439839"></a>
 
 请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python)。
@@ -169,6 +134,7 @@ push_blocks(self,
 -   传入数据类型错误情况下会抛出TypeError或ValueError异常。
 -   执行时间超过[sync\_kv\_timeout](sync_kv_timeout.md)配置会抛出[LLMException](LLMException.md)异常。
 -   layer\_range参数异常会抛出[LLMException](LLMException.md)异常。
+
 
 ## 约束说明<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section28090371"></a>
 
