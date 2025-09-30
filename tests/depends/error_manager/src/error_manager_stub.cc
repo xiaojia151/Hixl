@@ -33,7 +33,7 @@ std::unique_ptr<error_message::char_t[]> CreateUniquePtrFromString(const std::st
   }
   return uni_ptr;
 }
-}
+}  // namespace
 thread_local Context ErrorManager::error_context_ = {0, "", "", ""};
 
 namespace error_message {
@@ -81,13 +81,12 @@ struct StubErrorItem {
 
   friend bool operator==(const StubErrorItem &lhs, const StubErrorItem &rhs) noexcept {
     return (lhs.error_id == rhs.error_id) && (lhs.error_message == rhs.error_message) &&
-        (lhs.possible_cause == rhs.possible_cause) && (lhs.solution == rhs.solution);
+           (lhs.possible_cause == rhs.possible_cause) && (lhs.solution == rhs.solution);
   }
 };
 
 std::mutex stub_mutex_;
 static std::vector<StubErrorItem> stub_error_message_process_;
-
 
 int32_t ReportInnerErrMsg(const char *file_name, const char *func, uint32_t line, const char *error_code,
                           const char *format, ...) {
@@ -146,51 +145,50 @@ unique_const_char_array GetErrMgrErrorMessage() {
 unique_const_char_array GetErrMgrWarningMessage() {
   return CreateUniquePtrFromString("");
 }
-}
+}  // namespace error_message
 
-  ErrorManager &ErrorManager::GetInstance() {
-    static ErrorManager instance;
-    return instance;
-  }
+ErrorManager &ErrorManager::GetInstance() {
+  static ErrorManager instance;
+  return instance;
+}
 
 int ErrorManager::Init() {
   std::lock_guard<std::mutex> lock(mutex_);
   error_message_process_.clear();
   return 0;
 }
-  ///
-  /// @brief init
-  /// @param [in] path: current so path
-  /// @return int 0(success) -1(fail)
-  ///
-  int ErrorManager::Init(std::string path) { return 0; }
 
-  ///
-  /// @brief Report error message
-  /// @param [in] error_code: error code
-  /// @param [in] args_map: parameter map
-  /// @return int 0(success) -1(fail)
-  ///
-  int ErrorManager::ReportErrMessage(std::string error_code, const std::map<std::string, std::string> &args_map) {
-    return 0;
-  }
+/// @brief init
+/// @param [in] path: current so path
+/// @return int 0(success) -1(fail)
+int ErrorManager::Init(std::string path) {
+  return 0;
+}
 
-  std::string ErrorManager::GetErrorMessage() {
-    std::lock_guard<std::mutex> lock(mutex_);
-    if (!error_message_process_.empty()) {
-      return error_message_process_.front().error_message;
-    } else {
-      return std::string();
-    }
-  }
+/// @brief Report error message
+/// @param [in] error_code: error code
+/// @param [in] args_map: parameter map
+/// @return int 0(success) -1(fail)
+int ErrorManager::ReportErrMessage(std::string error_code, const std::map<std::string, std::string> &args_map) {
+  return 0;
+}
 
-  std::vector<ErrorItem> ErrorManager::GetRawErrorMessages() {
-    return {};
-  }
-
-  std::string ErrorManager::GetWarningMessage() {
+std::string ErrorManager::GetErrorMessage() {
+  std::lock_guard<std::mutex> lock(mutex_);
+  if (!error_message_process_.empty()) {
+    return error_message_process_.front().error_message;
+  } else {
     return std::string();
   }
+}
+
+std::vector<ErrorItem> ErrorManager::GetRawErrorMessages() {
+  return {};
+}
+
+std::string ErrorManager::GetWarningMessage() {
+  return std::string();
+}
 
 int ErrorManager::ReportInterErrMessage(std::string error_code, const std::string &error_msg) {
   std::lock_guard<std::mutex> lock(mutex_);
@@ -199,56 +197,55 @@ int ErrorManager::ReportInterErrMessage(std::string error_code, const std::strin
   return 0;
 }
 
-  ///
-  /// @brief output error message
-  /// @param [in] handle: print handle
-  /// @return int 0(success) -1(fail)
-  ///
-  int ErrorManager::OutputErrMessage(int handle) { return 0; }
+/// @brief output error message
+/// @param [in] handle: print handle
+/// @return int 0(success) -1(fail)
+int ErrorManager::OutputErrMessage(int handle) {
+  return 0;
+}
 
-  ///
-  /// @brief output  message
-  /// @param [in] handle: print handle
-  /// @return int 0(success) -1(fail)
-  ///
-  int ErrorManager::OutputMessage(int handle) { return 0; }
+/// @brief output  message
+/// @param [in] handle: print handle
+/// @return int 0(success) -1(fail)
+int ErrorManager::OutputMessage(int handle) {
+  return 0;
+}
 
-  ///
-  /// @brief Report error message
-  /// @param [in] key: vector parameter key
-  /// @param [in] value: vector parameter value
-  ///
-  void ErrorManager::ATCReportErrMessage(std::string error_code, const std::vector<std::string> &key,
-                                         const std::vector<std::string> &value) {
-  }
+/// @brief Report error message
+/// @param [in] key: vector parameter key
+/// @param [in] value: vector parameter value
+void ErrorManager::ATCReportErrMessage(std::string error_code, const std::vector<std::string> &key,
+                                       const std::vector<std::string> &value) {}
 
-  ///
-  /// @brief report graph compile failed message such as error code and op_name in mstune case
-  /// @param [in] msg: failed message map, key is error code, value is op_name
-  /// @return int 0(success) -1(fail)
-  ///
-  int ErrorManager::ReportMstuneCompileFailedMsg(const std::string &root_graph_name,
-		                                 const std::map<std::string, std::string> &msg) { return 0; }
+/// @brief report graph compile failed message such as error code and op_name in mstune case
+/// @param [in] msg: failed message map, key is error code, value is op_name
+/// @return int 0(success) -1(fail)
+int ErrorManager::ReportMstuneCompileFailedMsg(const std::string &root_graph_name,
+                                               const std::map<std::string, std::string> &msg) {
+  return 0;
+}
 
-  ///
-  /// @brief get graph compile failed message in mstune case
-  /// @param [in] graph_name: graph name
-  /// @param [out] msg_map: failed message map, key is error code, value is op_name list
-  /// @return int 0(success) -1(fail)
-  ///
-  int ErrorManager::GetMstuneCompileFailedMsg(const std::string &graph_name, std::map<std::string, std::vector<std::string>> &msg_map) { return 0; }
+/// @brief get graph compile failed message in mstune case
+/// @param [in] graph_name: graph name
+/// @param [out] msg_map: failed message map, key is error code, value is op_name list
+/// @return int 0(success) -1(fail)
+int ErrorManager::GetMstuneCompileFailedMsg(const std::string &graph_name,
+                                            std::map<std::string, std::vector<std::string>> &msg_map) {
+  return 0;
+}
 
+void ErrorManager::GenWorkStreamIdDefault() {}
 
-  void ErrorManager::GenWorkStreamIdDefault() {}
+void ErrorManager::GenWorkStreamIdBySessionGraph(uint64_t session_id, uint64_t graph_id) {}
 
-  void ErrorManager::GenWorkStreamIdBySessionGraph(uint64_t session_id, uint64_t graph_id) {}
+const std::string &ErrorManager::GetLogHeader() {
+  return error_context_.log_header;
+}
 
-  const std::string &ErrorManager::GetLogHeader() { return error_context_.log_header; }
-
-  struct error_message::Context &ErrorManager::GetErrorManagerContext() {
-    static struct error_message::Context error_context;
-    return error_context;
-  }
+struct error_message::Context &ErrorManager::GetErrorManagerContext() {
+  static struct error_message::Context error_context;
+  return error_context;
+}
 
 void ErrorManager::SetErrorContext(struct error_message::Context error_context) {}
 

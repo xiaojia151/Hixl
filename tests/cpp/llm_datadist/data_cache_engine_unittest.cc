@@ -232,7 +232,6 @@ TEST_F(DataCacheEngineTest, CopyCache_B2B) {
   src_cache_desc.data_type = ge::DT_INT32;
   src_cache_desc.cache_mem_type = CacheMemType::BLOCKS;
 
-
   CacheDesc dst_cache_desc = src_cache_desc;
   dst_cache_desc.shape = {64, 4};
 
@@ -1268,7 +1267,6 @@ TEST_F(DataCacheEngineTest, PullCache_D2D_B2B_REG) {
   pull_cache_param.size = -1;
   pull_cache_param.prompt_blocks = {0, 1, 4, 5, 6};
   pull_cache_param.decoder_blocks = {1, 2, 4, 6, 9};
-
 
   std::vector<CacheKey> src_cache_keys;
   CacheKey cache_key{};

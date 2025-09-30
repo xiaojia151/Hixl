@@ -1613,7 +1613,6 @@ rtError_t rtGetDevMsg(rtGetDevMsgType_t getMsgType, rtGetMsgCallback callback) {
 
 rtError_t rtSetTaskTag(const char *taskTag) {
   return ge::RuntimeStub::GetInstance()->rtSetTaskTag(taskTag);
-
 }
 
 rtError_t rtSetAicpuAttr(const char *key, const char *val) {

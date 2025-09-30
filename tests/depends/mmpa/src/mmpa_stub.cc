@@ -17,7 +17,7 @@
 extern "C" {
 #endif
 
-typedef int mmErrorMSg;
+using mmErrorMSg = int;
 class ComputeGraph;
 #define MMPA_MAX_SLEEP_MILLSECOND_USING_USLEEP 1000
 #define MMPA_MSEC_TO_USEC 1000

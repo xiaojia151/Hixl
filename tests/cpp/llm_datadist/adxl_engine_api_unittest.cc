@@ -57,7 +57,6 @@ TEST_F(AdxlEngineUTest, TestAdxlEngine) {
   std::map<AscendString, AscendString> options2;
   EXPECT_EQ(engine2.Initialize("127.0.0.1:26001", options2), SUCCESS);
 
-
   int32_t src = 1;
   adxl::MemDesc src_mem{};
   src_mem.addr = reinterpret_cast<uintptr_t>(&src);
