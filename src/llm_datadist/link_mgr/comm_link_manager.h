@@ -21,10 +21,9 @@
 #include "cache_mgr/cache_manager.h"
 
 namespace llm {
-namespace {
 constexpr const char_t *kLinkThreadNamePrefix = "ge_llm_link";
 constexpr size_t kLinkThreadNum = 16U;
-}
+
 struct PrepareMemArg {
   uint64_t comm_id;
   HcclComm comm;

@@ -64,7 +64,7 @@ struct BufferResp {
   std::vector<size_t> buffer_lens{};
 };
 
-static inline void from_json(const nlohmann::json &j, BufferReq &req) {
+inline void from_json(const nlohmann::json &j, BufferReq &req) {
   req.transfer_type = static_cast<TransferType>(j.at("transfer_type").get<int32_t>());
   j.at("req_id").get_to(req.req_id);
   j.at("timeout").get_to(req.timeout);
@@ -75,7 +75,7 @@ static inline void from_json(const nlohmann::json &j, BufferReq &req) {
   j.at("total_buffer_len").get_to(req.total_buffer_len);
 }
 
-static inline void to_json(nlohmann::json &j, const BufferReq &req) {
+inline void to_json(nlohmann::json &j, const BufferReq &req) {
   j = nlohmann::json{{"transfer_type", static_cast<int32_t>(req.transfer_type)},
                      {"req_id", req.req_id},
                      {"timeout", req.timeout},
@@ -86,7 +86,7 @@ static inline void to_json(nlohmann::json &j, const BufferReq &req) {
                      {"total_buffer_len", req.total_buffer_len}};
 }
 
-static inline void to_json(nlohmann::json &j, const BufferResp &resp) {
+inline void to_json(nlohmann::json &j, const BufferResp &resp) {
   j = nlohmann::json{
       {"transfer_type", static_cast<int32_t>(resp.transfer_type)},
       {"req_id", resp.req_id},
@@ -97,7 +97,7 @@ static inline void to_json(nlohmann::json &j, const BufferResp &resp) {
   };
 }
 
-static inline void from_json(const nlohmann::json &j, BufferResp &resp) {
+inline void from_json(const nlohmann::json &j, BufferResp &resp) {
   resp.transfer_type = static_cast<TransferType>(j.at("transfer_type").get<int32_t>());
   j.at("req_id").get_to(resp.req_id);
   j.at("timeout").get_to(resp.timeout);
@@ -106,11 +106,11 @@ static inline void from_json(const nlohmann::json &j, BufferResp &resp) {
   j.at("buffer_lens").get_to(resp.buffer_lens);
 }
 
-static inline void to_json(nlohmann::json &j, const HeartbeatMsg &msg) {
+inline void to_json(nlohmann::json &j, const HeartbeatMsg &msg) {
   j = nlohmann::json{{"msg", msg.msg}};
 }
 
-static inline void from_json(const nlohmann::json &j, HeartbeatMsg &msg) {
+inline void from_json(const nlohmann::json &j, HeartbeatMsg &msg) {
   j.at("msg").get_to(msg.msg);
 }
 

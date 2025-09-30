@@ -15,10 +15,10 @@
 #include <utility>
 
 namespace llm {
-template <typename _Tp, typename... _Args>
-static inline std::shared_ptr<_Tp> MakeShared(_Args &&... __args) {
-  using _Tp_nc = typename std::remove_const<_Tp>::type;
-  const std::shared_ptr<_Tp> ret(new (std::nothrow) _Tp_nc(std::forward<_Args>(__args)...));
+template <typename T, typename... Args>
+inline std::shared_ptr<T> MakeShared(Args &&... args) {
+  using T_nc = typename std::remove_const<T>::type;
+  const std::shared_ptr<T> ret = std::make_shared<T_nc>(std::forward<Args>(args)...);
   return ret;
 }
 
@@ -38,18 +38,18 @@ struct MakeUniq<T[B]> {
 };
 
 template <typename T, typename... Args>
-static inline typename MakeUniq<T>::unique_object MakeUnique(Args &&... args) {
+inline typename MakeUniq<T>::unique_object MakeUnique(Args &&... args) {
   using T_nc = typename std::remove_const<T>::type;
   return std::unique_ptr<T>(new (std::nothrow) T_nc(std::forward<Args>(args)...));
 }
 
 template <typename T>
-static inline typename MakeUniq<T>::unique_array MakeUnique(const size_t num) {
+inline typename MakeUniq<T>::unique_array MakeUnique(const size_t num) {
   return std::unique_ptr<T>(new (std::nothrow) typename std::remove_extent<T>::type[num]());
 }
 
 template <typename T, typename... Args>
-static inline typename MakeUniq<T>::invalid_type MakeUnique(Args &&...) = delete;
+inline typename MakeUniq<T>::invalid_type MakeUnique(Args &&...) = delete;
 }
 
 #endif  // CANN_GRAPH_ENGINE_RUNTIME_LLM_DATADIST_V2_MEM_UTILS_H_
