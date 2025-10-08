@@ -24,18 +24,18 @@ class DataCacheEngineTest : public ::testing::Test {
  protected:
   void SetUp() override {
     llm::MockMmpaForHcclApi::Install();
-    ge::RuntimeStub::SetInstance(std::make_shared<DataCacheEngineRuntimeMock>());
+    llm::RuntimeStub::SetInstance(std::make_shared<DataCacheEngineRuntimeMock>());
     llm::HcclAdapter::GetInstance().Initialize();
   }
   void TearDown() override {
-    ge::RuntimeStub::Reset();
+    llm::RuntimeStub::Reset();
     llm::HcclAdapter::GetInstance().Finalize();
     llm::MockMmpaForHcclApi::Reset();
   }
 };
 
 namespace {
-class MockRuntime : public ge::RuntimeStub {
+class MockRuntime : public llm::RuntimeStub {
  public:
   rtError_t rtStreamSynchronizeWithTimeout(rtStream_t stm, int32_t timeout) override {
     return count_++ == 1 ? ACL_ERROR_RT_STREAM_SYNC_TIMEOUT : RT_ERROR_NONE;
@@ -347,7 +347,6 @@ TEST_F(DataCacheEngineTest, PullCache_D2H_C2C_with_layer_range) {
 }
 
 TEST_F(DataCacheEngineTest, TransferCache_D2H_C2C) {
-  dlog_setlevel(LLM_MODULE_NAME, DLOG_INFO, 0);
   llm::CacheDesc src_cache_desc{};
   src_cache_desc.num_tensors = 8;
   src_cache_desc.shape = {4, 128};
@@ -707,7 +706,6 @@ TEST_F(DataCacheEngineTest, TransferCache_D2H_C2B) {
 }
 
 TEST_F(DataCacheEngineTest, PullDataCache_D2H_C2B_with_remaider) {
-  dlog_setlevel(0, 1, 0);
   llm::CacheDesc src_cache_desc{};
   src_cache_desc.num_tensors = 8;
   src_cache_desc.shape = {1, 7};
@@ -730,7 +728,6 @@ TEST_F(DataCacheEngineTest, PullDataCache_D2H_C2B_with_remaider) {
   test_runner.GetCacheData(pull_result);
   std::vector<int32_t> actual(&pull_result[0], &pull_result[8]);
   EXPECT_EQ(actual, (std::vector<int32_t>{0, 0, 1, 2, 0, 0, 3, 4}));
-  dlog_setlevel(0, 3, 0);
 }
 
 TEST_F(DataCacheEngineTest, PullCache_D2H_B2C_Failed) {
@@ -1137,9 +1134,9 @@ TEST_F(DataCacheEngineTest, PullCache_D2D_B2B_BatchGet) {
   DataCacheEngineTestRunner test_runner(2 * 1024 * 1024, false, true);
   test_runner.Initialize(src_cache_desc, dst_cache_desc, pull_cache_param);
 
-  ge::RuntimeStub::SetInstance(std::make_shared<MockRuntime>());
+  llm::RuntimeStub::SetInstance(std::make_shared<MockRuntime>());
   ASSERT_EQ(test_runner.Run(pull_cache_param), ge::LLM_TIMEOUT);
-  ge::RuntimeStub::Reset();
+  llm::RuntimeStub::Reset();
   ASSERT_EQ(test_runner.Run(pull_cache_param), ge::SUCCESS);
 
   std::vector<int32_t> pull_result(128 * 128);
@@ -1209,7 +1206,6 @@ TEST_F(DataCacheEngineTest, PullCache_D2D_B2B_over_1024_task) {
 }
 
 TEST_F(DataCacheEngineTest, TransferCache_D2D_B2B_over_1024_task) {
-  dlog_setlevel(LLM_MODULE_NAME, DLOG_INFO, 0);
   llm::CacheDesc src_cache_desc{};
   src_cache_desc.num_tensors = 2;
   src_cache_desc.shape = {2048, 128};
@@ -1542,7 +1538,6 @@ TEST_F(DataCacheEngineTest, SwapBlocks) {
 }
 
 TEST_F(DataCacheEngineTest, TransferCache_D2D_B2B_with_cache_key) {
-  dlog_setlevel(LLM_MODULE_NAME, DLOG_INFO, 0);
   llm::CacheDesc src_cache_desc{};
   src_cache_desc.num_tensors = 2;
   src_cache_desc.shape = {128, 128};
@@ -1585,7 +1580,6 @@ TEST_F(DataCacheEngineTest, TransferCache_D2D_B2B_with_cache_key) {
 }
 
 TEST_F(DataCacheEngineTest, TransferCache_D2D_B2B_with_cache_key_by_index) {
-  dlog_setlevel(LLM_MODULE_NAME, DLOG_INFO, 0);
   llm::CacheDesc src_cache_desc{};
   src_cache_desc.num_tensors = 4;
   src_cache_desc.shape = {128, 128};
@@ -1632,7 +1626,6 @@ TEST_F(DataCacheEngineTest, TransferCache_D2D_B2B_with_cache_key_by_index) {
 }
 
 TEST_F(DataCacheEngineTest, TransferCache_D2D_B2B_invalid_dst_layer_index) {
-  dlog_setlevel(LLM_MODULE_NAME, DLOG_INFO, 0);
   llm::CacheDesc src_cache_desc{};
   src_cache_desc.num_tensors = 4;
   src_cache_desc.shape = {128, 128};

@@ -12,6 +12,7 @@
 set -e
 
 BASEPATH=$(cd "$(dirname $0)/.."; pwd)
+ASCEND_INSTALL_PATH=""
 
 # print usage message
 usage() {
@@ -50,10 +51,6 @@ checkopts() {
   CMAKE_BUILD_TYPE="DT"
   ENABLE_CPP_TEST="on"
   ENABLE_PY_TEST="on"
-
-  if [ -n "$ASCEND_INSTALL_PATH" ]; then
-    ASCEND_INSTALL_PATH="$ASCEND_INSTALL_PATH"
-  fi
 
   ASCEND_3RD_LIB_PATH="$BASEPATH/build_out/third_party"
 
@@ -125,8 +122,7 @@ checkopts() {
   done
 }
 
-build()
-{
+build() {
   cd "${BUILD_PATH}"
   cmake -D ENABLE_TEST="on" \
         ${ASCEND_INSTALL_PATH:+-D ASCEND_INSTALL_PATH=${ASCEND_INSTALL_PATH}} \
@@ -139,7 +135,7 @@ build()
     echo "execute command: cmake ${CMAKE_ARGS} .. failed."
     return 1
   fi
-  make ${VERBOSE} select_targets -j${THREAD_NUM}
+  make ${VERBOSE} -j${THREAD_NUM}
 
   if [ $? -ne 0 ]
   then
@@ -209,16 +205,15 @@ run() {
       mk_dir ${BASEPATH}/cov
       if [[ "X$ENABLE_CPP_TEST" = "Xon" ]]; then
           lcov -c -d ${BUILD_PATH}/tests/cpp/llm_datadist/CMakeFiles/llm_datadist_test.dir \
+                  -d ${BUILD_PATH}/tests/depends/python/CMakeFiles/llm_datadist_wrapper_stub.dir \
+                  -d ${BUILD_PATH}/tests/depends/python/CMakeFiles/metadef_wrapper_stub.dir \
                -o cov/tmp.info
       fi
 
       if [[ "X$ENABLE_PY_TEST" = "Xon" ]]; then
           mv ${BUILD_PATH}/.coverage ${BASEPATH}/cov/
       fi
-      lcov -r cov/tmp.info '*/build_out/*' '*/include/*' \
-                           '*/third_party/*' '*/tests/*' '/usr/local/*' \
-                           '/usr/include/*' \
-                           "${ASCEND_INSTALL_PATH}/*" "${ASCEND_3RD_LIB_PATH}/*" -o cov/coverage.info
+      lcov -e cov/tmp.info "${BASEPATH}/src/*" -o cov/coverage.info
       cd ${BASEPATH}/cov
       genhtml coverage.info
   fi
@@ -227,6 +222,11 @@ run() {
 main() {
   cd "${BASEPATH}"
   checkopts "$@"
+  if [ $? -ne 0 ]
+  then
+    echo "checkopts failed."
+    return 1
+  fi
   run || { echo "run failed."; return; }
 }
 

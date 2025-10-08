@@ -30,22 +30,18 @@ else()
 endif()
 
 option(ENABLE_TEST "Enable test" OFF)
-option(ASCEND_3RD_LIB_PATH "Acend third party library path" "./build/third_party")
+option(ENABLE_EXAMPLES "Enable examples" ON)
 
 include(cmake/variables.cmake)
 include(cmake/intf_pub_linux.cmake)
 include(cmake/dependencies.cmake)
 
-add_custom_target(select_targets)
 if (ENABLE_TEST)
     add_subdirectory(tests)
-    add_dependencies(select_targets llm_datadist_wrapper_stub
-                                    metadef_wrapper_stub
-                                    llm_datadist_test)
 else ()
     add_subdirectory(src)
-    add_dependencies(select_targets llm_datadist
-                                    llm_datadist_python)
     include(cmake/package.cmake)
+    if (ENABLE_EXAMPLES)
+        add_subdirectory(examples)
+    endif()
 endif()
-

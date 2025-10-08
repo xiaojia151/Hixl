@@ -41,7 +41,7 @@ HcclResult HcclBatchPut1(HcclComm comm, uint32_t remoteRank, HcclOneSideOpDesc *
   }
   return HCCL_SUCCESS;
 }
-namespace ge {
+namespace llm {
 namespace {
 uintptr_t mock_handle = 0x8001;
 
@@ -168,4 +168,4 @@ class StartMock {
   }
 };
 static StartMock start_mock;
-}  // namespace ge
+}  // namespace llm

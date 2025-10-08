@@ -270,7 +270,7 @@ TEST_F(LlmDataDistUTest, TestAutoLocalCommResA2) {
       return RT_ERROR_NONE;
     }
   };
-  ge::RuntimeStub::SetInstance(std::make_shared<AutoCommResV1RuntimeMock>());
+  llm::RuntimeStub::SetInstance(std::make_shared<AutoCommResV1RuntimeMock>());
   LlmDataDist llm_datadist_p(1U, LlmRole::kPrompt);
   std::map<AscendString, AscendString> options_p;
   options_p[llm_datadist::OPTION_LISTEN_IP_INFO] = "127.0.0.1:26000";

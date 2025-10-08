@@ -20,6 +20,7 @@ if (NOT ENABLE_TEST)
     find_package_if_target_not_exists(runtime_static MODULE REQUIRED)
     find_package_if_target_not_exists(ascendcl MODULE REQUIRED)
     find_package_if_target_not_exists(metadef MODULE REQUIRED)
+    find_package_if_target_not_exists(ascend_hal MODULE REQUIRED)
 else ()
     add_library(hccl_headers INTERFACE)
     target_include_directories(hccl_headers INTERFACE

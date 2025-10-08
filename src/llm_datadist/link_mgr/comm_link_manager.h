@@ -15,7 +15,6 @@
 #include <thread>
 #include "llm_datadist/llm_error_codes.h"
 #include "common/llm_inner_types.h"
-#include "common/llm_blocking_queue.h"
 #include "common/llm_thread_pool.h"
 #include "comm_entity_manager.h"
 #include "cache_mgr/cache_manager.h"

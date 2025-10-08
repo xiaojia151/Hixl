@@ -72,4 +72,4 @@ void LLMThreadPool::ThreadFunc(LLMThreadPool *const thread_pool, uint32_t thread
     ++thread_pool->idle_thrd_num_;
   }
 }
-}  // namespace ge
+}  // namespace llm

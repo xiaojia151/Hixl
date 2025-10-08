@@ -16,7 +16,6 @@
 #include "link_mgr/comm_entity.h"
 #include "utils/task_batcher.h"
 #include "common/llm_thread_pool.h"
-#include "common/llm_blocking_queue.h"
 #include "hccl/hccl_adapter.h"
 
 namespace llm {

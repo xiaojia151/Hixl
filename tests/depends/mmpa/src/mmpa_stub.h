@@ -15,7 +15,7 @@
 #include <memory>
 #include "mmpa/mmpa_api.h"
 
-namespace ge {
+namespace llm {
 class MmpaStubApiGe {
  public:
   virtual ~MmpaStubApiGe() = default;
@@ -196,6 +196,6 @@ class MmpaStub {
   std::shared_ptr<MmpaStubApiGe> impl_;
 };
 
-}  // namespace ge
+}  // namespace llm
 
 #endif  // AIR_TESTS_DEPENDS_MMPA_SRC_MMAP_STUB_H_

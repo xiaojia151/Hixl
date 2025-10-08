@@ -27,7 +27,7 @@ static size_t reserve_mem_size_ = 200UL * 1024UL * 1024UL;
 #define EVENT_LENTH 10
 #define NOTIFY_LENTH 10
 
-namespace ge {
+namespace llm {
 std::shared_ptr<AclRuntimeStub> AclRuntimeStub::instance_;
 std::mutex AclRuntimeStub::mutex_;
 thread_local AclRuntimeStub* AclRuntimeStub::fake_instance_;
@@ -419,112 +419,112 @@ extern "C" {
 #endif
 
 aclError aclrtRecordNotify(aclrtNotify notify, aclrtStream stream) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtRecordNotify(notify, stream);
+  return llm::AclRuntimeStub::GetInstance()->aclrtRecordNotify(notify, stream);
 }
 
 aclError aclrtBinaryGetFunctionByEntry(aclrtBinHandle binHandle, uint64_t funcEntry, aclrtFuncHandle *funcHandle) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtBinaryGetFunctionByEntry(binHandle, funcEntry, funcHandle);
+  return llm::AclRuntimeStub::GetInstance()->aclrtBinaryGetFunctionByEntry(binHandle, funcEntry, funcHandle);
 }
 
 aclError aclrtLaunchKernel(aclrtFuncHandle funcHandle, uint32_t blockDim, const void *argsData, size_t argsSize,
   aclrtStream stream) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtLaunchKernel(funcHandle, blockDim, argsData, argsSize, stream);
+  return llm::AclRuntimeStub::GetInstance()->aclrtLaunchKernel(funcHandle, blockDim, argsData, argsSize, stream);
 }
 
 aclError aclrtStreamGetId(aclrtStream stream, int32_t *streamId) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtStreamGetId(stream, streamId);
+  return llm::AclRuntimeStub::GetInstance()->aclrtStreamGetId(stream, streamId);
 }
 
 aclError aclrtWaitAndResetNotify(aclrtNotify notify, aclrtStream stream, uint32_t timeout) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtWaitAndResetNotify(notify, stream, timeout);
+  return llm::AclRuntimeStub::GetInstance()->aclrtWaitAndResetNotify(notify, stream, timeout);
 }
 
 aclError aclrtSetDevice(int32_t deviceId) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtSetDevice(deviceId);
+  return llm::AclRuntimeStub::GetInstance()->aclrtSetDevice(deviceId);
 }
 
 aclError aclrtResetDevice(int32_t deviceId) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtResetDevice(deviceId);
+  return llm::AclRuntimeStub::GetInstance()->aclrtResetDevice(deviceId);
 }
 
 aclError aclrtGetDevice(int32_t *deviceId) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtGetDevice(deviceId);
+  return llm::AclRuntimeStub::GetInstance()->aclrtGetDevice(deviceId);
 }
 
 aclError aclrtGetThreadLastTaskId(uint32_t *taskId) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtGetThreadLastTaskId(taskId);
+  return llm::AclRuntimeStub::GetInstance()->aclrtGetThreadLastTaskId(taskId);
 }
 
 aclError aclrtSetCurrentContext(aclrtContext context) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtSetCurrentContext(context);
+  return llm::AclRuntimeStub::GetInstance()->aclrtSetCurrentContext(context);
 }
 
 aclError aclrtGetCurrentContext(aclrtContext *context) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtGetCurrentContext(context);
+  return llm::AclRuntimeStub::GetInstance()->aclrtGetCurrentContext(context);
 }
 
 aclError aclrtCreateEvent(aclrtEvent *event) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtCreateEvent(event);
+  return llm::AclRuntimeStub::GetInstance()->aclrtCreateEvent(event);
 }
 
 aclError aclrtDestroyEvent(aclrtEvent event) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtDestroyEvent(event);
+  return llm::AclRuntimeStub::GetInstance()->aclrtDestroyEvent(event);
 }
 
 aclError aclrtRecordEvent(aclrtEvent event, aclrtStream stream) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtRecordEvent(event, stream);
+  return llm::AclRuntimeStub::GetInstance()->aclrtRecordEvent(event, stream);
 }
 
 aclError aclrtQueryEventStatus(aclrtEvent event, aclrtEventRecordedStatus *status) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtQueryEventStatus(event, status);
+  return llm::AclRuntimeStub::GetInstance()->aclrtQueryEventStatus(event, status);
 }
 
 aclError aclrtCreateStream(aclrtStream *stream) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtCreateStream(stream);
+  return llm::AclRuntimeStub::GetInstance()->aclrtCreateStream(stream);
 }
 
 aclError aclrtCreateStreamWithConfig(aclrtStream *stream, uint32_t priority, uint32_t flag) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtCreateStreamWithConfig(stream, priority, flag);
+  return llm::AclRuntimeStub::GetInstance()->aclrtCreateStreamWithConfig(stream, priority, flag);
 }
 
 aclError aclrtDestroyStream(aclrtStream stream) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtDestroyStream(stream);
+  return llm::AclRuntimeStub::GetInstance()->aclrtDestroyStream(stream);
 }
 
 aclError aclrtStreamAbort(aclrtStream stream) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtStreamAbort(stream);
+  return llm::AclRuntimeStub::GetInstance()->aclrtStreamAbort(stream);
 }
 
 aclError aclrtSynchronizeStream(aclrtStream stream) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtSynchronizeStream(stream);
+  return llm::AclRuntimeStub::GetInstance()->aclrtSynchronizeStream(stream);
 }
 
 aclError aclrtSynchronizeStreamWithTimeout(aclrtStream stream, int32_t timeout) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtSynchronizeStreamWithTimeout(stream, timeout);
+  return llm::AclRuntimeStub::GetInstance()->aclrtSynchronizeStreamWithTimeout(stream, timeout);
 }
 
 aclError aclrtMalloc(void **devPtr, size_t size, aclrtMemMallocPolicy policy) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtMalloc(devPtr, size, policy);
+  return llm::AclRuntimeStub::GetInstance()->aclrtMalloc(devPtr, size, policy);
 }
 
 aclError aclrtMallocHost(void **hostPtr, size_t size) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtMallocHost(hostPtr, size);
+  return llm::AclRuntimeStub::GetInstance()->aclrtMallocHost(hostPtr, size);
 }
 
 aclError aclrtMemset(void *devPtr, size_t maxCount, int32_t value, size_t count) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtMemset(devPtr, maxCount, value, count);
+  return llm::AclRuntimeStub::GetInstance()->aclrtMemset(devPtr, maxCount, value, count);
 }
 
 aclError aclrtFree(void *devPtr) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtFree(devPtr);
+  return llm::AclRuntimeStub::GetInstance()->aclrtFree(devPtr);
 }
 
 aclError aclrtFreeHost(void *devPtr) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtFreeHost(devPtr);
+  return llm::AclRuntimeStub::GetInstance()->aclrtFreeHost(devPtr);
 }
 
 aclError aclrtMemcpy(void *dst, size_t dest_max, const void *src, size_t count, aclrtMemcpyKind kind) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtMemcpy(dst, dest_max, src, count, kind);
+  return llm::AclRuntimeStub::GetInstance()->aclrtMemcpy(dst, dest_max, src, count, kind);
 }
 
 aclError aclrtMemcpyAsync(void *dst,
@@ -533,7 +533,7 @@ aclError aclrtMemcpyAsync(void *dst,
                           size_t src_count,
                           aclrtMemcpyKind kind,
                           aclrtStream stream) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtMemcpyAsync(dst, dest_max, src, src_count, kind, stream);
+  return llm::AclRuntimeStub::GetInstance()->aclrtMemcpyAsync(dst, dest_max, src, src_count, kind, stream);
 }
 
 aclError aclrtMemcpyAsyncWithCondition(void *dst,
@@ -542,23 +542,23 @@ aclError aclrtMemcpyAsyncWithCondition(void *dst,
                                         size_t count,
                                         aclrtMemcpyKind kind,
                                         aclrtStream stream) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtMemcpyAsyncWithCondition(dst, destMax, src, count, kind, stream);
+  return llm::AclRuntimeStub::GetInstance()->aclrtMemcpyAsyncWithCondition(dst, destMax, src, count, kind, stream);
 }
 
 aclError aclrtGetMemInfo(aclrtMemAttr attr, size_t *free_size, size_t *total) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtGetMemInfo(attr, free_size, total);
+  return llm::AclRuntimeStub::GetInstance()->aclrtGetMemInfo(attr, free_size, total);
 }
 
 aclError aclrtGetSocVersion(char *version, const uint32_t maxLen) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtGetSocVersion(version, maxLen);
+  return llm::AclRuntimeStub::GetInstance()->aclrtGetSocVersion(version, maxLen);
 }
 
 aclError aclrtGetDeviceInfo(uint32_t deviceId, aclrtDevAttr attr, int64_t *value) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtGetDeviceInfo(deviceId, attr, value);
+  return llm::AclRuntimeStub::GetInstance()->aclrtGetDeviceInfo(deviceId, attr, value);
 }
 
 aclError aclrtGetDevicePhyIdByIndex(uint32_t devIndex, uint32_t *phyId) {
-  return ge::AclRuntimeStub::GetInstance()->aclrtGetDevicePhyIdByIndex(devIndex, phyId);
+  return llm::AclRuntimeStub::GetInstance()->aclrtGetDevicePhyIdByIndex(devIndex, phyId);
 }
 
 #ifdef __cplusplus

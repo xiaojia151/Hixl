@@ -15,6 +15,7 @@ BASEPATH=$(cd "$(dirname $0)"; pwd)
 OUTPUT_PATH="${BASEPATH}/build_out"
 BUILD_RELATIVE_PATH="build"
 BUILD_PATH="${BASEPATH}/${BUILD_RELATIVE_PATH}/"
+ASCEND_INSTALL_PATH=""
 
 # print usage message
 usage() {
@@ -57,10 +58,6 @@ checkopts() {
   OUTPUT_PATH="${BASEPATH}/build_out"
   ASCEND_3RD_LIB_PATH="$BASEPATH/build/third_party"
   CMAKE_BUILD_TYPE="Release"
-
-  if [ -n "$ASCEND_INSTALL_PATH" ]; then
-    ASCEND_INSTALL_PATH="$ASCEND_INSTALL_PATH"
-  fi
 
   # Process the options
   parsed_args=$(getopt -a -o j:hv -l help,verbose,ascend_install_path:,ascend_3rd_lib_path:,output_path:,build_type: -- "$@") || {

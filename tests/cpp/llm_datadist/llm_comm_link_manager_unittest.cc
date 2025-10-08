@@ -17,7 +17,7 @@
 
 using namespace std;
 using namespace ::testing;
-using namespace ge;
+using namespace llm;
 
 namespace llm {
 namespace {
@@ -314,7 +314,6 @@ TEST_F(LLMCommLinkManagerUTest, UnlinkWhenLinkNotFinished) {
   cache_keys.emplace_back(cache_key);
   EXPECT_EQ(llm_datadist.RegisterCache(cache_desc, cache, cache_keys), ge::SUCCESS);
 
-  dlog_setlevel(LLM_MODULE_NAME, DLOG_INFO, 0);
   std::map<uint64_t, uint32_t> cluster2rank{{1, 0}, {2, 1}};
   std::string rank_table;
   uint64_t comm_id;
@@ -323,7 +322,6 @@ TEST_F(LLMCommLinkManagerUTest, UnlinkWhenLinkNotFinished) {
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
   EXPECT_EQ(llm_datadist.Unlink(comm_id), ge::SUCCESS);
   llm_datadist.LLMDataDistFinalize();
-  dlog_setlevel(LLM_MODULE_NAME, DLOG_ERROR, 0);
 }
 
 TEST_F(LLMCommLinkManagerUTest, FinalizeWhenLinkNotFinished) {
@@ -348,7 +346,6 @@ TEST_F(LLMCommLinkManagerUTest, FinalizeWhenLinkNotFinished) {
   cache_keys.emplace_back(cache_key);
   EXPECT_EQ(llm_datadist.RegisterCache(cache_desc, cache, cache_keys), ge::SUCCESS);
 
-  dlog_setlevel(LLM_MODULE_NAME, DLOG_INFO, 0);
   std::map<uint64_t, uint32_t> cluster2rank{{1, 0}, {2, 1}};
   std::string rank_table;
   uint64_t comm_id;
@@ -356,11 +353,9 @@ TEST_F(LLMCommLinkManagerUTest, FinalizeWhenLinkNotFinished) {
   EXPECT_EQ(llm_datadist.Link(cluster_name, cluster2rank, rank_table, comm_id), ge::SUCCESS);
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
   llm_datadist.LLMDataDistFinalize();
-  dlog_setlevel(LLM_MODULE_NAME, DLOG_ERROR, 0);
 }
 
 TEST_F(LLMCommLinkManagerUTest, LinkMultipleComm) {
-  dlog_setlevel(0, 1, 0);
   MmpaStub::GetInstance().SetImpl(std::make_shared<MockMmpa>());
   LLMDataDistV2 llm_datadist(1U);
   std::map<ge::AscendString, ge::AscendString> options{};
@@ -407,7 +402,6 @@ TEST_F(LLMCommLinkManagerUTest, LinkMultipleComm) {
   EXPECT_EQ(status2, RegisterMemoryStatus::OK);
 
   llm_datadist.LLMDataDistFinalize();
-  dlog_setlevel(0, 3, 0);
 }
 
 TEST_F(LLMCommLinkManagerUTest, RemapRegisteredMemorySuc) {

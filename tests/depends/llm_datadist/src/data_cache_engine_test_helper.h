@@ -54,14 +54,14 @@ class HcclApiStub {
   static std::unique_ptr<HcclApiStub> instance_;
 };
 
-class MockMmpaForHcclApi : public ge::MmpaStubApiGe {
+class MockMmpaForHcclApi : public llm::MmpaStubApiGe {
  public:
   static void Install() {
-    ge::MmpaStub::GetInstance().SetImpl(std::make_shared<MockMmpaForHcclApi>());
+    llm::MmpaStub::GetInstance().SetImpl(std::make_shared<MockMmpaForHcclApi>());
   }
   static void Reset() {
     HcclApiStub::ResetStub();
-    ge::MmpaStub::GetInstance().Reset();
+    llm::MmpaStub::GetInstance().Reset();
   }
 
   void *DlOpen(const char *file_name, int32_t mode) override;
@@ -127,7 +127,7 @@ class MockMmpaForHcclApi : public ge::MmpaStubApiGe {
   }
 };
 
-class DataCacheEngineRuntimeMock : public ge::RuntimeStub {
+class DataCacheEngineRuntimeMock : public llm::RuntimeStub {
  public:
   rtError_t rtEventQueryStatus(rtEvent_t evt, rtEventStatus_t *status) override {
     if (++counter_ % 5 == 0) {
@@ -142,15 +142,15 @@ class DataCacheEngineRuntimeMock : public ge::RuntimeStub {
   int32_t counter_ = 0;
 };
 
-class AutoCommResRuntimeMock : public ge::RuntimeStub {
+class AutoCommResRuntimeMock : public llm::RuntimeStub {
  public:
   static void Install() {
-    ge::RuntimeStub::SetInstance(std::make_shared<AutoCommResRuntimeMock>());
+    llm::RuntimeStub::SetInstance(std::make_shared<AutoCommResRuntimeMock>());
     WriteHccnConfFile();
   }
 
   static void Reset() {
-    ge::RuntimeStub::Reset();
+    llm::RuntimeStub::Reset();
     RemoveHccnConfFile();
   }
 

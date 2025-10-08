@@ -72,7 +72,7 @@ do {                                                    \
 } while (0)
 
 
-namespace ge {
+namespace llm {
 namespace {
 struct MbufStub {
   explicit MbufStub(uint64_t size) {
@@ -315,11 +315,11 @@ rtError_t RuntimeStub::rtRegTaskFailCallbackByModule(const char *moduleName,
 }
 
 rtError_t RuntimeStub::rtMemQueueDeQueue(int32_t device, uint32_t qid, void **mbuf) {
-  if (ge::mem_queues_[device][qid].empty()) {
+  if (llm::mem_queues_[device][qid].empty()) {
     return 1;
   }
-  *mbuf = ge::mem_queues_[device][qid].back();
-  ge::mem_queues_[device][qid].pop();
+  *mbuf = llm::mem_queues_[device][qid].back();
+  llm::mem_queues_[device][qid].pop();
   return 0;
 }
 
@@ -334,18 +334,18 @@ rtError_t RuntimeStub::rtMemQueueDeQueueBuff(int32_t device, uint32_t qid, rtMem
 };
 
 rtError_t RuntimeStub::rtMbufGetBuffAddr(rtMbufPtr_t mbuf, void **databuf) {
-  *databuf = reinterpret_cast<ge::MbufStub *>(mbuf)->buffer;
+  *databuf = reinterpret_cast<llm::MbufStub *>(mbuf)->buffer;
   return 0;
 }
 
 rtError_t RuntimeStub::rtMbufGetBuffSize(rtMbufPtr_t mbuf, uint64_t *size) {
-  *size = reinterpret_cast<ge::MbufStub *>(mbuf)->length;
+  *size = reinterpret_cast<llm::MbufStub *>(mbuf)->length;
   return 0;
 }
 
 rtError_t RuntimeStub::rtMbufGetPrivInfo(rtMbufPtr_t mbuf, void **priv, uint64_t *size) {
   if (priv != nullptr && mbuf != nullptr) {
-    *priv = reinterpret_cast<ge::MbufStub *>(mbuf)->head.data();
+    *priv = reinterpret_cast<llm::MbufStub *>(mbuf)->head.data();
     *size = 512;
   }
   return 0;
@@ -357,7 +357,7 @@ rtError_t RuntimeStub::rtMbufCopyBufRef(rtMbufPtr_t mbuf, rtMbufPtr_t *ref_mbuf)
 }
 
 rtError_t RuntimeStub::rtMemQueueEnQueue(int32_t dev_id, uint32_t qid, void *mem_buf) {
-  ge::mem_queues_[dev_id][qid].push(mem_buf);
+  llm::mem_queues_[dev_id][qid].push(mem_buf);
   return 0;
 }
 
@@ -374,7 +374,7 @@ rtError_t RuntimeStub::rtBuffAlloc(uint64_t size, void **buff) {
 
 rtError_t RuntimeStub::rtMbufAlloc(rtMbufPtr_t *mbuf, uint64_t size) {
   if (mbuf != nullptr) {
-    auto mock_mbuf = std::make_shared<ge::MbufStub>(size);
+    auto mock_mbuf = std::make_shared<llm::MbufStub>(size);
     *mbuf = mock_mbuf.get();
     std::lock_guard<std::mutex> lk(mock_mbufs_mu_);
     mock_mbufs_[*mbuf] = mock_mbuf;
@@ -540,7 +540,7 @@ rtError_t RuntimeStub::rtGetDevice(int32_t *deviceId) {
   return RT_ERROR_NONE;
 }
 
-} // namespace ge
+} // namespace llm
 
 #ifdef __cplusplus
 extern "C" {
@@ -594,7 +594,7 @@ rtError_t rtGetDevice(int32_t *device) {
     return GET_STUB_RETURN_VALUE(rtGetDevice, rtError_t, RT_ERROR_NONE);
   }
 
-  return ge::RuntimeStub::GetInstance()->rtGetDevice(device);
+  return llm::RuntimeStub::GetInstance()->rtGetDevice(device);
 }
 
 ADD_STUB_RETURN_VALUE(rtGetDeviceCapability, rtError_t);
@@ -606,12 +606,12 @@ rtError_t rtGetDeviceCapability(int32_t device, int32_t moduleType, int32_t feat
 
 
 rtError_t rtStreamWaitEvent(rtStream_t stream, rtEvent_t event) {
-  return ge::RuntimeStub::GetInstance()->rtStreamWaitEvent(stream, event);
+  return llm::RuntimeStub::GetInstance()->rtStreamWaitEvent(stream, event);
 }
 
 ADD_STUB_RETURN_VALUE(rtStreamWaitEventWithTimeout, rtError_t);
 rtError_t rtStreamWaitEventWithTimeout(rtStream_t stream, rtEvent_t event, uint32_t timeout) {
-  return ge::RuntimeStub::GetInstance()->rtStreamWaitEventWithTimeout(stream, event, timeout);
+  return llm::RuntimeStub::GetInstance()->rtStreamWaitEventWithTimeout(stream, event, timeout);
 }
 
 ADD_STUB_RETURN_VALUE(rtEventReset, rtError_t);
@@ -620,7 +620,7 @@ rtError_t rtEventReset(rtEvent_t event, rtStream_t stream) {
 }
 
 RTS_API rtError_t rtEventQueryStatus(rtEvent_t evt, rtEventStatus_t *status) {
-  return ge::RuntimeStub::GetInstance()->rtEventQueryStatus(evt, status);
+  return llm::RuntimeStub::GetInstance()->rtEventQueryStatus(evt, status);
 }
 
 ADD_STUB_RETURN_VALUE(rtEventCreate, rtError_t);
@@ -705,7 +705,7 @@ rtError_t rtSupportModelStreamReuse(bool *bSupport) {
   if (std::string(__FUNCTION__) == g_runtime_stub_mock) {
     *bSupport = true;
   }
-  return ge::RuntimeStub::GetInstance()->rtSupportModelStreamReuse(bSupport);
+  return llm::RuntimeStub::GetInstance()->rtSupportModelStreamReuse(bSupport);
 }
 
 rtError_t rtNotifyCreateWithFlag(int32_t deviceId, rtNotify_t *notify, uint32_t flag) {
@@ -713,7 +713,7 @@ rtError_t rtNotifyCreateWithFlag(int32_t deviceId, rtNotify_t *notify, uint32_t 
 }
 
 rtError_t rtEventRecord(rtEvent_t event, rtStream_t stream) {
-  return ge::RuntimeStub::GetInstance()->rtEventRecord(event, stream);
+  return llm::RuntimeStub::GetInstance()->rtEventRecord(event, stream);
 }
 
 rtError_t rtEventSynchronize(rtEvent_t event) { return RT_ERROR_NONE; }
@@ -773,11 +773,11 @@ rtError_t rtMemsetAsync(void *dev_ptr, uint64_t dest_max, uint32_t value, uint64
 ADD_STUB_RETURN_VALUE(rtMalloc, rtError_t);
 rtError_t rtMalloc(void **dev_ptr, uint64_t size, rtMemType_t type, uint16_t moduleId) {
   return GET_STUB_RETURN_VALUE(rtMalloc, rtError_t,
-    ge::RuntimeStub::GetInstance()->rtMalloc(dev_ptr, size, type, moduleId));
+    llm::RuntimeStub::GetInstance()->rtMalloc(dev_ptr, size, type, moduleId));
 }
 
 rtError_t rtFree(void *dev_ptr) {
-  return ge::RuntimeStub::GetInstance()->rtFree(dev_ptr);
+  return llm::RuntimeStub::GetInstance()->rtFree(dev_ptr);
 }
 
 rtError_t rtMallocHost(void **host_ptr, uint64_t size, uint16_t moduleId) {
@@ -791,15 +791,15 @@ rtError_t rtFreeHost(void *host_ptr) {
 }
 
 rtError_t rtStreamCreate(rtStream_t *stream, int32_t priority) {
-  return ge::RuntimeStub::GetInstance()->rtStreamCreate(stream, priority);
+  return llm::RuntimeStub::GetInstance()->rtStreamCreate(stream, priority);
 }
 
 rtError_t rtStreamDestroy(rtStream_t stream) {
-  return ge::RuntimeStub::GetInstance()->rtStreamDestroy(stream);
+  return llm::RuntimeStub::GetInstance()->rtStreamDestroy(stream);
 }
 
 rtError_t rtStreamDestroyForce(rtStream_t stream) {
-  return ge::RuntimeStub::GetInstance()->rtStreamDestroyForce(stream);
+  return llm::RuntimeStub::GetInstance()->rtStreamDestroyForce(stream);
 }
 
 rtError_t rtModelAbort(rtModel_t model) { return RT_ERROR_NONE; }
@@ -870,13 +870,13 @@ rtError_t rtStreamSynchronize(rtStream_t stream) {
 }
 
 rtError_t rtStreamSynchronizeWithTimeout(rtStream_t stm, int32_t timeout) {
-  return ge::RuntimeStub::GetInstance()->rtStreamSynchronizeWithTimeout(stm, timeout);
+  return llm::RuntimeStub::GetInstance()->rtStreamSynchronizeWithTimeout(stm, timeout);
 }
 
 ADD_STUB_RETURN_VALUE(rtMemcpy, rtError_t);
 rtError_t rtMemcpy(void *dst, uint64_t dest_max, const void *src, uint64_t count, rtMemcpyKind_t kind) {
   return GET_STUB_RETURN_VALUE(rtMemcpy, rtError_t,
-    ge::RuntimeStub::GetInstance()->rtMemcpy(dst, dest_max, src, count, kind));
+    llm::RuntimeStub::GetInstance()->rtMemcpy(dst, dest_max, src, count, kind));
 }
 
 rtError_t rtCmoAddrTaskLaunch(void *cmoAddrInfo, uint64_t destMax, rtCmoOpCode_t cmoOpCode,
@@ -897,7 +897,7 @@ rtError_t rtMemcpyAsync(void *dst, uint64_t dest_max, const void *src, uint64_t 
   if (std::string(__FUNCTION__) == g_runtime_stub_mock) {
     return -1;
   }
-  return ge::RuntimeStub::GetInstance()->rtMemcpyAsync(dst, dest_max, src, count, kind, stream);
+  return llm::RuntimeStub::GetInstance()->rtMemcpyAsync(dst, dest_max, src, count, kind, stream);
 }
 
 rtError_t rtMemcpyAsyncWithoutCheckKind(void *dst, uint64_t dest_max, const void *src, uint64_t count,
@@ -910,7 +910,7 @@ rtError_t rtMemcpyAsyncWithCfgV2(void *dst, uint64_t dest_max, const void *src, 
   if (std::string(__FUNCTION__) == g_runtime_stub_mock) {
     return -1;
   }
-  return ge::RuntimeStub::GetInstance()->rtMemcpyAsyncWithCfgV2(dst, dest_max, src, count, kind, stm, cfgInfo);
+  return llm::RuntimeStub::GetInstance()->rtMemcpyAsyncWithCfgV2(dst, dest_max, src, count, kind, stm, cfgInfo);
 }
 
 rtError_t rtMemcpyAsyncPtr(void *memcpyAddrInfo, uint64_t destMax, uint64_t count,
@@ -918,7 +918,7 @@ rtError_t rtMemcpyAsyncPtr(void *memcpyAddrInfo, uint64_t destMax, uint64_t coun
   if (std::string(__FUNCTION__) == g_runtime_stub_mock) {
     return -1;
   }
-  return ge::RuntimeStub::GetInstance()->rtMemcpyAsyncPtr(memcpyAddrInfo, destMax, count, kind, stream, qosCfg);
+  return llm::RuntimeStub::GetInstance()->rtMemcpyAsyncPtr(memcpyAddrInfo, destMax, count, kind, stream, qosCfg);
 }
 
 ADD_STUB_RETURN_VALUE(rtsMemcpyBatch, rtError_t);
@@ -927,7 +927,7 @@ rtError_t rtsMemcpyBatch(void **dsts, void **srcs, size_t *sizes, size_t count,
   if (std::string(__FUNCTION__) == g_runtime_stub_mock) {
     return -1;
   }
-  return ge::RuntimeStub::GetInstance()->rtsMemcpyBatch(dsts, srcs, sizes, count, attrs, attrsIdxs, numAttrs, failIdx);
+  return llm::RuntimeStub::GetInstance()->rtsMemcpyBatch(dsts, srcs, sizes, count, attrs, attrsIdxs, numAttrs, failIdx);
 }
 
 rtError_t rtMemcpyHostTask(void *dst, uint64_t dest_max, const void *src, uint64_t count, rtMemcpyKind_t kind,
@@ -935,7 +935,7 @@ rtError_t rtMemcpyHostTask(void *dst, uint64_t dest_max, const void *src, uint64
   if (std::string(__FUNCTION__) == g_runtime_stub_mock) {
     return -1;
   }
-  return ge::RuntimeStub::GetInstance()->rtMemcpyAsync(dst, dest_max, src, count, kind, stream);
+  return llm::RuntimeStub::GetInstance()->rtMemcpyAsync(dst, dest_max, src, count, kind, stream);
 }
 
 rtError_t rtSetTSDevice(uint32_t tsId) {
@@ -943,7 +943,7 @@ rtError_t rtSetTSDevice(uint32_t tsId) {
 }
 
 rtError_t rtGetDeviceCount(int32_t *count) {
-  return ge::RuntimeStub::GetInstance()->rtGetDeviceCount(count);
+  return llm::RuntimeStub::GetInstance()->rtGetDeviceCount(count);
 }
 
 rtError_t rtDeviceGetBareTgid(uint32_t *pid) {
@@ -986,11 +986,11 @@ rtError_t rtFunctionRegister(void *bin_handle, const void *stub_func, const char
 }
 
 rtError_t rtDevBinaryRegister(const rtDevBinary_t *bin, void **handle) {
-  return ge::RuntimeStub::GetInstance()->rtDevBinaryRegister(bin, handle);
+  return llm::RuntimeStub::GetInstance()->rtDevBinaryRegister(bin, handle);
 }
 
 rtError_t rtRegisterAllKernel(const rtDevBinary_t *bin, void **handle) {
-  return ge::RuntimeStub::GetInstance()->rtRegisterAllKernel(bin, handle);
+  return llm::RuntimeStub::GetInstance()->rtRegisterAllKernel(bin, handle);
 }
 
 rtError_t rtKernelConfigTransArg(const void *ptr, uint64_t size, uint32_t flag, void **arg) { return RT_ERROR_NONE; }
@@ -999,7 +999,7 @@ rtError_t rtKernelLaunchWithHandle(void *handle, const uint64_t tilingkey, uint3
   if (blockDim == 99) {
     return -1;
   }
-  return ge::RuntimeStub::GetInstance()->rtKernelLaunchWithHandle(handle, tilingkey, blockDim, args, smDesc, stream, kernelInfo);
+  return llm::RuntimeStub::GetInstance()->rtKernelLaunchWithHandle(handle, tilingkey, blockDim, args, smDesc, stream, kernelInfo);
 }
 
 rtError_t rtKernelLaunchWithHandleV2(void *hdl, const uint64_t tilingKey, uint32_t blockDim, rtArgsEx_t *argsInfo,
@@ -1007,7 +1007,7 @@ rtError_t rtKernelLaunchWithHandleV2(void *hdl, const uint64_t tilingKey, uint32
   if (blockDim == 99) {
     return -1;
   }
-  return ge::RuntimeStub::GetInstance()->rtKernelLaunchWithHandleV2(
+  return llm::RuntimeStub::GetInstance()->rtKernelLaunchWithHandleV2(
           hdl, tilingKey, blockDim, argsInfo, smDesc, stm, cfgInfo);
 }
 
@@ -1017,7 +1017,7 @@ rtError_t rtVectorCoreKernelLaunchWithHandle(void *hdl, const uint64_t tilingKey
   if (blockDim == 99) {
     return -1;
   }
-  return ge::RuntimeStub::GetInstance()->rtVectorCoreKernelLaunchWithHandle(hdl, tilingKey, blockDim, argsInfo, smDesc,
+  return llm::RuntimeStub::GetInstance()->rtVectorCoreKernelLaunchWithHandle(hdl, tilingKey, blockDim, argsInfo, smDesc,
                                                                             stm, cfgInfo);
 }
 
@@ -1026,24 +1026,24 @@ rtError_t rtKernelLaunch(const void *stub_func, uint32_t block_dim, void *args, 
   if (block_dim == 99) {
     return -1;
   }
-  return ge::RuntimeStub::GetInstance()->rtKernelLaunch(stub_func, block_dim, args, args_size, sm_desc, stream);
+  return llm::RuntimeStub::GetInstance()->rtKernelLaunch(stub_func, block_dim, args, args_size, sm_desc, stream);
 }
 
 rtError_t rtKernelLaunchWithFlag(const void *stubFunc, uint32_t blockDim, rtArgsEx_t *argsInfo,
                                  rtSmDesc_t *smDesc, rtStream_t stream, uint32_t flag) {
-  return ge::RuntimeStub::GetInstance()->rtKernelLaunchWithFlag(stubFunc, blockDim, argsInfo, smDesc, stream, flag);
+  return llm::RuntimeStub::GetInstance()->rtKernelLaunchWithFlag(stubFunc, blockDim, argsInfo, smDesc, stream, flag);
 }
 
 rtError_t rtKernelLaunchWithFlagV2(const void *stubFunc, uint32_t blockDim, rtArgsEx_t *argsInfo,
                                    rtSmDesc_t *smDesc, rtStream_t stm, uint32_t flags,
                                    const rtTaskCfgInfo_t *cfgInfo) {
-  return ge::RuntimeStub::GetInstance()->rtKernelLaunchWithFlagV2(
+  return llm::RuntimeStub::GetInstance()->rtKernelLaunchWithFlagV2(
           stubFunc, blockDim, argsInfo, smDesc, stm, flags, cfgInfo);
 }
 
 rtError_t rtVectorCoreKernelLaunch(const void *stubFunc, uint32_t blockDim, rtArgsEx_t *argsInfo, rtSmDesc_t *smDesc,
                                    rtStream_t stm, uint32_t flags, const rtTaskCfgInfo_t *cfgInfo) {
-  return ge::RuntimeStub::GetInstance()->rtVectorCoreKernelLaunch(stubFunc, blockDim, argsInfo, smDesc, stm, flags,
+  return llm::RuntimeStub::GetInstance()->rtVectorCoreKernelLaunch(stubFunc, blockDim, argsInfo, smDesc, stm, flags,
                                                                   cfgInfo);
 }
 
@@ -1093,7 +1093,7 @@ rtError_t rtMemGetInfo(size_t *free, size_t *total) {
 rtError_t rtMemGetInfoEx(rtMemInfoType_t memInfoType, size_t *free, size_t *total) {
   *free = 64UL * 1024UL * 1024UL;
   *total = 128UL * 1024UL * 1024UL;
-  return ge::RuntimeStub::GetInstance()->rtMemGetInfoEx(memInfoType, free, total);
+  return llm::RuntimeStub::GetInstance()->rtMemGetInfoEx(memInfoType, free, total);
 }
 
 rtError_t rtMemAllocManaged(void **ptr, uint64_t size, uint32_t flag, uint16_t moduleId) {
@@ -1123,7 +1123,7 @@ rtError_t rtModelCreate(rtModel_t *model, uint32_t flag) {
     return -1;
   }
 
-  return ge::RuntimeStub::GetInstance()->rtModelCreate(model, flag);
+  return llm::RuntimeStub::GetInstance()->rtModelCreate(model, flag);
 }
 
 rtError_t rtSetModelName(rtModel_t model, const char_t *mdlName) {
@@ -1145,11 +1145,11 @@ rtError_t rtModelBindStream(rtModel_t model, rtStream_t stream, uint32_t flag) {
     return -1;
   }
 
-  return ge::RuntimeStub::GetInstance()->rtModelBindStream(model, stream, flag);
+  return llm::RuntimeStub::GetInstance()->rtModelBindStream(model, stream, flag);
 }
 
 rtError_t rtModelUnbindStream(rtModel_t model, rtStream_t stream) {
-  return ge::RuntimeStub::GetInstance()->rtModelUnbindStream(model, stream);
+  return llm::RuntimeStub::GetInstance()->rtModelUnbindStream(model, stream);
 }
 rtError_t rtModelExecute(rtModel_t model, rtStream_t stream, uint32_t flag) {
   const char * const kEnvRecordPath = "CONSTANT_FOLDING_PASS_8";
@@ -1159,7 +1159,7 @@ rtError_t rtModelExecute(rtModel_t model, rtStream_t stream, uint32_t flag) {
   if (std::string(&record_path[0]).find("mock_fail") != std::string::npos) {
     return -1;
   }
-  return ge::RuntimeStub::GetInstance()->rtModelExecute(model, stream, flag);
+  return llm::RuntimeStub::GetInstance()->rtModelExecute(model, stream, flag);
 }
 
 rtError_t rtModelExecuteSync(rtModel_t model, rtStream_t stream, uint32_t flag, int32_t timeout) {
@@ -1170,11 +1170,11 @@ rtError_t rtModelExecuteSync(rtModel_t model, rtStream_t stream, uint32_t flag, 
   if (std::string(&record_path[0]).find("mock_fail") != std::string::npos) {
     return -1;
   }
-  return ge::RuntimeStub::GetInstance()->rtModelExecuteSync(model, stream, flag, timeout);
+  return llm::RuntimeStub::GetInstance()->rtModelExecuteSync(model, stream, flag, timeout);
 }
 
 rtError_t rtGetFunctionByName(const char *stub_name, void **stub_func) {
-  return ge::RuntimeStub::GetInstance()->rtGetFunctionByName(stub_name, stub_func);
+  return llm::RuntimeStub::GetInstance()->rtGetFunctionByName(stub_name, stub_func);
 }
 rtError_t rtGetAddrByFun(const void *stubFunc, void **addr) {
   *(char **)addr = (char *)("dev_func");
@@ -1182,7 +1182,7 @@ rtError_t rtGetAddrByFun(const void *stubFunc, void **addr) {
 }
 
 rtError_t rtCtxCreate(rtContext_t *ctx, uint32_t flags, int32_t device) {
-  return ge::RuntimeStub::GetInstance()->rtCtxCreate(ctx, flags, device);
+  return llm::RuntimeStub::GetInstance()->rtCtxCreate(ctx, flags, device);
 }
 rtError_t rtCtxCreateV2(rtContext_t *ctx,
                         uint32_t flags,
@@ -1198,18 +1198,18 @@ rtError_t rtKernelLaunchEx(void *args, uint32_t args_size, uint32_t flags, rtStr
     return -1;
   }
 
-  return ge::RuntimeStub::GetInstance()->rtKernelLaunchEx(args, args_size, flags, stream_);
+  return llm::RuntimeStub::GetInstance()->rtKernelLaunchEx(args, args_size, flags, stream_);
 }
 
 rtError_t rtSetExceptionExtInfo(const rtArgsSizeInfo_t *const sizeInfo) {
-  return ge::RuntimeStub::GetInstance()->rtSetExceptionExtInfo(sizeInfo);
+  return llm::RuntimeStub::GetInstance()->rtSetExceptionExtInfo(sizeInfo);
 }
 
 rtError_t rtModelGetTaskId(void *handle, uint32_t *task_id, uint32_t *stream_id) {
   if (std::string(__FUNCTION__) == g_runtime_stub_mock) {
     return -1;
   }
-  return ge::RuntimeStub::GetInstance()->rtModelGetTaskId(handle, task_id, stream_id);
+  return llm::RuntimeStub::GetInstance()->rtModelGetTaskId(handle, task_id, stream_id);
 }
 
 rtError_t rtEndGraph(rtModel_t model, rtStream_t stream) { return RT_ERROR_NONE; }
@@ -1295,11 +1295,11 @@ rtError_t rtModelLoadComplete(rtModel_t model) {
 }
 
 rtError_t rtStreamCreateWithFlags(rtStream_t *stream, int32_t priority, uint32_t flags) {
-  return ge::RuntimeStub::GetInstance()->rtStreamCreateWithFlags(stream, priority,flags);
+  return llm::RuntimeStub::GetInstance()->rtStreamCreateWithFlags(stream, priority,flags);
 }
 
 rtError_t rtStreamSetMode(rtStream_t stm, const uint64_t stmMode) {
-  return ge::RuntimeStub::GetInstance()->rtStreamSetMode(stm, stmMode);
+  return llm::RuntimeStub::GetInstance()->rtStreamSetMode(stm, stmMode);
 }
 
 rtError_t rtFlushCache(void *base, size_t len) {
@@ -1332,7 +1332,7 @@ rtError_t rtStreamSwitchN(void *ptr, uint32_t size, void *valuePtr, rtStream_t *
 
 rtError_t rtStreamSwitchEx(void *ptr, rtCondition_t condition, void *value_ptr, rtStream_t true_stream,
                            rtStream_t stream, rtSwitchDataType_t data_type) {
-  return ge::RuntimeStub::GetInstance()->rtStreamSwitchEx(ptr, condition, value_ptr, true_stream, stream, data_type);
+  return llm::RuntimeStub::GetInstance()->rtStreamSwitchEx(ptr, condition, value_ptr, true_stream, stream, data_type);
 }
 
 rtError_t rtStreamActive(rtStream_t active_stream, rtStream_t stream) { return RT_ERROR_NONE; }
@@ -1340,7 +1340,7 @@ rtError_t rtStreamActive(rtStream_t active_stream, rtStream_t stream) { return R
 ADD_STUB_RETURN_VALUE(rtDatadumpInfoLoad, rtError_t);
 rtError_t rtDatadumpInfoLoad(const void *dump_info, uint32_t length) {
   return GET_STUB_RETURN_VALUE(rtDatadumpInfoLoad, rtError_t,
-    ge::RuntimeStub::GetInstance()->rtDatadumpInfoLoad(dump_info, length));
+    llm::RuntimeStub::GetInstance()->rtDatadumpInfoLoad(dump_info, length));
 }
 
 rtError_t rtAicpuInfoLoad(const void *aicpuInfo, uint32_t length) {
@@ -1381,7 +1381,7 @@ rtError_t rtSetSocVersion(const char *version)
 
 rtError_t rtGetSocVersion(char *version, const uint32_t maxLen)
 {
-  return ge::RuntimeStub::GetInstance()->rtGetSocVersion(version, maxLen);
+  return llm::RuntimeStub::GetInstance()->rtGetSocVersion(version, maxLen);
 }
 
 rtError_t rtGetAiCoreCount(uint32_t *aiCoreCnt)
@@ -1535,7 +1535,7 @@ rtError_t rtKernelGetAddrAndPrefCnt(void *handle, const uint64_t tilingKey, cons
 
 rtError_t rtKernelGetAddrAndPrefCntV2(void *handle, const uint64_t tilingKey, const void *const stubFunc,
                                       const uint32_t flag, rtKernelDetailInfo_t *kernelInfo) {
-  return ge::RuntimeStub::GetInstance()->rtKernelGetAddrAndPrefCntV2(handle, tilingKey, stubFunc, flag, kernelInfo);
+  return llm::RuntimeStub::GetInstance()->rtKernelGetAddrAndPrefCntV2(handle, tilingKey, stubFunc, flag, kernelInfo);
 }
 
 rtError_t rtFftsPlusTaskLaunch(rtFftsPlusTaskInfo_t *fftsPlusTaskInfo, rtStream_t stream) {
@@ -1547,7 +1547,7 @@ rtError_t rtStarsTaskLaunch(const void *address, uint32_t len, rtStream_t stm) {
 }
 
 rtError_t rtGeneralCtrl(uintptr_t *ctrl, uint32_t num, uint32_t type) {
-  return ge::RuntimeStub::GetInstance()->rtGeneralCtrl(ctrl, num, type);
+  return llm::RuntimeStub::GetInstance()->rtGeneralCtrl(ctrl, num, type);
 }
 rtError_t rtKernelLaunchFwk(const char *opName, void *args, uint32_t argSize, uint32_t flags, rtStream_t rtStream) {
   return RT_ERROR_NONE;
@@ -1556,7 +1556,7 @@ rtError_t rtKernelLaunchFwk(const char *opName, void *args, uint32_t argSize, ui
 rtError_t rtAicpuKernelLaunchWithFlag(const rtKernelLaunchNames_t *launchNames, uint32_t blockDim,
                                          const rtArgsEx_t *args, rtSmDesc_t *smDesc, rtStream_t stream,
                                          uint32_t flags) {
-  return ge::RuntimeStub::GetInstance()->rtAicpuKernelLaunchWithFlag(launchNames, blockDim, args, smDesc, stream,
+  return llm::RuntimeStub::GetInstance()->rtAicpuKernelLaunchWithFlag(launchNames, blockDim, args, smDesc, stream,
                                                                      flags);
 }
 
@@ -1569,7 +1569,7 @@ rtError_t rtAicpuKernelLaunchEx(uint32_t kernelType, const rtKernelLaunchNames_t
 rtError_t rtAicpuKernelLaunchExWithArgs(uint32_t kernelType, const char *opName, uint32_t blockDim,
                                         const rtAicpuArgsEx_t *argsInfo, rtSmDesc_t *smDesc,
                                         rtStream_t stream, uint32_t flags) {
-  return ge::RuntimeStub::GetInstance()->rtAicpuKernelLaunchExWithArgs(kernelType, opName, blockDim, argsInfo,
+  return llm::RuntimeStub::GetInstance()->rtAicpuKernelLaunchExWithArgs(kernelType, opName, blockDim, argsInfo,
                                                                        smDesc, stream, flags);
 }
 
@@ -1612,7 +1612,7 @@ rtError_t rtGetDevMsg(rtGetDevMsgType_t getMsgType, rtGetMsgCallback callback) {
 }
 
 rtError_t rtSetTaskTag(const char *taskTag) {
-  return ge::RuntimeStub::GetInstance()->rtSetTaskTag(taskTag);
+  return llm::RuntimeStub::GetInstance()->rtSetTaskTag(taskTag);
 }
 
 rtError_t rtSetAicpuAttr(const char *key, const char *val) {
@@ -1620,16 +1620,16 @@ rtError_t rtSetAicpuAttr(const char *key, const char *val) {
 }
 
 rtError_t rtRegTaskFailCallbackByModule(const char *moduleName, rtTaskFailCallback callback) {
-  return ge::RuntimeStub::GetInstance()->rtRegTaskFailCallbackByModule(moduleName, callback);
+  return llm::RuntimeStub::GetInstance()->rtRegTaskFailCallbackByModule(moduleName, callback);
 }
 
 rtError_t rtGetIsHeterogenous(int32_t *heterogeneous) {
-  return ge::RuntimeStub::GetInstance()->rtGetIsHeterogenous(heterogeneous);
+  return llm::RuntimeStub::GetInstance()->rtGetIsHeterogenous(heterogeneous);
 }
 
 rtError_t rtMemGrpQuery(rtMemGrpQueryInput_t * const input, rtMemGrpQueryOutput_t *output)
 {
-  return ge::RuntimeStub::GetInstance()->rtMemGrpQuery(input, output);
+  return llm::RuntimeStub::GetInstance()->rtMemGrpQuery(input, output);
 }
 
 rtError_t rtMemQueueGetQidByName(int32_t device, const char *name, uint32_t *qId) {
@@ -1649,34 +1649,34 @@ rtError_t rtMemQueueGrant(int32_t devId, uint32_t qid, int32_t pid, rtMemQueueSh
 }
 
 rtError_t rtMemQueueCreate(int32_t device, const rtMemQueueAttr_t *queAttr, uint32_t *qid) {
-  *qid = ge::mem_queues_[device].size();
-  ge::mem_queues_[device][*qid] = std::queue<void *>{};
+  *qid = llm::mem_queues_[device].size();
+  llm::mem_queues_[device][*qid] = std::queue<void *>{};
   return 0;
 }
 
 rtError_t rtMemQueueDestroy(int32_t device, uint32_t qid) {
-  ge::mem_queues_[device].erase(qid);
+  llm::mem_queues_[device].erase(qid);
   return 0;
 }
 
 rtError_t rtMemQueueEnQueueBuff(int32_t device, uint32_t qid, rtMemQueueBuff_t *inBuf, int32_t timeout) {
-  return ge::RuntimeStub::GetInstance()->rtMemQueueEnQueueBuff(device, qid, inBuf, timeout);
+  return llm::RuntimeStub::GetInstance()->rtMemQueueEnQueueBuff(device, qid, inBuf, timeout);
 }
 
 rtError_t rtMemQueueDeQueueBuff(int32_t device, uint32_t qid, rtMemQueueBuff_t *outBuf, int32_t timeout) {
-  return ge::RuntimeStub::GetInstance()->rtMemQueueDeQueueBuff(device, qid, outBuf, timeout);
+  return llm::RuntimeStub::GetInstance()->rtMemQueueDeQueueBuff(device, qid, outBuf, timeout);
 }
 
 rtError_t rtMemQueueEnQueue(int32_t device, uint32_t qid, void *mbuf) {
-  return ge::RuntimeStub::GetInstance()->rtMemQueueEnQueue(device, qid, mbuf);
+  return llm::RuntimeStub::GetInstance()->rtMemQueueEnQueue(device, qid, mbuf);
 }
 
 rtError_t rtMemQueueDeQueue(int32_t device, uint32_t qid, void **mbuf) {
-  return ge::RuntimeStub::GetInstance()->rtMemQueueDeQueue(device, qid, mbuf);
+  return llm::RuntimeStub::GetInstance()->rtMemQueueDeQueue(device, qid, mbuf);
 }
 
 rtError_t rtMemQueuePeek(int32_t device, uint32_t qid, size_t *bufLen, int32_t timeout) {
-  return ge::RuntimeStub::GetInstance()->rtMemQueuePeek(device, qid, bufLen, timeout);
+  return llm::RuntimeStub::GetInstance()->rtMemQueuePeek(device, qid, bufLen, timeout);
 }
 
 rtError_t rtMbufInit(rtMemBuffCfg_t *cfg) {
@@ -1716,7 +1716,7 @@ rtError_t rtBuffPut(const rtMbufPtr_t mbufPtr, void *buff){
 }
 
 rtError_t rtBuffAlloc(uint64_t size, void **buff) {
-  return ge::RuntimeStub::GetInstance()->rtBuffAlloc(size, buff);
+  return llm::RuntimeStub::GetInstance()->rtBuffAlloc(size, buff);
 }
 
 rtError_t rtBuffFree(void *buff) {
@@ -1724,19 +1724,19 @@ rtError_t rtBuffFree(void *buff) {
 }
 
 rtError_t rtBuffConfirm(void *buff, const uint64_t size){
-  return ge::RuntimeStub::GetInstance()->rtBuffConfirm(buff, size);
+  return llm::RuntimeStub::GetInstance()->rtBuffConfirm(buff, size);
 }
 
 rtError_t rtMbufAlloc(rtMbufPtr_t *mbuf, uint64_t size) {
-  return ge::RuntimeStub::GetInstance()->rtMbufAlloc(mbuf, size);
+  return llm::RuntimeStub::GetInstance()->rtMbufAlloc(mbuf, size);
 }
 
 rtError_t rtMbufCopyBufRef(rtMbufPtr_t mbuf, rtMbufPtr_t *ref_mbuf) {
-  return ge::RuntimeStub::GetInstance()->rtMbufCopyBufRef(mbuf, ref_mbuf);
+  return llm::RuntimeStub::GetInstance()->rtMbufCopyBufRef(mbuf, ref_mbuf);
 }
 
 rtError_t rtMbufFree(rtMbufPtr_t mbuf) {
-  return ge::RuntimeStub::GetInstance()->rtMbufFree(mbuf);
+  return llm::RuntimeStub::GetInstance()->rtMbufFree(mbuf);
 }
 
 rtError_t rtMbufSetDataLen(rtMbufPtr_t mbuf, uint64_t len) {
@@ -1744,19 +1744,19 @@ rtError_t rtMbufSetDataLen(rtMbufPtr_t mbuf, uint64_t len) {
 }
 
 rtError_t rtMbufGetBuffAddr(rtMbufPtr_t mbuf, void **databuf) {
-  return ge::RuntimeStub::GetInstance()->rtMbufGetBuffAddr(mbuf, databuf);
+  return llm::RuntimeStub::GetInstance()->rtMbufGetBuffAddr(mbuf, databuf);
 }
 
 rtError_t rtMbufGetDataLen(rtMbufPtr_t memBuf, uint64_t *len) {
-    return ge::RuntimeStub::GetInstance()->rtMbufGetBuffSize(memBuf, len);
+    return llm::RuntimeStub::GetInstance()->rtMbufGetBuffSize(memBuf, len);
 }
 
 rtError_t rtMbufGetBuffSize(rtMbufPtr_t mbuf, uint64_t *size) {
-  return ge::RuntimeStub::GetInstance()->rtMbufGetBuffSize(mbuf, size);
+  return llm::RuntimeStub::GetInstance()->rtMbufGetBuffSize(mbuf, size);
 }
 
 rtError_t rtMbufGetPrivInfo(rtMbufPtr_t mbuf, void **priv, uint64_t *size) {
-  return ge::RuntimeStub::GetInstance()->rtMbufGetPrivInfo(mbuf, priv, size);
+  return llm::RuntimeStub::GetInstance()->rtMbufGetPrivInfo(mbuf, priv, size);
 }
 
 rtError_t rtMemQueueAttach(int32_t devId, uint32_t qid, int32_t timeout) {
@@ -1792,13 +1792,13 @@ rtError_t rtEschedWaitEvent(int32_t devId,
                             uint32_t threadId,
                             int32_t timeout,
                             rtEschedEventSummary_t *event) {
-  return ge::RuntimeStub::GetInstance()->rtEschedWaitEvent(devId, grpId, threadId, timeout, event);
+  return llm::RuntimeStub::GetInstance()->rtEschedWaitEvent(devId, grpId, threadId, timeout, event);
 }
 
 rtError_t rtMemGrpCacheAlloc(const char *name,
                              int32_t devId,
                              const rtMemGrpCacheAllocPara *para) {
-  return ge::RuntimeStub::GetInstance()->rtMemGrpCacheAlloc(name, devId, para);
+  return llm::RuntimeStub::GetInstance()->rtMemGrpCacheAlloc(name, devId, para);
 }
 
 rtError_t rtEschedSubscribeEvent(int32_t devId,
@@ -1848,7 +1848,7 @@ rtError_t rtGetPriCtxByDeviceId(int32_t device, rtContext_t *ctx) {
 }
 
 rtError_t rtGetAvailStreamNum(const uint32_t streamType, uint32_t * const streamCount) {
-  return ge::RuntimeStub::GetInstance()->rtGetAvailStreamNum(streamType, streamCount);
+  return llm::RuntimeStub::GetInstance()->rtGetAvailStreamNum(streamType, streamCount);
 }
 
 rtError_t rtGetAvailEventNum(uint32_t * const eventCount) {
@@ -1926,39 +1926,39 @@ rtError_t rtModelCheckCompatibility(const char_t *OmSoCVersion, const char_t *OM
   if (std::string(__FUNCTION__) == g_runtime_stub_mock) {
     return -1;
   }
-  return ge::RuntimeStub::GetInstance()->rtModelCheckCompatibility(OmSoCVersion, OMArchVersion);
+  return llm::RuntimeStub::GetInstance()->rtModelCheckCompatibility(OmSoCVersion, OMArchVersion);
 }
 rtError_t rtLaunchSqeUpdateTask(uint32_t streamId, uint32_t taskId, void *src, uint64_t cnt,
                                 rtStream_t stm) {
-  return ge::RuntimeStub::GetInstance()->rtLaunchSqeUpdateTask(streamId, taskId, src, cnt, stm);
+  return llm::RuntimeStub::GetInstance()->rtLaunchSqeUpdateTask(streamId, taskId, src, cnt, stm);
 }
 
 rtError_t rtReserveMemAddress(void** devPtr, size_t size, size_t alignment, void *devAddr, uint64_t flags) {
-  return ge::RuntimeStub::GetInstance()->rtReserveMemAddress(devPtr, size, alignment, devAddr, flags);
+  return llm::RuntimeStub::GetInstance()->rtReserveMemAddress(devPtr, size, alignment, devAddr, flags);
 }
 
 rtError_t rtReleaseMemAddress(void* devPtr) {
-  return ge::RuntimeStub::GetInstance()->rtReleaseMemAddress(devPtr);
+  return llm::RuntimeStub::GetInstance()->rtReleaseMemAddress(devPtr);
 }
 
 rtError_t rtMallocPhysical(rtDrvMemHandle* handle, size_t size, rtDrvMemProp_t* prop, uint64_t flags) {
-  return ge::RuntimeStub::GetInstance()->rtMallocPhysical(handle, size, prop, flags);
+  return llm::RuntimeStub::GetInstance()->rtMallocPhysical(handle, size, prop, flags);
 }
 
 rtError_t rtFreePhysical(rtDrvMemHandle handle) {
-  return ge::RuntimeStub::GetInstance()->rtFreePhysical(handle);
+  return llm::RuntimeStub::GetInstance()->rtFreePhysical(handle);
 }
 
 rtError_t rtMapMem(void* devPtr, size_t size, size_t offset, rtDrvMemHandle handle, uint64_t flags) {
-  return ge::RuntimeStub::GetInstance()->rtMapMem(devPtr, size, offset, handle, flags);
+  return llm::RuntimeStub::GetInstance()->rtMapMem(devPtr, size, offset, handle, flags);
 }
 
 rtError_t rtUnmapMem(void* devPtr) {
-  return ge::RuntimeStub::GetInstance()->rtUnmapMem(devPtr);
+  return llm::RuntimeStub::GetInstance()->rtUnmapMem(devPtr);
 }
 
 rtError_t rtCtxGetCurrentDefaultStream(rtStream_t* stm) {
-  return ge::RuntimeStub::GetInstance()->rtCtxGetCurrentDefaultStream(stm);
+  return llm::RuntimeStub::GetInstance()->rtCtxGetCurrentDefaultStream(stm);
 }
 
 rtError_t rtStreamAbort(rtStream_t stm) {
@@ -1975,23 +1975,23 @@ rtError_t rtsValueWait(const void * const devAddr, const uint64_t value, const u
 }
 
 rtError_t rtStreamTaskClean(rtStream_t stm) {
-  return ge::RuntimeStub::GetInstance()->rtStreamTaskClean(stm);
+  return llm::RuntimeStub::GetInstance()->rtStreamTaskClean(stm);
 }
 
 rtError_t rtsBinaryLoadFromFile(const char * const binPath, const rtLoadBinaryConfig_t *const optionalCfg,
                                 rtBinHandle *binHandle)
 {
-  return ge::RuntimeStub::GetInstance()->rtsBinaryLoadFromFile(binPath, optionalCfg, binHandle);
+  return llm::RuntimeStub::GetInstance()->rtsBinaryLoadFromFile(binPath, optionalCfg, binHandle);
 }
 rtError_t rtsFuncGetByName(const rtBinHandle binHandle, const char *kernelName,
                            rtFuncHandle *funcHandle)
 {
-  return ge::RuntimeStub::GetInstance()->rtsFuncGetByName(binHandle, kernelName, funcHandle);
+  return llm::RuntimeStub::GetInstance()->rtsFuncGetByName(binHandle, kernelName, funcHandle);
 }
 rtError_t rtsLaunchCpuKernel(const rtFuncHandle funcHandle, const uint32_t blockDim, rtStream_t st,
                              const rtKernelLaunchCfg_t *cfg, rtCpuKernelArgs_t *argsInfo)
 {
-  return ge::RuntimeStub::GetInstance()->rtsLaunchCpuKernel(funcHandle, blockDim, st, cfg, argsInfo);
+  return llm::RuntimeStub::GetInstance()->rtsLaunchCpuKernel(funcHandle, blockDim, st, cfg, argsInfo);
 }
 
 #ifdef __cplusplus

@@ -49,6 +49,6 @@ class GE_FUNC_VISIBILITY ScopeGuard {
   std::function<void()> on_exit_scope_;
   bool dismissed_ ;
 };
-}  // namespace ge
+}  // namespace llm
 
 #endif  // CANN_GRAPH_ENGINE_RUNTIME_LLM_DATADIST_V2_SCOPE_GUARD_H_

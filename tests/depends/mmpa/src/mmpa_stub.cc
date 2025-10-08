@@ -35,7 +35,7 @@ INT32 mmOpen(const CHAR *path_name, INT32 flags) {
     return EN_INVALID_PARAM;
   }
 
-  fd = ge::MmpaStub::GetInstance().GetImpl()->Open2(path_name, flags, S_IRWXU | S_IRWXG);
+  fd = llm::MmpaStub::GetInstance().GetImpl()->Open2(path_name, flags, S_IRWXU | S_IRWXG);
   if (fd < MMPA_ZERO) {
     syslog(LOG_ERR, "Open file failed, errno is %s.\r\n", strerror(errno));
     return EN_ERROR;
@@ -59,7 +59,7 @@ INT32 mmOpen2(const CHAR *path_name, INT32 flags, MODE mode) {
     return EN_INVALID_PARAM;
   }
 
-  fd = ge::MmpaStub::GetInstance().GetImpl()->Open2(path_name, flags, mode);
+  fd = llm::MmpaStub::GetInstance().GetImpl()->Open2(path_name, flags, mode);
   if (fd < MMPA_ZERO) {
     syslog(LOG_ERR, "Open file failed, errno is %s.\r\n", strerror(errno));
     return EN_ERROR;
@@ -84,7 +84,7 @@ INT32 mmClose(INT32 fd) {
 }
 
 mmSsize_t mmWrite(INT32 fd, VOID *mm_buf, UINT32 mm_count) {
-  return ge::MmpaStub::GetInstance().GetImpl()->Write(fd, mm_buf, mm_count);
+  return llm::MmpaStub::GetInstance().GetImpl()->Write(fd, mm_buf, mm_count);
 }
 
 mmSsize_t mmRead(INT32 fd, VOID *mm_buf, UINT32 mm_count) {
@@ -112,11 +112,11 @@ INT32 mmMunMap(VOID *data, mmSize_t size, mmFd_t *extra) {
 }
 
 INT32 mmFStatGet(INT32 fd, mmStat_t *buf) {
-  return ge::MmpaStub::GetInstance().GetImpl()->FStatGet(fd, buf);
+  return llm::MmpaStub::GetInstance().GetImpl()->FStatGet(fd, buf);
 }
 
 INT32 mmMkdir(const CHAR *lp_path_name, mmMode_t mode) {
-  return ge::MmpaStub::GetInstance().GetImpl()->mmMkdir(lp_path_name, mode);
+  return llm::MmpaStub::GetInstance().GetImpl()->mmMkdir(lp_path_name, mode);
 }
 
 INT32 mmRmdir(const CHAR *lp_path_name) {
@@ -215,11 +215,11 @@ INT32 mmGetSystemTime(mmSystemTime_t *sysTime) {
 }
 
 INT32 mmAccess(const CHAR *path_name) {
-  return ge::MmpaStub::GetInstance().GetImpl()->Access(path_name);
+  return llm::MmpaStub::GetInstance().GetImpl()->Access(path_name);
 }
 
 INT32 mmStatGet(const CHAR *path, mmStat_t *buffer) {
-  return ge::MmpaStub::GetInstance().GetImpl()->StatGet(path, buffer);
+  return llm::MmpaStub::GetInstance().GetImpl()->StatGet(path, buffer);
 }
 
 INT32 mmGetFileSize(const CHAR *file_name, ULONGLONG *length) {
@@ -265,7 +265,7 @@ VOID mmScandirFree(mmDirent **entryList, INT32 count)
 
 INT32 mmAccess2(const CHAR *pathName, INT32 mode)
 {
-  return ge::MmpaStub::GetInstance().GetImpl()->mmAccess2(pathName, mode);
+  return llm::MmpaStub::GetInstance().GetImpl()->mmAccess2(pathName, mode);
 }
 
 INT32 mmGetTimeOfDay(mmTimeval *timeVal, mmTimezone *timeZone) {
@@ -284,7 +284,7 @@ INT32 mmRealPath(const CHAR *path, CHAR *realPath, INT32 realPathLen)
     return EN_OK;
   }
 
-  return ge::MmpaStub::GetInstance().GetImpl()->RealPath(path, realPath, realPathLen);
+  return llm::MmpaStub::GetInstance().GetImpl()->RealPath(path, realPath, realPathLen);
 }
 
 INT32 mmRWLockInit(mmRWLock_t *rwLock)
@@ -414,7 +414,7 @@ INT32 mmDladdr(VOID *addr, mmDlInfo *info) {
 }
 
 VOID *mmDlopen(const CHAR *fileName, INT32 mode) {
-  return ge::MmpaStub::GetInstance().GetImpl()->DlOpen(fileName, mode);
+  return llm::MmpaStub::GetInstance().GetImpl()->DlOpen(fileName, mode);
 }
 
 INT32 mmDlclose(VOID *handle) {
@@ -425,7 +425,7 @@ INT32 mmDlclose(VOID *handle) {
     return 0;
   }
 
-  return ge::MmpaStub::GetInstance().GetImpl()->DlClose(handle);
+  return llm::MmpaStub::GetInstance().GetImpl()->DlClose(handle);
 }
 
 VOID *mmDlsym(VOID *handle, const CHAR *funcName) {
@@ -433,7 +433,7 @@ VOID *mmDlsym(VOID *handle, const CHAR *funcName) {
     return nullptr;
   }
 
-  return ge::MmpaStub::GetInstance().GetImpl()->DlSym(handle, funcName);
+  return llm::MmpaStub::GetInstance().GetImpl()->DlSym(handle, funcName);
 }
 
 INT32 mmGetPid()
@@ -513,7 +513,7 @@ INT32 mmSleep(UINT32 millSecond) {
   } else {
     microSecond = MMPA_MAX_SLEEP_MICROSECOND_USING_USLEEP;
   }
-  return ge::MmpaStub::GetInstance().GetImpl()->Sleep(microSecond);
+  return llm::MmpaStub::GetInstance().GetImpl()->Sleep(microSecond);
 }
 
 INT32 mmUnlink(const CHAR *filename) {
@@ -531,7 +531,7 @@ INT32 mmSetEnv(const CHAR *name, const CHAR *value, INT32 overwrite) {
 }
 
 INT32 mmWaitPid(mmProcess pid, INT32 *status, INT32 options) {
-  return ge::MmpaStub::GetInstance().GetImpl()->WaitPid(pid, status, options);
+  return llm::MmpaStub::GetInstance().GetImpl()->WaitPid(pid, status, options);
 }
 
 VOID mmSetOptErr(INT32 mmOptErr) {

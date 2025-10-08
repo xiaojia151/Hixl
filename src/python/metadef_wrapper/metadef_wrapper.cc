@@ -20,7 +20,7 @@
 #undef PYBIND11_CHECK_PYTHON_VERSION
 #define PYBIND11_CHECK_PYTHON_VERSION
 
-namespace ge {
+namespace llm {
 namespace {
 namespace py = pybind11;
 }  // namespace

@@ -19,7 +19,7 @@
 #include "mmpa/mmpa_api.h"
 #include "acl/acl.h"
 
-namespace ge {
+namespace llm {
 class AclRuntimeStub {
 public:
   virtual ~AclRuntimeStub() = default;

@@ -19,9 +19,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-namespace ge {
+namespace llm {
 int ge_log_level = DLOG_ERROR;
-auto ins = ge::SlogStub::GetInstance(); // 让log提前初始化
+auto ins = llm::SlogStub::GetInstance(); // 让log提前初始化
 class DefaultSlogStub : public SlogStub {
  public:
   DefaultSlogStub() : SlogStub() {
@@ -130,7 +130,7 @@ int SlogStub::Format(char *buff, size_t buff_len, int module_id, int level, cons
   // 按照原来的实现，这里有一个裁掉目录，仅保存文件名的步骤，原地打印后，没法使用原来的机制了，所以重写一个。。。
   return EraseFolderFromPath(buff, pos);
 }
-}  // namespace ge
+}  // namespace llm
 
 void dav_log(int module_id, const char *fmt, ...) {}
 
@@ -138,9 +138,9 @@ void DlogRecord(int moduleId, int level, const char *fmt, ...) {
   va_list valist;
   va_start(valist, fmt);
   if (moduleId & RUN_LOG_MASK) {
-    ge::SlogStub::GetInstance()->Log(moduleId & (~RUN_LOG_MASK), DLOG_EVENT, fmt, valist);
+    llm::SlogStub::GetInstance()->Log(moduleId & (~RUN_LOG_MASK), DLOG_EVENT, fmt, valist);
   } else {
-    ge::SlogStub::GetInstance()->Log(moduleId, level, fmt, valist);
+    llm::SlogStub::GetInstance()->Log(moduleId, level, fmt, valist);
   }
   va_end(valist);
 }
@@ -148,14 +148,14 @@ void DlogRecord(int moduleId, int level, const char *fmt, ...) {
 void DlogErrorInner(int module_id, const char *fmt, ...) {
   va_list valist;
   va_start(valist, fmt);
-  ge::SlogStub::GetInstance()->Log(module_id, DLOG_ERROR, fmt, valist);
+  llm::SlogStub::GetInstance()->Log(module_id, DLOG_ERROR, fmt, valist);
   va_end(valist);
 }
 
 void DlogWarnInner(int module_id, const char *fmt, ...) {
   va_list valist;
   va_start(valist, fmt);
-  ge::SlogStub::GetInstance()->Log(module_id, DLOG_WARN, fmt, valist);
+  llm::SlogStub::GetInstance()->Log(module_id, DLOG_WARN, fmt, valist);
   va_end(valist);
 }
 
@@ -163,9 +163,9 @@ void DlogInfoInner(int module_id, const char *fmt, ...) {
   va_list valist;
   va_start(valist, fmt);
   if (module_id & RUN_LOG_MASK) {
-    ge::SlogStub::GetInstance()->Log(module_id & (~RUN_LOG_MASK), DLOG_EVENT, fmt, valist);
+    llm::SlogStub::GetInstance()->Log(module_id & (~RUN_LOG_MASK), DLOG_EVENT, fmt, valist);
   } else {
-    ge::SlogStub::GetInstance()->Log(module_id, DLOG_INFO, fmt, valist);
+    llm::SlogStub::GetInstance()->Log(module_id, DLOG_INFO, fmt, valist);
   }
   va_end(valist);
 }
@@ -173,14 +173,14 @@ void DlogInfoInner(int module_id, const char *fmt, ...) {
 void DlogDebugInner(int module_id, const char *fmt, ...) {
   va_list valist;
   va_start(valist, fmt);
-  ge::SlogStub::GetInstance()->Log(module_id, DLOG_DEBUG, fmt, valist);
+  llm::SlogStub::GetInstance()->Log(module_id, DLOG_DEBUG, fmt, valist);
   va_end(valist);
 }
 
 void DlogEventInner(int module_id, const char *fmt, ...) {
   va_list valist;
   va_start(valist, fmt);
-  ge::SlogStub::GetInstance()->Log((module_id & (~RUN_LOG_MASK)), DLOG_EVENT, fmt, valist);
+  llm::SlogStub::GetInstance()->Log((module_id & (~RUN_LOG_MASK)), DLOG_EVENT, fmt, valist);
   va_end(valist);
 }
 
@@ -192,17 +192,17 @@ int dlog_setlevel(int module_id, int level, int enable_event) {
   auto log_level = getenv("ASCEND_GLOBAL_LOG_LEVEL");
   // 设置环境变量时忽略用例代码里的设置
   if (log_level == nullptr) {
-    ge::SlogStub::GetInstance()->SetLevel(level);
-    ge::SlogStub::GetInstance()->SetEventLevel(enable_event);
+    llm::SlogStub::GetInstance()->SetLevel(level);
+    llm::SlogStub::GetInstance()->SetEventLevel(enable_event);
     if (module_id == GE) {
-      ge::ge_log_level = level;
+      llm::ge_log_level = level;
     }
   }
   return 0;
 }
 
 int dlog_getlevel(int module_id, int *enable_event) {
-  return ge::SlogStub::GetInstance()->GetLevel();
+  return llm::SlogStub::GetInstance()->GetLevel();
 }
 
 int CheckLogLevel(int moduleId, int log_level_check) {
@@ -210,7 +210,7 @@ int CheckLogLevel(int moduleId, int log_level_check) {
     return 1;
   }
   if (moduleId == GE) {
-    return log_level_check >= ge::ge_log_level;
+    return log_level_check >= llm::ge_log_level;
   }
   return log_level_check >= dlog_getlevel(moduleId, nullptr);
 }

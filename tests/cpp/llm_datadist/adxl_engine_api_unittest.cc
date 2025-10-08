@@ -21,7 +21,7 @@
 #include "depends/llm_datadist/src/data_cache_engine_test_helper.h"
 
 using namespace std;
-using namespace ge;
+using namespace llm;
 using namespace ::testing;
 using ::testing::Invoke;
 using ::testing::Mock;

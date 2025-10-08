@@ -11,223 +11,44 @@
 cmake_minimum_required(VERSION 3.5.1)
 project(llm_datadist_sample)
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY TRUE)
+set(DXL_INC_DIR "${DXL_CODE_DIR}/include")
+add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 
-if (DEFINED ENV{ASCEND_INSTALL_PATH})
-    set(ASCEND_PATH $ENV{ASCEND_INSTALL_PATH})
-else ()
-    set(ASCEND_PATH /usr/local/Ascend/latest)
-endif ()
-
-set(INCLUDE_DIR ${ASCEND_PATH}/include)
-
-set(common_compile_options
-        --std=c++11
-        -g
-        -Wall
+# 只定义目标名称列表（与cpp文件名前缀相同）
+set(targets_list
+    "prompt_pull_cache_and_blocks"
+    "decoder_pull_cache_and_blocks"
+    "prompt_push_cache_and_blocks"
+    "decoder_push_cache_and_blocks"
+    "prompt_switch_roles"
+    "decoder_switch_roles"
+    "client_server_h2d"
+    "server_server_d2d"
 )
 
-set(common_compile_definitions
-        _GLIBCXX_USE_CXX11_ABI=0
-)
+foreach(target_name IN LISTS targets_list)
+    # 自动构建源文件路径（目标名.cpp）
+    set(source_file "${target_name}.cpp")
 
-add_executable(prompt_pull_cache_and_blocks "prompt_pull_cache_and_blocks.cpp")
-
-target_compile_options(prompt_pull_cache_and_blocks PRIVATE
-        ${common_compile_options}
-)
-
-target_compile_definitions(prompt_pull_cache_and_blocks PRIVATE
-        ${common_compile_definitions}
-)
-
-target_include_directories(prompt_pull_cache_and_blocks PRIVATE
-        ${INCLUDE_DIR}
-        ${INCLUDE_DIR}/external/ge_common
-)
-
-target_link_directories(prompt_pull_cache_and_blocks PRIVATE
-        ${ASCEND_PATH}/lib64
-)
-
-target_link_libraries(prompt_pull_cache_and_blocks PRIVATE
-        llm_datadist
-        graph
-        ascendcl
-)
-
-add_executable(decoder_pull_cache_and_blocks "decoder_pull_cache_and_blocks.cpp")
-
-target_compile_options(decoder_pull_cache_and_blocks PRIVATE
-        ${common_compile_options}
-)
-
-target_compile_definitions(decoder_pull_cache_and_blocks PRIVATE
-        ${common_compile_definitions}
-)
-
-target_include_directories(decoder_pull_cache_and_blocks PRIVATE
-        ${INCLUDE_DIR}
-        ${INCLUDE_DIR}/external/ge_common
-)
-
-target_link_directories(decoder_pull_cache_and_blocks PRIVATE
-        ${ASCEND_PATH}/lib64
-)
-
-target_link_libraries(decoder_pull_cache_and_blocks PRIVATE
-        llm_datadist
-        graph
-        ascendcl
-)
-
-add_executable(prompt_push_cache_and_blocks "prompt_push_cache_and_blocks.cpp")
-
-target_compile_options(prompt_push_cache_and_blocks PRIVATE
-        ${common_compile_options}
-)
-
-target_compile_definitions(prompt_push_cache_and_blocks PRIVATE
-        ${common_compile_definitions}
-)
-
-target_include_directories(prompt_push_cache_and_blocks PRIVATE
-        ${INCLUDE_DIR}
-        ${INCLUDE_DIR}/external/ge_common
-)
-
-target_link_directories(prompt_push_cache_and_blocks PRIVATE
-        ${ASCEND_PATH}/lib64
-)
-
-target_link_libraries(prompt_push_cache_and_blocks PRIVATE
-        llm_datadist
-        graph
-        ascendcl
-)
-
-add_executable(decoder_push_cache_and_blocks "decoder_push_cache_and_blocks.cpp")
-
-target_compile_options(decoder_push_cache_and_blocks PRIVATE
-        ${common_compile_options}
-)
-
-target_compile_definitions(decoder_push_cache_and_blocks PRIVATE
-        ${common_compile_definitions}
-)
-
-target_include_directories(decoder_push_cache_and_blocks PRIVATE
-        ${INCLUDE_DIR}
-        ${INCLUDE_DIR}/external/ge_common
-)
-
-target_link_directories(decoder_push_cache_and_blocks PRIVATE
-        ${ASCEND_PATH}/lib64
-)
-
-target_link_libraries(decoder_push_cache_and_blocks PRIVATE
-        llm_datadist
-        graph
-        ascendcl
-)
-
-add_executable(prompt_switch_roles "prompt_switch_roles.cpp")
-
-target_compile_options(prompt_switch_roles PRIVATE
-        ${common_compile_options}
-)
-
-target_compile_definitions(prompt_switch_roles PRIVATE
-        ${common_compile_definitions}
-)
-
-target_include_directories(prompt_switch_roles PRIVATE
-        ${INCLUDE_DIR}
-        ${INCLUDE_DIR}/external/ge_common
-)
-
-target_link_directories(prompt_switch_roles PRIVATE
-        ${ASCEND_PATH}/lib64
-)
-
-target_link_libraries(prompt_switch_roles PRIVATE
-        llm_datadist
-        graph
-        ascendcl
-)
-
-add_executable(decoder_switch_roles "decoder_switch_roles.cpp")
-
-target_compile_options(decoder_switch_roles PRIVATE
-        ${common_compile_options}
-)
-
-target_compile_definitions(decoder_switch_roles PRIVATE
-        ${common_compile_definitions}
-)
-
-target_include_directories(decoder_switch_roles PRIVATE
-        ${INCLUDE_DIR}
-        ${INCLUDE_DIR}/external/ge_common
-)
-
-target_link_directories(decoder_switch_roles PRIVATE
-        ${ASCEND_PATH}/lib64
-)
-
-target_link_libraries(decoder_switch_roles PRIVATE
-        llm_datadist
-        graph
-        ascendcl
-)
-
-add_executable(client_server_h2d "client_server_h2d.cpp")
-
-target_compile_options(client_server_h2d PRIVATE
-        ${common_compile_options}
-)
-
-target_compile_definitions(client_server_h2d PRIVATE
-        ${common_compile_definitions}
-)
-
-target_include_directories(client_server_h2d PRIVATE
-        ${INCLUDE_DIR}
-        ${INCLUDE_DIR}/external/ge_common
-)
-
-target_link_directories(client_server_h2d PRIVATE
-        ${ASCEND_PATH}/lib64
-)
-
-target_link_libraries(client_server_h2d PRIVATE
-        llm_datadist
-        graph
-        ascendcl
-)
-
-add_executable(server_server_d2d "server_server_d2d.cpp")
-
-target_compile_options(server_server_d2d PRIVATE
-        ${common_compile_options}
-)
-
-target_compile_definitions(server_server_d2d PRIVATE
-        ${common_compile_definitions}
-)
-
-target_include_directories(server_server_d2d PRIVATE
-        ${INCLUDE_DIR}
-        ${INCLUDE_DIR}/external/ge_common
-)
-
-target_link_directories(server_server_d2d PRIVATE
-        ${ASCEND_PATH}/lib64
-)
-
-target_link_libraries(server_server_d2d PRIVATE
-        llm_datadist
-        graph
-        ascendcl
-)
+    if(NOT TARGET ${target_name})
+        add_executable(${target_name} ${source_file})
+        target_include_directories(${target_name} PRIVATE
+            ${DXL_INC_DIR}
+            ${ASCEND_INSTALL_PATH}/include
+        )
+        target_compile_options(${target_name} PRIVATE
+            -ftrapv
+            -O2
+            -fno-common
+            -Wfloat-equal
+            -Wall
+            -Werror
+            -Wextra
+        )
+        target_link_libraries(${target_name} PRIVATE
+            llm_datadist
+            ascendcl
+            ascend_hal_stub
+        )
+    endif()
+endforeach()

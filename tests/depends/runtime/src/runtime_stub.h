@@ -28,7 +28,7 @@ void SetMockRtGetDeviceWay(int32_t is_mock_new_way);
 }
 #endif
 
-namespace ge {
+namespace llm {
 class RuntimeStub {
  public:
   virtual ~RuntimeStub() = default;
@@ -339,7 +339,7 @@ public:
 private:
   const std::string key_;
 };
-}  // namespace ge
+}  // namespace llm
 
 #ifdef __cplusplus
 extern "C" {

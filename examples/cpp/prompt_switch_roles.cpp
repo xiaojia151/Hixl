@@ -16,241 +16,249 @@
 #include "llm_datadist/llm_datadist.h"
 
 using namespace llm_datadist;
-namespace{
-constexpr uint16_t PROMPT_LISTEN_PORT = 26000;
-constexpr uint16_t DECODER_LISTEN_PORT = 26001;
-constexpr uint16_t PROMPT_CLUSTER_ID = 0;
-constexpr uint32_t NUM_TENSORS = 4U;
-constexpr size_t TENSOR_SIZE = 8 * 16 * sizeof(int32_t);
-const std::vector<int64_t> TENSOR_SHAPE = {8, 16};
-constexpr int32_t WAIT_TIME = 10;
-constexpr int32_t EXPECTED_ARG_CNT = 4;
-constexpr uint32_t ARG_INDEX_DEVICE_ID = 1;
-constexpr uint32_t ARG_INDEX_LOCAL_IP = 2;
-constexpr uint32_t ARG_INDEX_REMOTE_IP = 3;
+namespace {
+constexpr uint16_t kPromptListenPort = 26000;
+constexpr uint16_t kDecoderListenPort = 26001;
+constexpr uint16_t kPromptClusterId = 0;
+constexpr uint32_t kNumTensors = 4U;
+constexpr size_t kTensorSize = 8 * 16 * sizeof(int32_t);
+const std::vector<int64_t> kTensorShape = {8, 16};
+constexpr int32_t kWaitTime = 10;
+constexpr int32_t kExpectedArgCnt = 4;
+constexpr uint32_t kArgIndexDeviceId = 1;
+constexpr uint32_t kArgIndexLocalIp = 2;
+constexpr uint32_t kArgIndexRemoteIp = 3;
+constexpr uint32_t kPushBatchIndex = 4;
+constexpr uint8_t kPushTensorNumPerLayer = 4;
 
-#define CHECK_ACL(x)                                                                        \
-    do {                                                                                    \
-        aclError __ret = x;                                                                 \
-        if (__ret != ACL_ERROR_NONE) {                                                      \
-            std::cerr << __FILE__ << ":" << __LINE__ << " aclError:" << __ret << std::endl; \
-        }                                                                                   \
-    } while (0);
+#define CHECK_ACL(x)                                                                  \
+  do {                                                                                \
+    aclError __ret = x;                                                               \
+    if (__ret != ACL_ERROR_NONE) {                                                    \
+      std::cerr << __FILE__ << ":" << __LINE__ << " aclError:" << __ret << std::endl; \
+    }                                                                                 \
+  } while (0)
+}  // namespace
+
+int Initialize(LlmDataDist &llm_datadist, const std::string &device_id, const std::string &local_ip) {
+  std::map<AscendString, AscendString> options;
+  options[OPTION_DEVICE_ID] = device_id.c_str();
+  options[OPTION_LISTEN_IP_INFO] = (local_ip + ":" + std::to_string(kPromptListenPort)).c_str();
+  auto ret = llm_datadist.Initialize(options);
+  if (ret != LLM_SUCCESS) {
+    printf("[ERROR] Initialize failed, ret = %u\n", ret);
+    return -1;
+  }
+  printf("[INFO] Initialize success\n");
+  return LLM_SUCCESS;
 }
 
-int Initialize(LlmDataDist &llmDataDist, const std::string &deviceId, const std::string &localIp)
-{
-    std::map<AscendString, AscendString> options;
-    options[OPTION_DEVICE_ID] = deviceId.c_str();
-    options[OPTION_LISTEN_IP_INFO] = (localIp + ":" + std::to_string(PROMPT_LISTEN_PORT)).c_str();
-    auto ret = llmDataDist.Initialize(options);
+int32_t SetRole(LlmDataDist &llm_datadist, LlmRole role) {
+  std::map<AscendString, AscendString> options;
+  auto ret = llm_datadist.SetRole(role, options);
+  if (ret != LLM_SUCCESS) {
+    printf("[ERROR] SetRole failed, ret = %u\n", ret);
+    return -1;
+  }
+  printf("[INFO] SetRole success\n");
+  return 0;
+}
+
+int Link(LlmDataDist &llm_datadist, const char *local_ip, const char *remote_ip) {
+  std::vector<Status> rets;
+  std::vector<ClusterInfo> clusters;
+  ClusterInfo cluster_info;
+  cluster_info.remote_cluster_id = 1;
+  IpInfo local_ip_info;
+  local_ip_info.ip = local_ip;
+  local_ip_info.port = kDecoderListenPort;
+  cluster_info.local_ip_infos.emplace_back(std::move(local_ip_info));
+  IpInfo remote_ip_info;
+  remote_ip_info.ip = remote_ip;
+  remote_ip_info.port = kDecoderListenPort;
+  cluster_info.remote_ip_infos.emplace_back(std::move(remote_ip_info));
+  clusters.emplace_back(std::move(cluster_info));
+  auto ret = llm_datadist.LinkLlmClusters(clusters, rets);
+  if (ret != LLM_SUCCESS) {
+    printf("[ERROR] LinkLlmClusters failed, ret = %u\n", ret);
+    return -1;
+  }
+  printf("[INFO] LinkLlmClusters success\n");
+  return 0;
+}
+
+int Unlink(LlmDataDist &llm_datadist, const char *remote_ip) {
+  std::vector<Status> rets;
+  std::vector<ClusterInfo> clusters;
+  ClusterInfo cluster_info;
+  cluster_info.remote_cluster_id = 1;
+  IpInfo remote_ip_info;
+  remote_ip_info.ip = remote_ip;
+  remote_ip_info.port = kDecoderListenPort;
+  cluster_info.remote_ip_infos.emplace_back(std::move(remote_ip_info));
+  clusters.emplace_back(std::move(cluster_info));
+  auto ret = llm_datadist.UnlinkLlmClusters(clusters, rets);
+  if (ret != LLM_SUCCESS) {
+    printf("[ERROR] UnlinkLlmClusters failed, ret = %u\n", ret);
+    return -1;
+  }
+  printf("[INFO] UnlinkLlmClusters success\n");
+  return 0;
+}
+
+int32_t PushCache(LlmDataDist &llm_datadist, int64_t cache_id) {
+  std::vector<uint64_t> prompt_blocks{5, 6, 7};
+  std::vector<uint64_t> decoder_blocks{5, 6, 7};
+  // 可以使用PushKvBlock推送多块block的数据
+  Cache cache{};
+  cache.cache_id = cache_id;
+  auto ret = LLM_SUCCESS;
+  CacheIndex cache_index = {};
+  cache_index.cluster_id = 1;
+  cache_index.cache_id = 1;
+  for (uint32_t i = 0U; i < kNumTensors; ++i) {
+    KvCacheExtParam param{};
+    param.src_layer_range = std::pair<int32_t, int32_t>(i, i);
+    param.dst_layer_range = std::pair<int32_t, int32_t>(i, i);
+    param.tensor_num_per_layer = 1;
+    ret = llm_datadist.PushKvBlocks(cache, cache_index, prompt_blocks, decoder_blocks, param);
     if (ret != LLM_SUCCESS) {
-        printf("[ERROR] Initialize failed, ret = %u\n", ret);
-        return -1;
+      printf("[ERROR] PushKvBlocks failed, ret = %u\n", ret);
+      return -1;
     }
-    printf("[INFO] Initialize success\n");
-    return LLM_SUCCESS;
+  }
+  printf("[INFO] PushKvBlocks success\n");
+
+  // 也可以使用PushKvCache推送一个batch中的连续数据
+  CacheIndex cache_index2 = {};
+  cache_index2.cluster_id = 1;
+  cache_index2.cache_id = 1;
+  cache_index2.batch_index = kPushBatchIndex;
+  KvCacheExtParam param2{};
+  param2.src_layer_range = std::pair<int32_t, int32_t>(0, 0);
+  param2.dst_layer_range = std::pair<int32_t, int32_t>(0, 0);
+  param2.tensor_num_per_layer = kPushTensorNumPerLayer;
+  ret = llm_datadist.PushKvCache(cache, cache_index2, kPushBatchIndex, -1, param2);
+  if (ret != LLM_SUCCESS) {
+    printf("[ERROR] PushKvCache failed, ret = %u\n", ret);
+    return -1;
+  }
+  printf("[INFO] PushKvCache success\n");
+  return 0;
 }
 
-int32_t SetRole(LlmDataDist &llmDataDist, LlmRole role)
-{
-    std::map<AscendString, AscendString> options;
-    auto ret = llmDataDist.SetRole(role, options);
-    if (ret != LLM_SUCCESS) {
-        printf("[ERROR] SetRole failed, ret = %u\n", ret);
-        return -1;
+void Finalize(LlmDataDist &llm_datadist, int64_t cache_id, bool linked, const char *remote_ip,
+              const std::vector<void *> buffers) {
+  if (linked) {
+    auto ret = Unlink(llm_datadist, remote_ip);
+    if (ret != 0) {
+      printf("[ERROR] Unlink failed, ret = %d\n", ret);
+    } else {
+      printf("[INFO] Unlink success\n");
     }
-    printf("[INFO] SetRole success\n");
-    return 0;
+  }
+  if (cache_id > 0) {
+    auto ret = llm_datadist.UnregisterKvCache(cache_id);
+    if (ret != 0) {
+      printf("[ERROR] UnregisterKvCache failed, ret = %u\n", ret);
+    } else {
+      printf("[INFO] UnregisterKvCache success\n");
+    }
+  }
+  for (auto buffer : buffers) {
+    aclrtFree(buffer);
+  }
+  llm_datadist.Finalize();
 }
 
-int Link(LlmDataDist &llmDataDist, const char *localIp, const char *remoteIp)
-{
-    std::vector<Status> rets;
-    std::vector<ClusterInfo> clusters;
-    ClusterInfo clusterInfo;
-    clusterInfo.remote_cluster_id = 1;
-    IpInfo localIpInfo;
-    localIpInfo.ip = localIp;
-    localIpInfo.port = DECODER_LISTEN_PORT;
-    clusterInfo.local_ip_infos.emplace_back(std::move(localIpInfo));
-    IpInfo remoteIpInfo;
-    remoteIpInfo.ip = remoteIp;
-    remoteIpInfo.port = DECODER_LISTEN_PORT;
-    clusterInfo.remote_ip_infos.emplace_back(std::move(remoteIpInfo));
-    clusters.emplace_back(std::move(clusterInfo));
-    auto ret = llmDataDist.LinkLlmClusters(clusters, rets);
-    if (ret != LLM_SUCCESS) {
-        printf("[ERROR] LinkLlmClusters failed, ret = %u\n", ret);
-        return -1;
-    }
-    printf("[INFO] LinkLlmClusters success\n");
-    return 0;
+int32_t RegisterCache(LlmDataDist &llm_datadist, std::vector<void *> &buffers, int64_t &cache_id) {
+  CacheDesc cache_desc{};
+  cache_desc.num_tensors = kNumTensors;
+  cache_desc.data_type = DT_INT32;
+  cache_desc.shape = kTensorShape;
+  std::vector<uint64_t> tensor_addrs;
+  for (uint32_t i = 0U; i < kNumTensors; ++i) {
+    int32_t *buffer = nullptr;
+    CHECK_ACL(aclrtMalloc((void **)&buffer, kTensorSize, ACL_MEM_MALLOC_HUGE_ONLY));
+
+    // init device buffer
+    std::vector<int32_t> host_buffer(kTensorSize / sizeof(int32_t));
+    std::iota(host_buffer.begin(), host_buffer.end(), 0);
+    CHECK_ACL(aclrtMemcpy(buffer, kTensorSize, &host_buffer[0], kTensorSize, ACL_MEMCPY_HOST_TO_DEVICE));
+
+    tensor_addrs.emplace_back(reinterpret_cast<uint64_t>(buffer));
+    buffers.emplace_back(reinterpret_cast<void *>(buffer));
+  }
+
+  auto ret = llm_datadist.RegisterKvCache(cache_desc, tensor_addrs, {}, cache_id);
+  if (ret != LLM_SUCCESS) {
+    printf("[ERROR] RegisterKvCache failed, ret = %u\n", ret);
+    return -1;
+  }
+  // RegisterKvCache成功后，可以获取cache中各tensor的地址用于后续操作
+  printf("[INFO] RegisterKvCache success\n");
+  for (size_t i = 0U; i < tensor_addrs.size(); ++i) {
+    printf("[INFO] Tensor[%zu] addr = %p\n", i, reinterpret_cast<void *>(tensor_addrs[i]));
+  }
+  return 0;
 }
 
-int Unlink(LlmDataDist &llmDataDist, const char *remoteIp)
-{
-    std::vector<Status> rets;
-    std::vector<ClusterInfo> clusters;
-    ClusterInfo clusterInfo;
-    clusterInfo.remote_cluster_id = 1;
-    IpInfo remoteIpInfo;
-    remoteIpInfo.ip = remoteIp;
-    remoteIpInfo.port = DECODER_LISTEN_PORT;
-    clusterInfo.remote_ip_infos.emplace_back(std::move(remoteIpInfo));
-    clusters.emplace_back(std::move(clusterInfo));
-    auto ret = llmDataDist.UnlinkLlmClusters(clusters, rets);
-    if (ret != LLM_SUCCESS) {
-        printf("[ERROR] UnlinkLlmClusters failed, ret = %u\n", ret);
-        return -1;
-    }
-    printf("[INFO] UnlinkLlmClusters success\n");
-    return 0;
+int32_t RunPromptSample(const char *device_id, const char *local_ip, const char *remote_ip) {
+  printf("[INFO] Prompt Sample start\n");
+  // 1. 初始化
+  LlmDataDist llm_datadist(kPromptClusterId, LlmRole::kPrompt);
+  if (Initialize(llm_datadist, device_id, local_ip) != 0) {
+    printf("[ERROR] Initialize LlmDataDist failed\n");
+    return -1;
+  }
+
+  // 2. 注册内存地址
+  std::vector<void *> buffers;
+  int64_t cache_id = -1;
+  bool linked = false;
+  if (RegisterCache(llm_datadist, buffers, cache_id) != 0) {
+    Finalize(llm_datadist, cache_id, linked, remote_ip, buffers);
+    return -1;
+  }
+
+  // 3. 等待decoder拉取cache
+  std::this_thread::sleep_for(std::chrono::seconds(kWaitTime));
+
+  // 4. 切换角色
+  if (SetRole(llm_datadist, LlmRole::kDecoder) != 0) {
+    Finalize(llm_datadist, cache_id, linked, remote_ip, buffers);
+    return -1;
+  }
+
+  // 5. 与decoder建链
+  if (Link(llm_datadist, local_ip, remote_ip) != 0) {
+    Finalize(llm_datadist, cache_id, linked, remote_ip, buffers);
+    return -1;
+  }
+  linked = true;
+
+  // 6. 向decoder push cache
+  if (PushCache(llm_datadist, cache_id) != 0) {
+    Finalize(llm_datadist, cache_id, linked, remote_ip, buffers);
+    return -1;
+  }
+
+  // 7. 释放Cache与llmDataDist
+  llm_datadist.Finalize();
+  printf("[INFO] Finalize success\n");
+  printf("[INFO] Prompt Sample end\n");
+  return 0;
 }
 
-int32_t PushCache(LlmDataDist &llmDataDist, int64_t cacheId)
-{
-    std::vector<uint64_t> promptBlocks {5, 6, 7};
-    std::vector<uint64_t> decoderBlocks {5, 6, 7};
-    // 可以使用PushKvBlock推送多块block的数据
-    Cache cache{};
-    cache.cache_id = cacheId;
-    auto ret = LLM_SUCCESS;
-    CacheIndex cacheIndex{1, 1};
-    for (uint32_t i = 0U; i < NUM_TENSORS; ++i) {
-        KvCacheExtParam param{};
-        param.src_layer_range = std::pair<int32_t, int32_t>(i, i);
-        param.dst_layer_range = std::pair<int32_t, int32_t>(i, i);
-        param.tensor_num_per_layer = 1;
-        ret = llmDataDist.PushKvBlocks(cache, cacheIndex, promptBlocks, decoderBlocks, param);
-        if (ret != LLM_SUCCESS) {
-            printf("[ERROR] PushKvBlocks failed, ret = %u\n", ret);
-            return -1;
-        }
-    }
-    printf("[INFO] PushKvBlocks success\n");
-
-    // 也可以使用PushKvCache推送一个batch中的连续数据
-    CacheIndex cacheIndex2{1, 1, 4};
-    KvCacheExtParam param2{};
-    param2.src_layer_range = std::pair<int32_t, int32_t>(0, 0);
-    param2.dst_layer_range = std::pair<int32_t, int32_t>(0, 0);
-    param2.tensor_num_per_layer = 4;
-    ret = llmDataDist.PushKvCache(cache, cacheIndex2, 4, -1, param2);
-    if (ret != LLM_SUCCESS) {
-        printf("[ERROR] PushKvCache failed, ret = %u\n", ret);
-        return -1;
-    }
-    printf("[INFO] PushKvCache success\n");
-    return 0;
-}
-
-void Finalize(LlmDataDist &llmDataDist, int64_t cacheId, bool linked, const char *remoteIp,
-              const std::vector<void *> buffers)
-{
-    if (linked) {
-        auto ret = Unlink(llmDataDist, remoteIp);
-        if (ret != 0) {
-            printf("[ERROR] Unlink failed, ret = %d\n", ret);
-        } else {
-            printf("[INFO] Unlink success\n");
-        }
-    }
-    if (cacheId > 0) {
-        auto ret = llmDataDist.UnregisterKvCache(cacheId);
-        if (ret != 0) {
-            printf("[ERROR] UnregisterKvCache failed, ret = %u\n", ret);
-        } else {
-            printf("[INFO] UnregisterKvCache success\n");
-        }
-    }
-    for (auto buffer : buffers) {
-        aclrtFree(buffer);
-    }
-    llmDataDist.Finalize();
-}
-
-int32_t RunPromptSample(const char *deviceId, const char *localIp, const char *remoteIp)
-{
-    printf("[INFO] Prompt Sample start\n");
-    // 1. 初始化
-    LlmDataDist llmDataDist(PROMPT_CLUSTER_ID, LlmRole::kPrompt);
-    if (Initialize(llmDataDist, deviceId, localIp) != 0) {
-        printf("[ERROR] Initialize LlmDataDist failed\n");
-        return -1;
-    }
-    // 2. 注册内存地址
-    CacheDesc cacheDesc{};
-    cacheDesc.num_tensors = NUM_TENSORS;
-    cacheDesc.data_type = DT_INT32;
-    cacheDesc.shape = TENSOR_SHAPE;
-    std::vector<uint64_t> tensorAddrs;
-    std::vector<void *> buffers;
-    for (uint32_t i = 0U; i < NUM_TENSORS; ++i) {
-        int32_t *buffer = nullptr;
-        CHECK_ACL(aclrtMalloc((void **)&buffer, TENSOR_SIZE, ACL_MEM_MALLOC_HUGE_ONLY));
-
-        // init device buffer
-        std::vector<int32_t> hostBuffer(TENSOR_SIZE / sizeof(int32_t));
-        std::iota(hostBuffer.begin(), hostBuffer.end(), 0);
-        CHECK_ACL(aclrtMemcpy(buffer, TENSOR_SIZE, &hostBuffer[0], TENSOR_SIZE, ACL_MEMCPY_HOST_TO_DEVICE));
-
-        tensorAddrs.emplace_back(reinterpret_cast<uint64_t>(buffer));
-        buffers.emplace_back(reinterpret_cast<void *>(buffer));
-    }
-    int64_t cacheId = -1;
-    bool linked = false;
-    auto ret = llmDataDist.RegisterKvCache(cacheDesc, tensorAddrs, {}, cacheId);
-    if (ret != LLM_SUCCESS) {
-        printf("[ERROR] RegisterKvCache failed, ret = %u\n", ret);
-        Finalize(llmDataDist, cacheId, linked, remoteIp, buffers);
-        return -1;
-    }
-    // 3. RegisterKvCache成功后，可以获取cache中各tensor的地址用于后续操作
-    printf("[INFO] RegisterKvCache success\n");
-    for (size_t i = 0U; i < tensorAddrs.size(); ++i) {
-        printf("[INFO] Tensor[%zu] addr = %p\n", i, reinterpret_cast<void *>(tensorAddrs[i]));
-    }
-
-    // 4. 等待decoder拉取cache
-    std::this_thread::sleep_for(std::chrono::seconds(WAIT_TIME));
-
-    // 5. 切换角色
-    if (SetRole(llmDataDist, LlmRole::kDecoder) != 0) {
-        Finalize(llmDataDist, cacheId, linked, remoteIp, buffers);
-        return -1;
-    }
-
-    // 6. 与decoder建链
-    if (Link(llmDataDist, localIp, remoteIp) != 0) {
-        Finalize(llmDataDist, cacheId, linked, remoteIp, buffers);
-        return -1;
-    }
-    linked = true;
-
-    // 7. 向decoder push cache
-    if (PushCache(llmDataDist, cacheId) != 0) {
-        Finalize(llmDataDist, cacheId, linked, remoteIp, buffers);
-        return -1;
-    }
-
-    // 8. 释放Cache与llmDataDist
-    llmDataDist.Finalize();
-    printf("[INFO] Finalize success\n");
-    printf("[INFO] Prompt Sample end\n");
-    return 0;
-}
-
-int main(int32_t argc, char **argv)
-{
-    if (argc != EXPECTED_ARG_CNT) {
-        printf("[ERROR] expect 3 args(deviceId, localHostIp, remoteHostIp), but got %d\n", argc - 1);
-        return -1;
-    }
-    const auto deviceId = argv[ARG_INDEX_DEVICE_ID];
-    const auto localIp = argv[ARG_INDEX_LOCAL_IP];
-    const auto remoteIp = argv[ARG_INDEX_REMOTE_IP];
-    printf("[INFO] deviceId = %s, localIp = %s, remoteIp = %s\n", deviceId, localIp, remoteIp);
-    auto ret = RunPromptSample(deviceId, localIp, remoteIp);
-    return ret;
+int main(int32_t argc, char **argv) {
+  if (argc != kExpectedArgCnt) {
+    printf("[ERROR] expect 3 args(device_id, localHostIp, remoteHostIp), but got %d\n", argc - 1);
+    return -1;
+  }
+  const auto device_id = argv[kArgIndexDeviceId];
+  const auto local_ip = argv[kArgIndexLocalIp];
+  const auto remote_ip = argv[kArgIndexRemoteIp];
+  printf("[INFO] device_id = %s, local_ip = %s, remote_ip = %s\n", device_id, local_ip, remote_ip);
+  auto ret = RunPromptSample(device_id, local_ip, remote_ip);
+  return ret;
 }

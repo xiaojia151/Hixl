@@ -34,6 +34,7 @@
 #include "depends/llm_datadist/src/hccl_stub.h"
 
 using namespace std;
+using namespace ge;
 using namespace ::testing;
 using ::testing::Invoke;
 using ::testing::Mock;
@@ -47,7 +48,7 @@ RTS_API rtError_t rtEventQueryStatus(rtEvent_t evt, rtEventStatus_t *status) {
   return RT_ERROR_NONE;
 }
 
-namespace ge {
+namespace llm {
 namespace {
 class DataCacheEngineRunner {
  public:
@@ -227,7 +228,7 @@ class MockMmpaLongTimeRegister : public MmpaStubApiGe {
   }
 };
 
-class MockRuntime : public ge::RuntimeStub {
+class MockRuntime : public llm::RuntimeStub {
  public:
   rtError_t rtStreamSynchronizeWithTimeout(rtStream_t stm, int32_t timeout) override {
     return count_++ == 1 ? ACL_ERROR_RT_STREAM_SYNC_TIMEOUT : RT_ERROR_NONE;
@@ -257,7 +258,6 @@ TEST_F(DataCacheEngineSTest, UnlinkWhenPrepareNotFinished) {
   options["llm.Role"] = "Decoder";
   EXPECT_EQ(llm_datadist.LLMDataDistInitialize(options), ge::SUCCESS);
 
-  dlog_setlevel(LLM_MODULE_NAME, DLOG_INFO, 0);
   std::map<uint64_t, uint32_t> cluster2rank{{1, 0}, {2, 1}};
   std::string rank_table;
   uint64_t comm_id;
@@ -266,7 +266,6 @@ TEST_F(DataCacheEngineSTest, UnlinkWhenPrepareNotFinished) {
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
   EXPECT_EQ(llm_datadist.Unlink(comm_id), ge::SUCCESS);
   llm_datadist.LLMDataDistFinalize();
-  dlog_setlevel(LLM_MODULE_NAME, DLOG_ERROR, 0);
 }
 
 TEST_F(DataCacheEngineSTest, TestMemPool) {
@@ -384,7 +383,7 @@ TEST_F(DataCacheEngineSTest, PullCache_D2H_B2B_BigBlock) {
   pull_cache_param.decoder_blocks.resize(32);
 
   llm::MockMmpaForHcclApi::Install();
-  ge::RuntimeStub::SetInstance(std::make_shared<llm::DataCacheEngineRuntimeMock>());
+  llm::RuntimeStub::SetInstance(std::make_shared<llm::DataCacheEngineRuntimeMock>());
   llm::HcclAdapter::GetInstance().Initialize();
   llm::DataCacheEngineTestRunner test_runner(100 * 1024 * 1024);
   test_runner.Initialize(src_cache_desc, dst_cache_desc, pull_cache_param);
@@ -589,11 +588,11 @@ TEST_F(DataCacheEngineSTest, PullCache_D2D_B2B_BatchGet) {
   cache_key.prompt_cluster_id = 0;
   cache_key.prompt_cache_id = 1;
 
-  ge::RuntimeStub::SetInstance(std::make_shared<MockRuntime>());
+  llm::RuntimeStub::SetInstance(std::make_shared<MockRuntime>());
   EXPECT_EQ(data_cache_engine_runner.GetLlmDataDist().PullCache(data_cache_engine_runner.GetDstCache().cache_id,
                                                                 cache_key,
                                                                 pull_cache_param), ge::LLM_TIMEOUT);
-  ge::RuntimeStub::Reset();
+  llm::RuntimeStub::Reset();
   data_cache_engine_runner.PullDataCache(pull_cache_param, pull_result);
   data_cache_engine_runner.ReleaseResource();
 
@@ -1289,4 +1288,4 @@ TEST_F(DataCacheEngineSTest, SwapBlocks) {
   EXPECT_EQ(llm_data_dist.DeallocateCache(cached_tensors.cache_id), ge::SUCCESS);
   EXPECT_EQ(llm_data_dist.DeallocateCache(cached_tensors_2.cache_id), ge::SUCCESS);
 }
-}  // namespace ge
+}  // namespace llm

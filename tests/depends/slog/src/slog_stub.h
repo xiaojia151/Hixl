@@ -15,7 +15,7 @@
 #include <map>
 #include <stdarg.h>
 #include "toolchain/slog.h"
-namespace ge {
+namespace llm {
 class SlogStub {
  public:
   SlogStub() {
@@ -88,5 +88,5 @@ class SlogStub {
       {RUNTIME, "RUNTIME"}
   };
 };
-}  // namespace ge
+}  // namespace llm
 #endif  // AIR_CXX_TESTS_DEPENDS_SLOG_SRC_SLOG_STUB_H_

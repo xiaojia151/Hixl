@@ -14,7 +14,6 @@
 #include <vector>
 #include <thread>
 #include "common/llm_inner_types.h"
-#include "common/llm_blocking_queue.h"
 #include "comm_entity.h"
 #include "cache_mgr/comm_mem_manager.h"
 #include "common/aligned_ptr.h"
