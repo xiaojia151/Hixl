@@ -62,7 +62,7 @@ constexpr Status LLM_OUT_OF_MEMORY = 0x5010B01CU;
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p105081631171611"><a name="p105081631171611"></a><a name="p105081631171611"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><a name="ul1985759181216"></a><a name="ul1985759181216"></a><ul id="ul1985759181216"><li>如果是<a href="PullKvCache.md">PullKvCache</a>、<a href="PullKvBlocks.md">PullKvBlocks</a>等传输相关接口报该错误，该链路不可恢复，需重新建链。</li><li>其他接口报该异常，加大超时时间并重试。</li></ul>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><a name="ul1985759181216"></a><a name="ul1985759181216"></a><ul id="ul1985759181216"><li>如果是PullKvCache</a>、PullKvBlocks</a>等传输相关接口报该错误，该链路不可恢复，需重新建链。</li><li>其他接口报该异常，加大超时时间并重试。</li></ul>
 </td>
 </tr>
 <tr id="row15325320162816"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p6134450175511"><a name="p6134450175511"></a><a name="p6134450175511"></a>LLM_KV_CACHE_NOT_EXIST</p>
@@ -107,7 +107,7 @@ constexpr Status LLM_OUT_OF_MEMORY = 0x5010B01CU;
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p1369512813402"><a name="p1369512813402"></a><a name="p1369512813402"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p88380322379"><a name="p88380322379"></a><a name="p88380322379"></a><a href="LinkLlmClusters.md">LinkLlmClusters</a>第二个返回值中有该错误码时，需要检查对应集群之间的网络连接。</p>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p88380322379"><a name="p88380322379"></a><a name="p88380322379"></a>LinkLlmClusters</a>第二个返回值中有该错误码时，需要检查对应集群之间的网络连接。</p>
 </td>
 </tr>
 <tr id="row31771641152211"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p1517719415223"><a name="p1517719415223"></a><a name="p1517719415223"></a>LLM_UNLINK_FAILED</p>
@@ -116,7 +116,7 @@ constexpr Status LLM_OUT_OF_MEMORY = 0x5010B01CU;
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p66951228114014"><a name="p66951228114014"></a><a name="p66951228114014"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p201342042133720"><a name="p201342042133720"></a><a name="p201342042133720"></a><a href="UnlinkLlmClusters.md">UnlinkLlmClusters</a>第二个返回值中有该错误码时，需要检查对应集群之间的网络连接。</p>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p201342042133720"><a name="p201342042133720"></a><a name="p201342042133720"></a>UnlinkLlmClusters</a>第二个返回值中有该错误码时，需要检查对应集群之间的网络连接。</p>
 </td>
 </tr>
 <tr id="row1444475042210"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p11444125022210"><a name="p11444125022210"></a><a name="p11444125022210"></a>LLM_NOTIFY_PROMPT_UNLINK_FAILED</p>
@@ -125,7 +125,7 @@ constexpr Status LLM_OUT_OF_MEMORY = 0x5010B01CU;
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p12695192824010"><a name="p12695192824010"></a><a name="p12695192824010"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><a name="ol10774115212272"></a><a name="ol10774115212272"></a><ol id="ol10774115212272"><li>排查Decode与Prompt之间的网络连接。</li><li>主动调Prompt侧的<a href="UnlinkLlmClusters.md">UnlinkLlmClusters</a>接口清理残留资源。</li></ol>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><a name="ol10774115212272"></a><a name="ol10774115212272"></a><ol id="ol10774115212272"><li>排查Decode与Prompt之间的网络连接。</li><li>主动调Prompt侧的UnlinkLlmClusters</a>接口清理残留资源。</li></ol>
 </td>
 </tr>
 <tr id="row1035323914230"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p103531139182316"><a name="p103531139182316"></a><a name="p103531139182316"></a>LLM_CLUSTER_NUM_EXCEED_LIMIT</p>
@@ -134,7 +134,7 @@ constexpr Status LLM_OUT_OF_MEMORY = 0x5010B01CU;
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p10695102884016"><a name="p10695102884016"></a><a name="p10695102884016"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p485143413402"><a name="p485143413402"></a><a name="p485143413402"></a>检查<a href="LinkLlmClusters.md">LinkLlmClusters</a>和<a href="UnlinkLlmClusters.md">UnlinkLlmClusters</a>传入参数，clusters数量不能超过16。</p>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p485143413402"><a name="p485143413402"></a><a name="p485143413402"></a>检查LinkLlmClusters</a>和UnlinkLlmClusters</a>传入参数，clusters数量不能超过16。</p>
 </td>
 </tr>
 <tr id="row16227125518239"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p16227145510236"><a name="p16227145510236"></a><a name="p16227145510236"></a>LLM_PROCESSING_LINK</p>
@@ -161,7 +161,7 @@ constexpr Status LLM_OUT_OF_MEMORY = 0x5010B01CU;
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p20328100163011"><a name="p20328100163011"></a><a name="p20328100163011"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p143284015303"><a name="p143284015303"></a><a name="p143284015303"></a>检查在SetRole前是否已经调用<a href="UnlinkLlmClusters.md">UnlinkLlmClusters</a>断开所有的链接。</p>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p143284015303"><a name="p143284015303"></a><a name="p143284015303"></a>检查在SetRole前是否已经调用UnlinkLlmClusters</a>断开所有的链接。</p>
 </td>
 </tr>
 <tr id="row119821824301"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p9982162163017"><a name="p9982162163017"></a><a name="p9982162163017"></a>LLM_FEATURE_NOT_ENABLED</p>

@@ -1,12 +1,44 @@
 # ADXL数据结构<a name="ZH-CN_TOPIC_0000002413024580"></a>
+## MemDesc<a name="ZH-CN_TOPIC_0000002446623669"></a>
 
--   **[MemType](MemType.md)**  
+内存的描述信息
 
--   **[TransferOp](TransferOp.md)**  
+```
+struct MemDesc {
+  uintptr_t addr;
+  size_t len;
+  uint8_t reserved[128] = {};
+}
+```
+## MemHandle<a name="ZH-CN_TOPIC_0000002464248565"></a>
 
--   **[MemDesc](MemDesc.md)**  
+```
+using MemHandle = void *;
+```
+## MemType<a name="ZH-CN_TOPIC_0000002413184452"></a>
 
--   **[TransferOpDesc](TransferOpDesc.md)**  
+内存的类型。
 
--   **[MemHandle](MemHandle.md)**  
+```
+enum MemType {
+  MEM_DEVICE,
+  MEM_HOST
+}
+```
+## TransferOp<a name="ZH-CN_TOPIC_0000002446743593"></a>
 
+```
+enum TransferOp {
+  READ,
+  WRITE
+}
+```
+## TransferOpDesc<a name="ZH-CN_TOPIC_0000002413024584"></a>
+
+```
+struct TransferOpDesc {
+  uintptr_t local_addr;
+  uintptr_t remote_addr;
+  size_t len;
+}
+```

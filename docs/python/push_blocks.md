@@ -122,7 +122,14 @@ push_blocks(self,
 </td>
 </tr>
 </tbody>
+<<<<<<< HEAD
+<<<<<<< HEAD
 </table>
+=======
+>>>>>>> 22ad141... doc
+=======
+</table>
+>>>>>>> da451bc... doc
 
 ## 调用示例<a name="section17821439839"></a>
 
