@@ -31,7 +31,6 @@ LLM-DataDist作为大模型分布式集群和数据管理组件，提供了高�
 ├── scripts                        # 脚本路径
 │  └── package
 ├── src                            # 源码路径
-│  ├── CMakeLists.txt
 │  ├── llm_datadist
 │  └── python
 └── tests                          # 测试工程目录
@@ -43,6 +42,7 @@ LLM-DataDist作为大模型分布式集群和数据管理组件，提供了高�
 
 - [构建](docs/build.md)：介绍组件的编译和安装，包括编译成功后利用tests进行本地验证。
 - [样例执行](examples/README.md)：介绍如何端到端执行样例代码，包括C++和Python样例。
+- [开发指南](https://hiascend.com/document/redirect/CannCommunityLLMDatadistdev): 用于指导开发者如何使用LLM-DataDist接口实现集群间的数据传输，构筑大模型推理分离式框架。  
 
 ## 📖学习教程
 
