@@ -20,7 +20,7 @@
 #include "pybind11/stl.h"
 #include "runtime/rt_error_codes.h"
 #include "runtime/rt.h"
-#include "ge/ge_api.h"
+#include "graph/types.h"
 #include "llm_datadist/llm_error_codes.h"
 #include "llm_datadist_v2_wrapper.h"
 #include "common/mem_utils.h"

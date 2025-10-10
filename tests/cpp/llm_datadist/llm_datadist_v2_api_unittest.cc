@@ -326,12 +326,12 @@ TEST_F(LlmDataDistUTest, TestAutoLocalCommResA3) {
   llm_datadist_d.Finalize();
 }
 
-TEST_F(LlmDataDistUTest, TestAutoLocalCommResInvalidDevice) {
+TEST_F(LlmDataDistUTest, TestAutoLocalCommResWithoutDeviceIp) {
   LlmDataDist llm_datadist_p(1U, LlmRole::kPrompt);
   std::map<AscendString, AscendString> options_p;
   options_p[llm_datadist::OPTION_LISTEN_IP_INFO] = "127.0.0.1:26000";
-  options_p[llm_datadist::OPTION_DEVICE_ID] = "20";
-  EXPECT_NE(llm_datadist_p.Initialize(options_p), SUCCESS);
+  options_p[llm_datadist::OPTION_DEVICE_ID] = "9";
+  EXPECT_EQ(llm_datadist_p.Initialize(options_p), SUCCESS);
 }
 
 TEST_F(LlmDataDistUTest, TestLocalCommResA3LinkFailed) {

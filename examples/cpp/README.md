@@ -30,7 +30,6 @@
 -   操作系统及架构：Euleros x86系统、Euleros aarch64系统
 -   编译器：g++
 -   芯片：Atlas 训练系列产品、Atlas 推理系列产品（配置Ascend 310P AI处理器）
--   python及依赖的库：python3.7.5
 -   已完成昇腾AI软件栈在运行环境上的部署
 
 ## 程序编译

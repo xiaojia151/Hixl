@@ -25,6 +25,7 @@ constexpr int64_t kDefaultSleepTime = 1;
 constexpr int32_t kMillisToMicros = 1000;
 constexpr int32_t kTimeoutLoss = 50;
 constexpr uint64_t kBlockSize = 512 * 1024U;
+constexpr size_t kServerPoolIndex = 1U;
 }  // namespace
 
 Status BufferTransferService::Initialize() {
@@ -38,22 +39,23 @@ Status BufferTransferService::Initialize() {
   buffer_resp_processor_ = std::thread([this]() { ProcessBufferResp(); });
   buffer_second_step_processor_ = std::thread([this]() { ProcessBufferReqSecondStep(); });
   ctrl_msg_processor_ = std::thread([this]() { ProcessCtrlMsg(); });
-  while (true) {
-    auto dev_buffer = npu_mem_pool_->Alloc(buffer_size_);
-    if (dev_buffer == nullptr) {
-      LLMLOGI("Allocated buff num:%zu.", buff_addr_idle_.size());
-      break;
+  buff_addr_idles_.resize(npu_mem_pools_.size());
+  for (size_t i = 0; i < npu_mem_pools_.size(); ++i) {
+    auto &npu_mem_pool = npu_mem_pools_[i];
+    while (true) {
+      auto dev_buffer = npu_mem_pool->Alloc(buffer_size_);
+      if (dev_buffer == nullptr) {
+        LLMLOGI("Allocated buff num:%zu.", buff_addr_idles_[i].size());
+        break;
+      }
+      buff_addr_idles_[i].emplace(dev_buffer, true);
     }
-    buff_addr_idle_.emplace(dev_buffer, true);
   }
   return SUCCESS;
 }
 
 void BufferTransferService::Finalize() {
   stop_signal_.store(true);
-  if (reverse_transfer_req_processor_.joinable()) {
-    reverse_transfer_req_processor_.join();
-  }
   buffer_req_cv_.notify_all();
   if (buffer_req_processor_.joinable()) {
     buffer_req_processor_.join();
@@ -70,8 +72,11 @@ void BufferTransferService::Finalize() {
   if (ctrl_msg_processor_.joinable()) {
     ctrl_msg_processor_.join();
   }
-  for (auto &dev_buffer : buff_addr_idle_) {
-    npu_mem_pool_->Free(dev_buffer.first);
+  for (size_t i = 0; i < npu_mem_pools_.size(); ++i) {
+    auto &npu_mem_pool = npu_mem_pools_[i];
+    for (auto &dev_buffer : buff_addr_idles_[i]) {
+      npu_mem_pool->Free(dev_buffer.first);
+    }
   }
   if (stream_ != nullptr) {
     auto ret = rtStreamDestroy(stream_);
@@ -280,46 +285,48 @@ std::vector<uintptr_t> BufferTransferService::GenerateBufferReq(BufferReq &buffe
 
 void BufferTransferService::ProcessBufferReqFirstStep() {
   rtCtxSetCurrent(rt_context_);
-  std::unique_lock<std::mutex> lock(buffer_req_mutex_);
   while (!stop_signal_.load()) {
-    buffer_req_cv_.wait(lock, [this] { return !buffer_req_queue_.empty() || stop_signal_.load(); });
-    if (stop_signal_.load()) {
-      break;
-    }
-    while (!buffer_req_queue_.empty()) {
-      auto req = buffer_req_queue_.front();
-      buffer_req_queue_.pop();
-      auto &buffer_req = req.second;
-      if (!CheckTimeout(buffer_req)) {
-        auto type = buffer_req.transfer_type;
-        (type == TransferType::kReadRH2H || type == TransferType::kReadRD2H || type == TransferType::kReadRH2D ||
-         type == TransferType::kReadRD2D)
-            ? HandleBufferCopy(req.first, req.second)
-            : HandleBufferD2D(req.first, req.second);
+    std::pair<ChannelPtr, BufferReq> req;
+    {
+      std::unique_lock<std::mutex> lock(buffer_req_mutex_);
+      buffer_req_cv_.wait(lock, [this] { return !buffer_req_queue_.empty() || stop_signal_.load(); });
+      if (stop_signal_.load()) {
+        break;
       }
+      req = std::move(buffer_req_queue_.front());
+      buffer_req_queue_.pop();
+    }
+    auto &buffer_req = req.second;
+    if (!CheckTimeout(buffer_req)) {
+      auto type = buffer_req.transfer_type;
+      (type == TransferType::kReadRH2H || type == TransferType::kReadRD2H || type == TransferType::kReadRH2D ||
+       type == TransferType::kReadRD2D)
+          ? HandleBufferCopy(req.first, req.second)
+          : HandleBufferD2D(req.first, req.second);
     }
   }
 }
 
 void BufferTransferService::ProcessBufferReqSecondStep() {
   rtCtxSetCurrent(rt_context_);
-  std::unique_lock<std::mutex> lock(buffer_second_step_mutex_);
   while (!stop_signal_.load()) {
-    buffer_second_step_cv_.wait(lock, [this] { return !buffer_second_step_queue_.empty() || stop_signal_.load(); });
-    if (stop_signal_.load()) {
-      break;
-    }
-    while (!buffer_second_step_queue_.empty()) {
-      auto req = buffer_second_step_queue_.front();
-      buffer_second_step_queue_.pop();
-      auto &buffer_req = req.second;
-      if (!CheckTimeout(buffer_req)) {
-        auto type = buffer_req.transfer_type;
-        (type == TransferType::kReadRH2H || type == TransferType::kReadRD2H || type == TransferType::kReadRH2D ||
-         type == TransferType::kReadRD2D)
-            ? HandleBufferD2D(req.first, req.second)
-            : HandleBufferCopy(req.first, req.second);
+    std::pair<ChannelPtr, BufferReq> req;
+    {
+      std::unique_lock<std::mutex> lock(buffer_second_step_mutex_);
+      buffer_second_step_cv_.wait(lock, [this] { return !buffer_second_step_queue_.empty() || stop_signal_.load(); });
+      if (stop_signal_.load()) {
+        break;
       }
+      req = std::move(buffer_second_step_queue_.front());
+      buffer_second_step_queue_.pop();
+    }
+    auto &buffer_req = req.second;
+    if (!CheckTimeout(buffer_req)) {
+      auto type = buffer_req.transfer_type;
+      (type == TransferType::kReadRH2H || type == TransferType::kReadRD2H || type == TransferType::kReadRH2D ||
+       type == TransferType::kReadRD2D)
+          ? HandleBufferD2D(req.first, req.second)
+          : HandleBufferCopy(req.first, req.second);
     }
   }
 }
@@ -329,8 +336,8 @@ Status BufferTransferService::HandleBufferD2D(const ChannelPtr &channel, BufferR
   ADXL_CHK_BOOL_RET_STATUS(buffer_req.total_buffer_len <= buffer_size_, PARAM_INVALID,
                            "Total buffer length:%lu is bigger than buffer size:%lu.", buffer_req.total_buffer_len,
                            buffer_size_);
-  LLM_DISMISSABLE_GUARD(failed_guard,
-                       ([this, &buffer_req]() { ReleaseBuffer(llm::ValueToPtr(buffer_req.local_buffer_addr)); }));
+  LLM_DISMISSABLE_GUARD(
+      failed_guard, ([this, &buffer_req]() { ReleaseServerBuffer(llm::ValueToPtr(buffer_req.local_buffer_addr)); }));
   const auto start = std::chrono::steady_clock::now();
   const auto timeout = buffer_req.timeout;
 
@@ -341,7 +348,7 @@ Status BufferTransferService::HandleBufferD2D(const ChannelPtr &channel, BufferR
   if (is_write) {
     op = TransferOp::READ;
     void *dev_buffer = nullptr;
-    ADXL_CHK_STATUS_RET(TryGetBuffer(dev_buffer, timeout));
+    ADXL_CHK_STATUS_RET(TryGetServerBuffer(dev_buffer, timeout));
     buffer_req.local_buffer_addr = llm::PtrToValue(dev_buffer);
   }
   uint64_t time_cost =
@@ -386,8 +393,8 @@ Status BufferTransferService::HandleBufferCopy(const ChannelPtr &channel, Buffer
   ADXL_CHK_BOOL_RET_STATUS(buffer_req.total_buffer_len <= buffer_size_, PARAM_INVALID,
                            "Total buffer length:%lu is bigger than buffer size:%lu.", buffer_req.total_buffer_len,
                            buffer_size_);
-  LLM_DISMISSABLE_GUARD(failed_guard,
-                       ([this, &buffer_req]() { ReleaseBuffer(llm::ValueToPtr(buffer_req.local_buffer_addr)); }));
+  LLM_DISMISSABLE_GUARD(
+      failed_guard, ([this, &buffer_req]() { ReleaseServerBuffer(llm::ValueToPtr(buffer_req.local_buffer_addr)); }));
   auto start = std::chrono::steady_clock::now();
   auto left_timeout = buffer_req.timeout;
   auto type = buffer_req.transfer_type;
@@ -395,7 +402,7 @@ Status BufferTransferService::HandleBufferCopy(const ChannelPtr &channel, Buffer
                   type == TransferType::kReadRH2D || type == TransferType::kReadRD2D);
   if (is_read) {
     void *dev_buffer = nullptr;
-    ADXL_CHK_STATUS_RET(TryGetBuffer(dev_buffer, buffer_req.timeout));
+    ADXL_CHK_STATUS_RET(TryGetServerBuffer(dev_buffer, buffer_req.timeout));
     buffer_req.local_buffer_addr = llm::PtrToValue(dev_buffer);
 
     uint64_t time_cost =
@@ -496,23 +503,24 @@ Status BufferTransferService::ProcessCopyWithAsync(const std::vector<uintptr_t> 
 
 void BufferTransferService::ProcessCtrlMsg() {
   while (!stop_signal_.load()) {
-    std::unique_lock<std::mutex> lock(buffer_ctrl_msg_mutex_);
-    ctrl_msg_cv_.wait(lock, [this] { return !buffer_ctrl_msg_queue_.empty() || stop_signal_.load(); });
-    if (stop_signal_.load()) {
-      break;
-    }
-    while (!buffer_ctrl_msg_queue_.empty()) {
-      auto buffer_req = buffer_ctrl_msg_queue_.front();
+    std::pair<ChannelPtr, BufferReq> buffer_req;
+    {
+      std::unique_lock<std::mutex> lock(buffer_ctrl_msg_mutex_);
+      ctrl_msg_cv_.wait(lock, [this] { return !buffer_ctrl_msg_queue_.empty() || stop_signal_.load(); });
+      if (stop_signal_.load()) {
+        break;
+      }
+      buffer_req = std::move(buffer_ctrl_msg_queue_.front());
       buffer_ctrl_msg_queue_.pop();
-      HandleCtrlMsg(buffer_req.first, buffer_req.second);
     }
+    HandleCtrlMsg(buffer_req.first, buffer_req.second);
   }
 }
 
 Status BufferTransferService::HandleCtrlMsg(const ChannelPtr &channel, const BufferReq &buffer_req) {
   auto start = std::chrono::steady_clock::now();
   // free local buffer
-  ReleaseBuffer(llm::ValueToPtr(buffer_req.local_buffer_addr));
+  ReleaseServerBuffer(llm::ValueToPtr(buffer_req.local_buffer_addr));
   BufferResp buffer_resp{};
   buffer_resp.transfer_type = buffer_req.transfer_type;
   buffer_resp.req_id = buffer_req.req_id;
@@ -532,17 +540,18 @@ Status BufferTransferService::HandleCtrlMsg(const ChannelPtr &channel, const Buf
 
 void BufferTransferService::ProcessBufferResp() {
   rtCtxSetCurrent(rt_context_);
-  std::unique_lock<std::mutex> lock(buffer_resp_mutex_);
   while (!stop_signal_.load()) {
-    buffer_resp_cv_.wait(lock, [this] { return !buffer_resp_queue_.empty() || stop_signal_.load(); });
-    if (stop_signal_.load()) {
-      break;
-    }
-    while (!buffer_resp_queue_.empty()) {
-      auto resp = buffer_resp_queue_.front();
+    BufferResp resp;
+    {
+      std::unique_lock<std::mutex> lock(buffer_resp_mutex_);
+      buffer_resp_cv_.wait(lock, [this] { return !buffer_resp_queue_.empty() || stop_signal_.load(); });
+      if (stop_signal_.load()) {
+        break;
+      }
+      resp = std::move(buffer_resp_queue_.front());
       buffer_resp_queue_.pop();
-      HandleBufferResp(resp);
     }
+    HandleBufferResp(resp);
   }
 }
 
@@ -612,12 +621,13 @@ void BufferTransferService::PushBufferResp(const BufferResp &buffer_resp) {
   buffer_resp_cv_.notify_one();
 }
 
-Status BufferTransferService::TryGetBuffer(void *&buffer_addr, uint64_t timeout) {
+Status BufferTransferService::TryGetBuffer(void *&buffer_addr, uint64_t timeout, size_t pool_index) {
   auto start = std::chrono::steady_clock::now();
   while (true) {
     {
-      std::lock_guard<std::mutex> lock(buff_idle_mutex_);
-      for (auto &dev_buffer : buff_addr_idle_) {
+      auto &mutex = (pool_index == 0) ? buff_idle_mutex_ : server_buff_idle_mutex_;
+      std::lock_guard<std::mutex> lock(mutex);
+      for (auto &dev_buffer : buff_addr_idles_[pool_index]) {
         if (dev_buffer.second) {
           dev_buffer.second = false;
           buffer_addr = dev_buffer.first;
@@ -631,14 +641,24 @@ Status BufferTransferService::TryGetBuffer(void *&buffer_addr, uint64_t timeout)
   }
 }
 
-void BufferTransferService::ReleaseBuffer(void *buffer_addr) {
+void BufferTransferService::ReleaseBuffer(void *buffer_addr, size_t pool_index) {
   if (buffer_addr == nullptr) {
     return;
   }
-  std::lock_guard<std::mutex> buff_idle_lock(buff_idle_mutex_);
-  if (buff_addr_idle_.find(buffer_addr) != buff_addr_idle_.end()) {
-    buff_addr_idle_[buffer_addr] = true;
+  auto &mutex = (pool_index == 0) ? buff_idle_mutex_ : server_buff_idle_mutex_;
+  std::lock_guard<std::mutex> buff_idle_lock(mutex);
+  auto &buff_addr_idle = buff_addr_idles_[pool_index];
+  if (buff_addr_idle.find(buffer_addr) != buff_addr_idle.end()) {
+    buff_addr_idle[buffer_addr] = true;
   }
+}
+
+Status BufferTransferService::TryGetServerBuffer(void *&buffer_addr, uint64_t timeout) {
+  return TryGetBuffer(buffer_addr, timeout, kServerPoolIndex);
+}
+
+void BufferTransferService::ReleaseServerBuffer(void *buffer_addr) {
+  return ReleaseBuffer(buffer_addr, kServerPoolIndex);
 }
 
 Status BufferTransferService::SendBufferReq(const ChannelPtr &channel, BufferReq &buffer_req, uint64_t timeout,

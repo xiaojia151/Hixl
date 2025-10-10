@@ -27,6 +27,18 @@ constexpr const char kLlmOptionListenPort[] = "llm.ListenPort";
 constexpr const char kLlmOptionEnableRemoteCacheAccessible[] = "llm.EnableRemoteCacheAccessible";
 constexpr uint64_t kDefaultTensorNumPerLayer = 2U;
 
+struct IpInfo {
+  uint32_t ip = 0U;
+  uint16_t port = 0U;
+};
+
+struct ClusterInfo {
+  uint64_t remote_cluster_id = 0U;
+  int32_t remote_role_type = 0;
+  std::vector<IpInfo> local_ip_infos;
+  std::vector<IpInfo> remote_ip_infos;
+};
+
 #pragma pack(push, 1)
 enum class RegisterMemoryStatus : uint32_t { OK = 0U, PREPARING = 1U, FAILED = 2U };
 

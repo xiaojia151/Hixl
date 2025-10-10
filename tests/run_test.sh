@@ -208,14 +208,16 @@ run() {
                   -d ${BUILD_PATH}/tests/depends/python/CMakeFiles/llm_datadist_wrapper_stub.dir \
                   -d ${BUILD_PATH}/tests/depends/python/CMakeFiles/metadef_wrapper_stub.dir \
                -o cov/tmp.info
+          lcov -e cov/tmp.info "${BASEPATH}/src/*" -o cov/coverage.info
+          cd ${BASEPATH}/cov
+          genhtml coverage.info
       fi
 
       if [[ "X$ENABLE_PY_TEST" = "Xon" ]]; then
           mv ${BUILD_PATH}/.coverage ${BASEPATH}/cov/
+          cd ${BASEPATH}/cov
+          coverage html -i --include="${BASEPATH}/src/*"
       fi
-      lcov -e cov/tmp.info "${BASEPATH}/src/*" -o cov/coverage.info
-      cd ${BASEPATH}/cov
-      genhtml coverage.info
   fi
 }
 

@@ -50,15 +50,6 @@ ge::Status CheckBlocksContinuous(const std::vector<std::pair<int64_t, int64_t>> 
 
 ge::Status LLMUtils::ParserWaitTimeInfo(const std::map<ge::AscendString, ge::AscendString> &options,
                                         DecoderWaitTimeInfo &wait_time_info) {
-  const auto &input_wait_time_iter = options.find(LLM_OPTION_INPUT_WAIT_TIME);
-  if (input_wait_time_iter != options.cend()) {
-    LLMLOGI("get input wait time:%s ms.", input_wait_time_iter->second.GetString());
-    LLM_CHK_BOOL_RET_STATUS(IsPositiveInteger(input_wait_time_iter->second.GetString()) == ge::SUCCESS,
-                           ge::LLM_PARAM_INVALID,
-                           "input wait time:%s is invalid, wait time value should be a positive integer.",
-                           input_wait_time_iter->second.GetString());
-    wait_time_info.input_wait_time = std::atoi(input_wait_time_iter->second.GetString());
-  }
   const auto &sync_kv_wait_time_iter = options.find(LLM_OPTION_SYNC_KV_CACHE_WAIT_TIME);
   if (sync_kv_wait_time_iter != options.cend()) {
     LLMLOGI("get sync kv wait time:%s ms.", sync_kv_wait_time_iter->second.GetString());
@@ -68,24 +59,7 @@ ge::Status LLMUtils::ParserWaitTimeInfo(const std::map<ge::AscendString, ge::Asc
                            sync_kv_wait_time_iter->second.GetString());
     wait_time_info.sync_kv_wait_time = std::atoi(sync_kv_wait_time_iter->second.GetString());
   }
-  const auto &nn_execute_wait_time_iter = options.find(LLM_OPTION_NN_EXECUTE_WAIT_TIME);
-  if (nn_execute_wait_time_iter != options.cend()) {
-    LLMLOGI("get nn execute wait time:%s ms.", nn_execute_wait_time_iter->second.GetString());
-    LLM_CHK_BOOL_RET_STATUS(IsPositiveInteger(nn_execute_wait_time_iter->second.GetString()) == ge::SUCCESS,
-                           ge::LLM_PARAM_INVALID,
-                           "nn execute wait time:%s is invalid, wait time value should be a positive integer.",
-                           nn_execute_wait_time_iter->second.GetString());
-    wait_time_info.nn_execute_wait_time = std::atoi(nn_execute_wait_time_iter->second.GetString());
-  }
-  const auto &proc_req_wait_time_iter = options.find(LLM_OPTION_PROCESS_REQUEST_WAIT_TIME);
-  if (proc_req_wait_time_iter != options.cend()) {
-    LLMLOGI("get process request wait time:%s ms.", proc_req_wait_time_iter->second.GetString());
-    LLM_CHK_BOOL_RET_STATUS(IsPositiveInteger(proc_req_wait_time_iter->second.GetString()) == ge::SUCCESS,
-                           ge::LLM_PARAM_INVALID,
-                           "process request wait time:%s is invalid, wait time value should be a positive integer.",
-                           proc_req_wait_time_iter->second.GetString());
-    wait_time_info.process_req_wait_time = std::atoi(proc_req_wait_time_iter->second.GetString());
-  }
+
   return ge::SUCCESS;
 }
 
@@ -167,11 +141,9 @@ ge::Status LLMUtils::FindContiguousBlockIndexPair(const std::vector<uint64_t> &s
 }
 
 ge::Status LLMUtils::IpToInt(const std::string &ip, uint32_t &ip_int) {
-  const std::string
-      kIpPatternStr = R"(^(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)$)";
   constexpr uint32_t kNumBits = 8U;
-  std::regex ip_pattern(kIpPatternStr);
-  LLM_CHK_BOOL_RET_STATUS(std::regex_match(ip, ip_pattern), ge::LLM_PARAM_INVALID,
+  struct in_addr addr;
+  LLM_CHK_BOOL_RET_STATUS(inet_pton(AF_INET, ip.c_str(), &addr) == 1, ge::LLM_PARAM_INVALID,
                          "%s is not a valid ip address", ip.c_str());
   const auto items = LLMUtils::Split(ip, '.');
   ip_int = 0;
@@ -184,10 +156,8 @@ ge::Status LLMUtils::IpToInt(const std::string &ip, uint32_t &ip_int) {
 }
 
 ge::Status LLMUtils::CheckIp(const std::string &ip) {
-  const std::string
-      kIpPatternStr = R"(^(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)$)";
-  std::regex ip_pattern(kIpPatternStr);
-  LLM_CHK_BOOL_RET_STATUS(std::regex_match(ip, ip_pattern), ge::LLM_PARAM_INVALID,
+  struct in_addr addr;
+  LLM_CHK_BOOL_RET_STATUS(inet_pton(AF_INET, ip.c_str(), &addr) == 1, ge::LLM_PARAM_INVALID,
                          "%s is not a valid ip address", ip.c_str());
   return ge::SUCCESS;
 }

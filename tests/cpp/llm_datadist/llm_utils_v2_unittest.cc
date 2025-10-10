@@ -8,7 +8,6 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 
-
 #include <gtest/gtest.h>
 #include "common/llm_utils.h"
 #include "common/msg_handler_plugin.h"
@@ -79,15 +78,9 @@ TEST_F(LLMUtilsTest, TestParserOptions) {
       {"ge.socVersion", "Ascend910B1"},
       {"ge.graphRunMode", "0"},
       {llm::LLM_OPTION_ROLE, "decoder"},
-      {llm::LLM_OPTION_OM_CACHE_PATH, "/tmp/om_cache_paths"},
       {"ge.distributed_cluster_build", "1"},
       {"RESOURCE_CONFIG_PATH", "/tmp/numa_config_path"},
-      {llm::LLM_OPTION_INPUT_WAIT_TIME, "1"},
-      {llm::LLM_OPTION_PROCESS_REQUEST_WAIT_TIME, "1000"},
       {llm::LLM_OPTION_SYNC_KV_CACHE_WAIT_TIME, "20"},
-      {llm::LLM_OPTION_NN_EXECUTE_WAIT_TIME, "100"},
-      {llm::LLM_OPTION_ENABLE_BUF_CFG, "1"},
-      {llm::LLM_OPTION_HCOM_CLUSTER_CONFIG, "hcom_cluster_config.c_str()"},
   };
 
   DecoderWaitTimeInfo wait_time_info;

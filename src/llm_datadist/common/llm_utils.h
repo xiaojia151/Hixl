@@ -19,16 +19,10 @@
 #include "common/llm_inner_types.h"
 
 namespace llm {
-constexpr int32_t kDefaultInputWaitTime = 1;
 constexpr int32_t kDefaultSyncKvWaitTime = 1000;
-constexpr int32_t kDefaultNnExecuteWaitTime = 1000;
-constexpr int32_t kDefaultProcessReqWaitTime = 3000;
 
 struct DecoderWaitTimeInfo {
-  int32_t input_wait_time{kDefaultInputWaitTime};
   int32_t sync_kv_wait_time{kDefaultSyncKvWaitTime};
-  int32_t nn_execute_wait_time{kDefaultNnExecuteWaitTime};
-  int32_t process_req_wait_time{kDefaultProcessReqWaitTime};
 };
 
 enum class ServerType : uint32_t { Prompt = 0U, Decoder };

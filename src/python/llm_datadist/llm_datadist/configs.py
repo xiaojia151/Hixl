@@ -104,7 +104,6 @@ class LlmConfig(object):
         self._listen_ip_info = ""
         self._device_id = None
         self._sync_kv_timeout = None
-        self._hcom_cluster_config = ""
         self._deploy_res_path = ""
         self._ge_options = {}
         self._enable_switch_role = False
@@ -113,8 +112,6 @@ class LlmConfig(object):
 
         # below is offline
         self._cluster_info = ""
-        self._nn_execute_timeout = ""
-        self._process_request_timeout = ""
         self._output_max_size = ""
         self._mem_utilization = 0.95
         self._buf_pool_cfg = ""
@@ -148,8 +145,6 @@ class LlmConfig(object):
                 self._options["ge.exec.deviceId"] = ";".join([str(dev) for dev in self.device_id])
         if self.sync_kv_timeout is not None:
             self._options["llm.SyncKvCacheWaitTime"] = str(self.sync_kv_timeout)
-        if self.hcom_cluster_config:
-            self._options["llm.HcomClusterConfig"] = str(self.hcom_cluster_config)
         if self.deploy_res_path:
             self._options["llm.deployResPath"] = str(self.deploy_res_path)
         if self.buf_pool_cfg:
@@ -166,10 +161,6 @@ class LlmConfig(object):
         # below is offline
         if self._cluster_info:
             self._options["llm.ClusterInfo"] = str(self.cluster_info)
-        if self._nn_execute_timeout:
-            self._options["llm.NnExecuteWaitTime"] = str(self.nn_execute_timeout)
-        if self._process_request_timeout:
-            self._options["llm.ProcessRequestWaitTime"] = str(self.process_request_timeout)
         if self._output_max_size:
             self._options["llm.OutputMaxSize"] = str(self.output_max_size)
         if self._enable_switch_role:
@@ -271,20 +262,8 @@ class LlmConfig(object):
         return self._cluster_info
 
     @property
-    def hcom_cluster_config(self):
-        return self._hcom_cluster_config
-
-    @property
-    def nn_execute_timeout(self):
-        return self._nn_execute_timeout
-
-    @property
     def sync_kv_timeout(self):
         return self._sync_kv_timeout
-
-    @property
-    def process_request_timeout(self):
-        return self._process_request_timeout
 
     @cluster_info.setter
     def cluster_info(self, cluster_info):
@@ -295,16 +274,6 @@ class LlmConfig(object):
                 ip_info["ip"] = trans_str_ip(ip_info["ip"])
         self._cluster_info = json.dumps(cluster_info_dict)
 
-    @hcom_cluster_config.setter
-    def hcom_cluster_config(self, hcom_cluster_config):
-        check_isinstance("hcom_cluster_config", hcom_cluster_config, str)
-        self._hcom_cluster_config = hcom_cluster_config
-
-    @nn_execute_timeout.setter
-    def nn_execute_timeout(self, nn_execute_timeout):
-        check_isinstance("nn_execute_timeout", nn_execute_timeout, [int, str])
-        self._nn_execute_timeout = nn_execute_timeout
-
     @sync_kv_timeout.setter
     def sync_kv_timeout(self, sync_kv_timeout):
         check_isinstance("sync_kv_timeout", sync_kv_timeout, [int, str])
@@ -313,11 +282,6 @@ class LlmConfig(object):
         raise_if_false(int(sync_kv_timeout) > 0, "sync_kv_timeout should be greater than zero.")
         check_int32('sync_kv_timeout', int(sync_kv_timeout))
         self._sync_kv_timeout = sync_kv_timeout
-
-    @process_request_timeout.setter
-    def process_request_timeout(self, process_request_timeout):
-        check_isinstance("process_request_timeout", process_request_timeout, [int, str])
-        self._process_request_timeout = process_request_timeout
 
     @property
     def enable_switch_role(self):
