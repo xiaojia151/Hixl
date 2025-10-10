@@ -44,7 +44,7 @@
 
 ## 函数功能<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section3870635"></a>
 
-构造CacheKey，通常CacheManager的[allocate\_cache](allocate_cache.md)、[pull\_cache](pull_cache.md)接口中作为参数类型使用。
+构造CacheKey，通常CacheManager的allocate\_cache、pull\_cache接口中作为参数类型使用。
 
 ## 函数原型<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section24431028171314"></a>
 

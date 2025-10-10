@@ -2,7 +2,7 @@
 
 ## 函数功能<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section3870635"></a>
 
-构造CacheDesc，通常在CacheManager的[allocate\_cache](allocate_cache.md)接口中作为参数类型使用。
+构造CacheDesc，通常在CacheManager的allocate\_cache接口中作为参数类型使用。
 
 ## 函数原型<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section24431028171314"></a>
 
@@ -44,14 +44,14 @@ __init__(self,
 </tr>
 <tr id="row426916171070"><td class="cellrowborder" valign="top" width="22.220000000000002%" headers="mcps1.1.4.1.1 "><p id="p226918171874"><a name="p226918171874"></a><a name="p226918171874"></a>data_type</p>
 </td>
-<td class="cellrowborder" valign="top" width="35.89%" headers="mcps1.1.4.1.2 "><p id="p42693171773"><a name="p42693171773"></a><a name="p42693171773"></a><a href="DataType.md">DataType</a></p>
+<td class="cellrowborder" valign="top" width="35.89%" headers="mcps1.1.4.1.2 "><p id="p42693171773"><a name="p42693171773"></a><a name="p42693171773"></a>DataType</a></p>
 </td>
 <td class="cellrowborder" valign="top" width="41.89%" headers="mcps1.1.4.1.3 "><p id="p12699171717"><a name="p12699171717"></a><a name="p12699171717"></a>tensor的data type。</p>
 </td>
 </tr>
 <tr id="row1154353971415"><td class="cellrowborder" valign="top" width="22.220000000000002%" headers="mcps1.1.4.1.1 "><p id="p1854443991410"><a name="p1854443991410"></a><a name="p1854443991410"></a>placement</p>
 </td>
-<td class="cellrowborder" valign="top" width="35.89%" headers="mcps1.1.4.1.2 "><p id="p1754443931410"><a name="p1754443931410"></a><a name="p1754443931410"></a><a href="Placement.md">Placement</a></p>
+<td class="cellrowborder" valign="top" width="35.89%" headers="mcps1.1.4.1.2 "><p id="p1754443931410"><a name="p1754443931410"></a><a name="p1754443931410"></a>Placement</a></p>
 </td>
 <td class="cellrowborder" valign="top" width="41.89%" headers="mcps1.1.4.1.3 "><p id="p854411394140"><a name="p854411394140"></a><a name="p854411394140"></a>表示cache所在的设备类型。默认值Placement.DEVICE。</p>
 </td>

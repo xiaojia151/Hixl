@@ -1,6 +1,6 @@
 # LLMRole<a name="ZH-CN_TOPIC_0000002408011597"></a>
 
-调用[init](init.md)接口时传入的角色类型。
+调用init接口时传入的角色类型。
 
 <a name="table124618224416"></a>
 <table><thead align="left"><tr id="row7246102215412"><th class="cellrowborder" valign="top" width="60.85%" id="mcps1.1.3.1.1"><p id="p324682215414"><a name="p324682215414"></a><a name="p324682215414"></a>枚举值</p>

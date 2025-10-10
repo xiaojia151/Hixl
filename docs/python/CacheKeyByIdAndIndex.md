@@ -44,7 +44,7 @@
 
 ## 函数功能<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section3870635"></a>
 
-构造CacheKeyByIdAndIndex，通常在CacheManager的[pull\_cache](pull_cache.md)、[push\_cache](push_cache.md)接口中作为参数类型使用。
+构造CacheKeyByIdAndIndex，通常在CacheManager的pull\_cache、push\_cache接口中作为参数类型使用。
 
 ## 函数原型<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section24431028171314"></a>
 
