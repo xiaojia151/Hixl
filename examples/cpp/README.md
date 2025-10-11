@@ -35,20 +35,15 @@
 ## 程序编译
 
 1. 设置环境变量ASCEND_INSTALL_PATH为ASCEND安装的路径
-```
-export ASCEND_INSTALL_PATH=xxxx
-```
+    ```
+    export ASCEND_INSTALL_PATH=xxxx
+    ```
 
 2. 执行如下命令进行编译。
+参考[构建](../../docs/build.md)里的**编译执行**章节，利用build.sh进行编译。  
 
-   依次执行:
 
-   ```
-   mkdir build && cd build
-   cmake .. && make
-   ```
-
-3. 编译结束后，在**build**目录下生成多个可执行文件。
+3. 编译结束后，在**build/examples/cpp**目录下生成多个可执行文件。
 
 ## 样例运行
 
@@ -61,10 +56,10 @@ export ASCEND_INSTALL_PATH=xxxx
     - 若运行环境上安装的“Ascend-cann-toolkit”包，环境变量设置如下：
 
         ```
-        . ${HOME}/Ascend/ascend-toolkit/set_env.sh
+        source ${HOME}/Ascend/set_env.sh
         ```
 
-        “$HOME/Ascend”请替换相关软件包的实际安装路径。
+        “${HOME}/Ascend”请替换相关软件包的实际安装路径。
 
     - 若运行环境上安装的“CANN-XXX.run”包，环境变量设置如下：
 
@@ -72,7 +67,7 @@ export ASCEND_INSTALL_PATH=xxxx
         source ${HOME}/Ascend/latest/bin/setenv.bash
         ```
 
-        “$HOME/Ascend”请替换相关软件包的实际安装路径。
+        “${HOME}/Ascend”请替换相关软件包的实际安装路径。
 
  - 在运行环境执行可执行文件。
 
@@ -80,12 +75,12 @@ export ASCEND_INSTALL_PATH=xxxx
 
     此样例介绍了decoder向prompt进行pull cache和pull blocks流程，其中link和pull的方向与角色无关，可以根据需求更改
 
-    - 执行prompt_pull_cache_and_blocks, 参数为device_id、local_host_ip和remote_host_ip, 其中device_id为prompt要使用的device_id, local_host_ip为prompt所在host的ip, remote_host_ip为decoder所在host的ip，如:
+    - 执行prompt_pull_cache_and_blocks, 参数为device_id、local_ip和remote_ip, 其中device_id为prompt要使用的device_id, local_ip为prompt所在host的ip, 如:
         ```
         ./prompt_pull_cache_and_blocks 0 10.10.170.1
         ```
 
-    - 执行decoder_pull_cache_and_blocks, 参数为device_id、local_host_ip和remote_host_ip, 其中device_id为decoder要使用的device_id, local_host_ip为decoder所在host的ip，remote_host_ip为prompt所在host的ip，如:
+    - 执行decoder_pull_cache_and_blocks, 参数为device_id、local_ip和remote_ip, 其中device_id为decoder要使用的device_id, local_ip为decoder所在host的ip，remote_ip为prompt所在host的ip，如:
         ```
         ./decoder_pull_cache_and_blocks 2 10.170.10.2 10.170.10.1
         ```
@@ -94,12 +89,12 @@ export ASCEND_INSTALL_PATH=xxxx
 
     此样例介绍了prompt向decoder进行push cache和push blocks流程，其中link和push的方向与角色无关，可以根据需求更改
 
-    - 执行prompt_push_cache_and_blocks, 参数为device_id与local_ip, 其中device_id为prompt要使用的device_id, local_ip为prompt所在host的ip，如:
+    - 执行prompt_push_cache_and_blocks, 参数为device_id, local_ip与remote_ip 其中device_id为prompt要使用的device_id, local_ip为prompt所在host的ip，remote_ip为prompt所在host的ip, 如:
         ```
         ./prompt_push_cache_and_blocks 0 10.10.10.1 10.10.10.5
         ```
 
-    - 执行decoder_push_cache_and_blocks, 参数为device_id、local_ip与remote_ip, 其中device_id为decoder要使用的device_id, local_ip为decoder所在host的ip，remote_ip为prompt所在host的ip，如:
+    - 执行decoder_push_cache_and_blocks, 参数为device_id与local_ip, 其中device_id为decoder要使用的device_id, local_ip为decoder所在host的ip, 如:
         ```
         ./decoder_push_cache_and_blocks 4 10.10.10.5
         ```
@@ -108,19 +103,19 @@ export ASCEND_INSTALL_PATH=xxxx
 
     此样例介绍了prompt和decoder进行角色切换，并结合pull以及push使用流程
 
-    - 执行prompt_switch_roles, 参数为device_id、local_host_ip和remote_host_ip, 其中device_id为prompt要使用的device_id, local_host_ip为prompt所在host的ip, remote_host_ip为decoder所在host的ip，如:
+    - 执行prompt_switch_roles, 参数为device_id、local_ip和remote_ip, 其中device_id为prompt要使用的device_id, local_ip为prompt所在host的ip, remote_ip为decoder所在host的ip，如:
         ```
         ./prompt_switch_roles 0 10.10.170.1 10.170.10.2
         ```
 
-    - 执行decoder_switch_roles, 参数为device_id、local_host_ip和remote_host_ip, 其中device_id为decoder要使用的device_id, local_host_ip为decoder所在host的ip，remote_host_ip为prompt所在host的ip，如:
+    - 执行decoder_switch_roles, 参数为device_id、local_ip和remote_ip, 其中device_id为decoder要使用的device_id, local_ip为decoder所在host的ip，remote_ip为prompt所在host的ip，如:
         ```
         ./decoder_switch_roles 2 10.170.10.2 10.170.10.1
 
 ### 2. adxl_engine样例
   - 说明：
     - 所有样例需要成对运行，client侧和server侧执行间隔时间不要过长，client-server用例中设置WAIT_REG_TIME为5s，WAIT_TRANS_TIME为10s，server-server用例中设置WAIT_TIME为5s，用户可根据实际情况自行修改这两个变量的值以保证用例成功运行。
-    - 下面所有样例是以client和server运行在不同机器上为前提编写，如果只有一台机器只需要将local_engine和remote_engine设为相同即可。
+    - 下面所有用例都只能在单机上执行，local_engine和remote_engine设为相同即可；如果需要多机执行，需对用例进行改造。
 
   - 配置环境变量
     - 若运行环境上安装的“Ascend-cann-toolkit”包，环境变量设置如下：
@@ -145,23 +140,23 @@ export ASCEND_INSTALL_PATH=xxxx
 
     - 执行client client_server_h2d, 参数为device_id、local engine和remote engine, 其中device_id为client要使用的device_id，如:
         ```
-        HCCL_INTRA_ROCE_ENABLE=1 ./client_server_h2d 0 10.10.10.0 10.10.10.1:16000
+        HCCL_INTRA_ROCE_ENABLE=1 ./client_server_h2d 0 10.10.10.0 10.10.10.0:16000
         ```
 
     - 执行server client_server_h2d, 参数为device_id、local engine, 其中device_id为server要使用的device_id, 如:
         ```
-        HCCL_INTRA_ROCE_ENABLE=1 ./client_server_h2d 1 10.10.10.1:16000
+        HCCL_INTRA_ROCE_ENABLE=1 ./client_server_h2d 1 10.10.10.0:16000
         ```
 
     (2) 执行server_server_d2d, 均作为server，d2d场景
 
     - 执行server1 server_server_d2d, 参数为device_id、local engine和remote engine, 其中device_id为当前engine要使用的device_id，如:
         ```
-        HCCL_INTRA_ROCE_ENABLE=1 ./server_server_d2d 0 10.10.10.0:16000 10.10.10.1:16001
+        HCCL_INTRA_ROCE_ENABLE=1 ./server_server_d2d 0 10.10.10.0:16000 10.10.10.0:16001
         ```
 
     - 执行server2 server_server_d2d, 参数为device_id、local engine和remote engine, 其中device_id为当前engine要使用的device_id, 如:
         ```
-        HCCL_INTRA_ROCE_ENABLE=1 ./server_server_d2d 1 10.10.10.1:16001 10.10.10.0:16000
+        HCCL_INTRA_ROCE_ENABLE=1 ./server_server_d2d 1 10.10.10.0:16001 10.10.10.0:16000
         ```
     **注**：HCCL_INTRA_ROCE_ENABLE=1表示使用RDMA进行传输

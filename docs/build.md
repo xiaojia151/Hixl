@@ -20,8 +20,28 @@
      # 修改下面的PYTHON3_HOME为实际的PYTHON安装目录
      export PATH=$PATH:$PYTHON3_HOME/bin
      ```
+
+     执行tests需要numpy依赖(建议使用大于等于1.26.4的版本)
+     ```
+     pip install numpy
+     ```
+
+     执行python example时需要pyyaml依赖(建议使用大于等于6.0.1的版本)
+     ```
+     pip install pyyaml
+     ```
+
+     执行python example时需要torch-npu依赖(建议使用大于等于2.1.0的版本)，[获取方法](https://gitcode.com/Ascend/pytorch) 
+
+     执行example需要protobuf依赖(建议使用默认安装版本) 
+     ```
+     pip install protobuf
+     ```
+
+
+
      
-   - CMake >= 3.14.0  (建议使用3.20.0版本)
+   - CMake >= 3.16.0  (建议使用3.20.0版本)
 
      ```shell
      # Ubuntu/Debian操作系统安装命令示例如下，其他操作系统请自行安装
@@ -45,19 +65,39 @@
      sudo apt-get install bash
      ```
 
-2. **安装社区版CANN toolkit包**
+2. **安装驱动与固件（运行态依赖）**  
+  运行样例时必须安装驱动与固件，安装指导详见[《CANN软件安装指南》](https://www.hiascend.com/document/redirect/CannCommunityInstSoftware)  
 
+3. **安装社区版CANN toolkit包**
     根据实际环境，下载对应`Ascend-cann-toolkit_${cann_version}_linux-${arch}.run`包，下载链接为[toolkit x86_64包](https://ascend-cann.obs.cn-north-4.myhuaweicloud.com/CANN/community/Ascend-cann-toolkit_8.3.RC1_linux-x86_64.run)、[toolkit aarch64包](https://ascend-cann.obs.cn-north-4.myhuaweicloud.com/CANN/community/Ascend-cann-toolkit_8.3.RC1_linux-aarch64.run)。
     
     ```bash
     # 确保安装包具有可执行权限
     chmod +x Ascend-cann-toolkit_${cann_version}_linux-${arch}.run
-    # 安装命令
-    ./Ascend-cann-toolkit_${cann_version}_linux-${arch}.run --full --force --install-path=${install_path}
+    # 安装命令(其中--install-path为可选)
+    ./Ascend-cann-toolkit_${cann_version}_linux-${arch}.run --full --force --install-path=${ascend_install_path}
     ```
     - \$\{cann\_version\}：表示CANN包版本号。
     - \$\{arch\}：表示CPU架构，如aarch64、x86_64。
-    - \$\{install\_path\}：表示指定安装路径，默认安装在`/usr/local/Ascend`目录。
+    - \$\{ascend\_install\_path\}：表示指定安装路径，可选，默认安装在`/usr/local/Ascend`目录，指定路径安装时，指定的路径权限需设置为755。
+
+4. **安装社区版CANN legacy包（运行sample依赖）**
+
+    运行sample时必须安装本包。
+
+    根据产品型号和环境架构，下载对应`cann-${soc_name}-ops-legacy_${cann_version}_linux-${arch}.run`包，下载链接如下：
+
+    - Atlas A2 训练系列产品/Atlas 800I A2 推理产品/A200I A2 Box 异构组件：[legacy x86_64包](https://ascend-cann.obs.cn-north-4.myhuaweicloud.com/CANN/community/8.5.0.alpha001/cann-910b-ops-legacy_8.5.0.alpha001_linux-86_64.run)、[legacy aarch64包](https://ascend-cann.obs.cn-north-4.myhuaweicloud.com/CANN/community/8.5.0.alpha001/cann-910b-ops-legacy_8.5.0.alpha001_linux-aarch64.run)。
+    - Atlas A3 训练系列产品/Atlas A3 推理系列产品：[legacy x86_64包](https://ascend-cann.obs.cn-north-4.myhuaweicloud.com/CANN/community/8.5.0.alpha001/cann-910_93-ops-legacy_8.5.0.alpha001_linux-x86_64.run)、[legacy aarch64包](https://ascend-cann.obs.cn-north-4.myhuaweicloud.com/CANN/community/8.5.0.alpha001/cann-910_93-ops-legacy_8.5.0.alpha001_linux-aarch64.run)。
+
+    ```bash
+    # 确保安装包具有可执行权限
+    chmod +x cann-${soc_name}-ops-legacy_${cann_version}_linux-${arch}.run
+    # 安装命令
+    ./cann-${soc_name}-ops-legacy_${cann_version}_linux-${arch}.run --full --install-path=${ascend_install_path}
+    ```
+    - \$\{soc\_name\}：表示NPU型号名称，即\$\{soc\_version\}删除“ascend”后剩余的内容。
+    - \$\{ascend\_install\_path\}：表示指定安装路径，需要与toolkit包安装在相同路径，默认安装在`/usr/local/Ascend`目录。
    
 
 ### 源码下载
@@ -66,6 +106,7 @@
 ```bash
 git clone https://gitcode.com/cann/ops-dxl-dev.git
 ```
+- 注意：gitcode平台在使用HTTPS协议协议的时候要配置并使用个人访问令牌代替登录密码进行克隆，推送等操作
 
 ### 配置环境变量
 	
@@ -73,38 +114,48 @@ git clone https://gitcode.com/cann/ops-dxl-dev.git
 
  ```bash
 # 默认路径安装，以root用户为例（非root用户，将/usr/local替换为${HOME}）
-source /usr/local/Ascend/ascend-toolkit/latest/set_env.sh
+source /usr/local/Ascend/set_env.sh
 # 指定路径安装
-# source ${install_path}/set_env.sh
+# source ${ascend_install_path}/set_env.sh
  ```
 
 ### 编译执行
 
 ```bash
-# 默认路径安装，root用户默认路径是/usr/local/Ascend/ascend-toolkit/latest，普通用户默认路径是${HOME}/Ascend/ascend-toolkit/latest
+# 默认路径安装，root用户默认路径是/usr/local/Ascend，普通用户默认路径是${HOME}/Ascend
 bash build.sh 
 # 指定路径安装，安装路径是ascend_install_path
-bash build.sh --ascend_install_path=${ascend_install_path}
+bash build.sh --ascend_install_path=${ascend_install_path}/latest
 ```
-成功编译后会在build_out目录下生成cann-ops-dxl\_${cann_version}_linux\_${arch}.run  
+成功编译后会在build_out目录下生成`cann-ops-dxl_${cann_version}_linux_${arch}.run`，同时会将C++用例一同编译，在build/examples/cpp路径下生成编译后的二进制文件。  
 - ${cann_version}表示cann版本号。
-- ${arch}表示表示CPU架构，如aarch64、x86_64。
+- ${arch}表示表示CPU架构，如aarch64、x86_64。 
+- 更多执行选项可以用-h查看 
+  ```
+  bash build.sh -h
+  ```
+
 
 ## 本地验证(tests)
 利用tests路径下的测试用例进行本地验证
 ```bash
-# 默认路径安装，root用户默认路径是/usr/local/Ascend/ascend-toolkit/latest，普通用户默认路径是${HOME}/Ascend/ascend-toolkit/latest
+# 默认路径安装，root用户默认路径是/usr/local/Ascend/，普通用户默认路径是${HOME}/Ascend
 bash tests/run_test.sh
 # 指定路径安装，安装路径是ascend_install_path
 bash tests/run_test.sh --ascend_install_path=${ascend_install_path}
 ```
+- 更多执行选项可以用-h查看
+  ```
+  bash tests/run_test.sh -h
+  ```
 
 ## 安装
 
-将[编译执行](#编译执行)环节生成的run包进行安装
+将[编译执行](#编译执行)环节生成的run包进行安装  
+- 说明，此处的指定路径默认路径需与前面安装toolkit包时的路径保持一致
 ```bash
-# 如果需要指定安装路径则加上--install_path=${install_path}
-./cann-ops-dxl_${cann_version}_linux_${arch}.run --full --quiet --pylocal
+# 如果需要指定安装路径则加上--install-path=${ascend_install_path}
+./cann-ops-dxl_${cann_version}_linux-${arch}.run --full --quiet --pylocal
 ```
 - --full 全量模式安装
 - --quiet 静默安装，跳过人机交互环节
