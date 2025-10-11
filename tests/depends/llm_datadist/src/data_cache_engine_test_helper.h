@@ -174,7 +174,7 @@ class AutoCommResRuntimeMock : public llm::RuntimeStub {
   }
 
  private:
-  // 写入/tmp/hccn.conf文件
+  // write /tmp/hccn.conf
   static void WriteHccnConfFile() {
     const std::string file_path = "/tmp/hccn.conf";
     std::ofstream file(file_path);
@@ -183,7 +183,6 @@ class AutoCommResRuntimeMock : public llm::RuntimeStub {
       return;
     }
 
-    // 写入预定义的网络配置
     file << "netmask_0=1.2.3.4\n"
          << "address_0=1.1.1.0\n"
          << "netmask_1=1.2.3.4\n"
@@ -204,7 +203,7 @@ class AutoCommResRuntimeMock : public llm::RuntimeStub {
     file.close();
   }
 
-  // 删除/tmp/hccn.conf文件
+  // remove /tmp/hccn.conf
   static void RemoveHccnConfFile() {
     const std::string file_path = "/tmp/hccn.conf";
     if (std::remove(file_path.c_str()) != 0) {
