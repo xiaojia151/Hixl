@@ -46,7 +46,7 @@
 
 ## 函数功能<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section3870635"></a>
 
-获取异常的错误码。错误码列表详见[LLMStatusCode](LLMStatusCode.md)。
+获取异常的错误码。错误码列表详见LLMStatusCode。
 
 ## 函数原型<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section24431028171314"></a>
 

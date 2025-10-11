@@ -48,7 +48,7 @@
 
 等待模型指定层执行完成，用户需要继承LayerSynchronizer并实现该接口。
 
-该接口会在执行[transfer\_cache\_async](transfer_cache_async.md)时被调用，当该接口返回成功，则开始当前层cache的传输。
+该接口会在执行transfer\_cache\_async时被调用，当该接口返回成功，则开始当前层cache的传输。
 
 ## 函数原型<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section24431028171314"></a>
 
@@ -86,7 +86,7 @@ synchronize_layer(layer_index: int, timeout_in_millis: Optional[int]) -> bool
 
 ## 调用示例<a name="section17821439839"></a>
 
-该接口不由用户直接调用，而是作为回调由[CacheManager](CacheManager.md)调用。
+该接口不由用户直接调用，而是作为回调由CacheManager调用。
 
 ## 返回值<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section45086037"></a>
 

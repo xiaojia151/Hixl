@@ -57,7 +57,6 @@ HcclResult HcclBatchGet1(HcclComm comm, uint32_t remoteRank, HcclOneSideOpDesc *
   return HCCL_SUCCESS;
 }
 
-// д��/tmp/hccn.conf�ļ�
 void WriteHccnConfFile() {
   const std::string file_path = "/tmp/hccn.conf";
   std::ofstream file(file_path);
@@ -66,7 +65,6 @@ void WriteHccnConfFile() {
     return;
   }
 
-  // д��Ԥ�������������
   file << "netmask_0=1.2.3.4\n"
         << "address_0=1.1.1.0\n"
         << "netmask_1=1.2.3.4\n"
@@ -87,7 +85,6 @@ void WriteHccnConfFile() {
   file.close();
 }
 
-// ɾ��/tmp/hccn.conf�ļ�
 void RemoveHccnConfFile() {
   const std::string file_path = "/tmp/hccn.conf";
   if (std::remove(file_path.c_str()) != 0) {

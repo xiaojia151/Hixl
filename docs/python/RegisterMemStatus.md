@@ -1,6 +1,6 @@
 # RegisterMemStatus<a name="ZH-CN_TOPIC_0000002374252140"></a>
 
-调用[query\_register\_mem\_status](query_register_mem_status.md)接口的返回值类型。
+调用query\_register\_mem\_status接口的返回值类型。
 
 <a name="table124618224416"></a>
 <table><thead align="left"><tr id="row7246102215412"><th class="cellrowborder" valign="top" width="45.660000000000004%" id="mcps1.1.3.1.1"><p id="p324682215414"><a name="p324682215414"></a><a name="p324682215414"></a>枚举值</p>

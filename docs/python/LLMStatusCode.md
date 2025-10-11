@@ -83,7 +83,7 @@ LLMException中status\_code对应的枚举类，枚举值及解决方法如下�
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p1369512813402"><a name="p1369512813402"></a><a name="p1369512813402"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p88380322379"><a name="p88380322379"></a><a name="p88380322379"></a><a href="link_clusters.md">link_clusters</a>第二个返回值中有该错误码时，需要检查对应集群之间的网络连接。</p>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p88380322379"><a name="p88380322379"></a><a name="p88380322379"></a>link_clusters</a>第二个返回值中有该错误码时，需要检查对应集群之间的网络连接。</p>
 </td>
 </tr>
 <tr id="row31771641152211"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p1517719415223"><a name="p1517719415223"></a><a name="p1517719415223"></a>LLM_UNLINK_FAILED</p>
@@ -92,7 +92,7 @@ LLMException中status\_code对应的枚举类，枚举值及解决方法如下�
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p66951228114014"><a name="p66951228114014"></a><a name="p66951228114014"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p201342042133720"><a name="p201342042133720"></a><a name="p201342042133720"></a><a href="unlink_clusters.md">unlink_clusters</a>第二个返回值中有该错误码时，需要检查对应集群之间的网络连接。</p>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p201342042133720"><a name="p201342042133720"></a><a name="p201342042133720"></a>unlink_clusters</a>第二个返回值中有该错误码时，需要检查对应集群之间的网络连接。</p>
 </td>
 </tr>
 <tr id="row1444475042210"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p11444125022210"><a name="p11444125022210"></a><a name="p11444125022210"></a>LLM_NOTIFY_PROMPT_UNLINK_FAILED</p>
@@ -101,7 +101,7 @@ LLMException中status\_code对应的枚举类，枚举值及解决方法如下�
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p12695192824010"><a name="p12695192824010"></a><a name="p12695192824010"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><a name="ol10774115212272"></a><a name="ol10774115212272"></a><ol id="ol10774115212272"><li>排查Decode与Prompt之间的网络连接。</li><li>主动调Prompt侧的<a href="unlink_clusters.md">unlink_clusters</a>清理残留资源。</li></ol>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><a name="ol10774115212272"></a><a name="ol10774115212272"></a><ol id="ol10774115212272"><li>排查Decode与Prompt之间的网络连接。</li><li>主动调Prompt侧的unlink_clusters</a>清理残留资源。</li></ol>
 </td>
 </tr>
 <tr id="row1035323914230"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p103531139182316"><a name="p103531139182316"></a><a name="p103531139182316"></a>LLM_CLUSTER_NUM_EXCEED_LIMIT</p>
@@ -110,7 +110,7 @@ LLMException中status\_code对应的枚举类，枚举值及解决方法如下�
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p10695102884016"><a name="p10695102884016"></a><a name="p10695102884016"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p485143413402"><a name="p485143413402"></a><a name="p485143413402"></a>排查<a href="link_clusters.md">link_clusters</a>和<a href="unlink_clusters.md">unlink_clusters</a>传入参数，clusters数量不能超过16。</p>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p485143413402"><a name="p485143413402"></a><a name="p485143413402"></a>排查link_clusters</a>和unlink_clusters</a>传入参数，clusters数量不能超过16。</p>
 </td>
 </tr>
 <tr id="row16227125518239"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p16227145510236"><a name="p16227145510236"></a><a name="p16227145510236"></a>LLM_PROCESSING_LINK</p>
@@ -146,7 +146,7 @@ LLMException中status\_code对应的枚举类，枚举值及解决方法如下�
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p20328100163011"><a name="p20328100163011"></a><a name="p20328100163011"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p143284015303"><a name="p143284015303"></a><a name="p143284015303"></a>检查在切换当前LLMDataDist的角色前是否已经调用<a href="unlink_clusters.md">unlink_clusters</a>断开所有的链接。</p>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p143284015303"><a name="p143284015303"></a><a name="p143284015303"></a>检查在切换当前LLMDataDist的角色前是否已经调用unlink_clusters</a>断开所有的链接。</p>
 </td>
 </tr>
 <tr id="row119821824301"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p9982162163017"><a name="p9982162163017"></a><a name="p9982162163017"></a>LLM_FEATURE_NOT_ENABLED</p>
@@ -165,7 +165,7 @@ LLMException中status\_code对应的枚举类，枚举值及解决方法如下�
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p844384413234"><a name="p844384413234"></a><a name="p844384413234"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><a name="ul02175372013"></a><a name="ul02175372013"></a><ul id="ul02175372013"><li>如果是<a href="pull_cache.md">pull_cache</a>、<a href="pull_blocks.md">pull_blocks</a>、<a href="transfer_cache_async.md">transfer_cache_async</a>等传输相关接口报错，该链路不可恢复，需重新建链。</li><li>其他接口报该异常，加大超时时间并重试。</li></ul>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><a name="ul02175372013"></a><a name="ul02175372013"></a><ul id="ul02175372013"><li>如果是pull_cache</a>、pull_blocks</a>、transfer_cache_async</a>等传输相关接口报错，该链路不可恢复，需重新建链。</li><li>其他接口报该异常，加大超时时间并重试。</li></ul>
 </td>
 </tr>
 <tr id="row4762643192212"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p11762843132215"><a name="p11762843132215"></a><a name="p11762843132215"></a>LLM_LINK_BUSY</p>
@@ -175,8 +175,8 @@ LLMException中status\_code对应的枚举类，枚举值及解决方法如下�
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p117621143162216"><a name="p117621143162216"></a><a name="p117621143162216"></a>是</p>
 </td>
 <td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p17762184310222"><a name="p17762184310222"></a><a name="p17762184310222"></a>检查同时调用的接口是否有冲突，例如：同时调用如下接口时，会报该错误码。</p>
-<a name="ul10452131203213"></a><a name="ul10452131203213"></a><ul id="ul10452131203213"><li>同时调用<a href="unlink.md">unlink</a>和<p id="p463121183515"><a name="p463121183515"></a><a name="p463121183515"></a><a href="pull_cache.md">pull_cache</a>。</p>
-</li><li>使用相同链路同时调用<a href="pull_cache.md">pull_cache</a>和<a href="transfer_cache_async.md">transfer_cache_async</a>。</li></ul>
+<li>同时调用unlink</a>和pull_cache</a>。
+</li><li>使用相同链路同时调用pull_cache</a>和transfer_cache_async</a>。</li></ul>
 </td>
 </tr>
 <tr id="row13117497241"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p22184952412"><a name="p22184952412"></a><a name="p22184952412"></a>LLM_OUT_OF_MEMORY</p>
@@ -195,7 +195,7 @@ LLMException中status\_code对应的枚举类，枚举值及解决方法如下�
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p155971670190"><a name="p155971670190"></a><a name="p155971670190"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p12312104312411"><a name="p12312104312411"></a><a name="p12312104312411"></a>请参考<span id="ph963712461518"><a name="ph963712461518"></a><a name="ph963712461518"></a>《Ascend Extension for PyTorch 自定义API参考》</span>中的torch_npu.npu.restart_device接口的说明获取并修复内存UCE的错误虚拟地址。如果是KV Cache内存，需要再调用cache manager的<a href="remap_registered_memory.md">remap_registered_memory</a>接口修复注册给网卡的KV Cache内存。</p>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p12312104312411"><a name="p12312104312411"></a><a name="p12312104312411"></a>请参考<span id="ph963712461518"><a name="ph963712461518"></a><a name="ph963712461518"></a>《Ascend Extension for PyTorch 自定义API参考》</span>中的torch_npu.npu.restart_device接口的说明获取并修复内存UCE的错误虚拟地址。如果是KV Cache内存，需要再调用cache manager的remap_registered_memory</a>接口修复注册给网卡的KV Cache内存。</p>
 <div class="note" id="note17365201515316"><a name="note17365201515316"></a><a name="note17365201515316"></a><span class="notetitle"> 说明： </span><div class="notebody"><p id="p133650151335"><a name="p133650151335"></a><a name="p133650151335"></a>本错误码为预留，暂不支持。</p>
 </div></div>
 </td>

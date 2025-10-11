@@ -1,6 +1,6 @@
 # MemType<a name="ZH-CN_TOPIC_0000002407891581"></a>
 
-表示地址所在位置，通常作为[MemInfo](MemInfo.md)的mem\_type参数的类型。
+表示地址所在位置，通常作为MemInfo的mem\_type参数的类型。
 
 <a name="zh-cn_topic_0000001417673572_zh-cn_topic_0000001359609816_table2051894852017"></a>
 <table><thead align="left"><tr id="zh-cn_topic_0000001417673572_zh-cn_topic_0000001359609816_row4558174815206"><th class="cellrowborder" valign="top" width="34.01%" id="mcps1.1.3.1.1"><p id="zh-cn_topic_0000001417673572_zh-cn_topic_0000001359609816_p255884814201"><a name="zh-cn_topic_0000001417673572_zh-cn_topic_0000001359609816_p255884814201"></a><a name="zh-cn_topic_0000001417673572_zh-cn_topic_0000001359609816_p255884814201"></a>枚举值</p>

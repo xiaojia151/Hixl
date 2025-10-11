@@ -44,7 +44,7 @@
 
 ## 函数功能<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section3870635"></a>
 
-构造BlocksCacheKey，通常在CacheManager的[allocate\_blocks\_cache](allocate_blocks_cache.md)、[pull\_blocks](pull_blocks.md)、[push\_blocks](push_blocks.md)接口中作为参数类型使用。
+构造BlocksCacheKey，通常在CacheManager的allocate\_blocks\_cache、pull\_blocks、push\_blocks接口中作为参数类型使用。
 
 ## 函数原型<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section24431028171314"></a>
 

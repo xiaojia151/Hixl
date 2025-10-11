@@ -2,7 +2,7 @@
 
 ## 函数功能<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section3870635"></a>
 
-构造MemInfo，通常在CacheManager的[remap\_registered\_memory](remap_registered_memory.md)接口中作为参数类型使用。
+构造MemInfo，通常在CacheManager的remap\_registered\_memory接口中作为参数类型使用。
 
 ## 函数原型<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section24431028171314"></a>
 
@@ -23,7 +23,7 @@ __init__(mem_type: Memtype, addr: int, size: int)
 </thead>
 <tbody><tr id="zh-cn_topic_0000001417673572_zh-cn_topic_0000001359609816_row35581048202018"><td class="cellrowborder" valign="top" width="22.220000000000002%" headers="mcps1.1.4.1.1 "><p id="p6621349454"><a name="p6621349454"></a><a name="p6621349454"></a>mem_type</p>
 </td>
-<td class="cellrowborder" valign="top" width="35.89%" headers="mcps1.1.4.1.2 "><p id="p9541205974512"><a name="p9541205974512"></a><a name="p9541205974512"></a><a href="MemType.md">MemType</a></p>
+<td class="cellrowborder" valign="top" width="35.89%" headers="mcps1.1.4.1.2 "><p id="p9541205974512"><a name="p9541205974512"></a><a name="p9541205974512"></a>MemType</a></p>
 </td>
 <td class="cellrowborder" valign="top" width="41.89%" headers="mcps1.1.4.1.3 "><p id="p7172700591"><a name="p7172700591"></a><a name="p7172700591"></a>内存地址类型。</p>
 </td>

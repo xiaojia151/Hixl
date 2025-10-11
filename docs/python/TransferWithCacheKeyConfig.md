@@ -65,7 +65,7 @@ __init__(cache_key: Union[BlocksCacheKey, CacheKeyByIdAndIndex], src_layer_range
 </thead>
 <tbody><tr id="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312720989_row32073719"><td class="cellrowborder" valign="top" width="27.63%" headers="mcps1.1.4.1.1 "><p id="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312720989_p47834478"><a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312720989_p47834478"></a><a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312720989_p47834478"></a>cache_key</p>
 </td>
-<td class="cellrowborder" valign="top" width="25.580000000000002%" headers="mcps1.1.4.1.2 "><p id="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312720989_p49387472"><a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312720989_p49387472"></a><a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312720989_p49387472"></a>Union[<a href="BlocksCacheKey.md">BlocksCacheKey</a>, <a href="CacheKeyByIdAndIndex.md">CacheKeyByIdAndIndex</a>]</p>
+<td class="cellrowborder" valign="top" width="25.580000000000002%" headers="mcps1.1.4.1.2 "><p id="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312720989_p49387472"><a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312720989_p49387472"></a><a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312720989_p49387472"></a>Union[BlocksCacheKey</a>, CacheKeyByIdAndIndex</a>]</p>
 </td>
 <td class="cellrowborder" valign="top" width="46.79%" headers="mcps1.1.4.1.3 "><p id="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312720989_p29612923"><a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312720989_p29612923"></a><a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312720989_p29612923"></a>目的Cache所在实例的cluster_id。</p>
 </td>
@@ -105,7 +105,7 @@ TransferWithCacheKeyConfig(BlocksCacheKey(1), range(0, 40), range(0, 40))
 
 正常情况下返回TransferWithCacheKeyConfig的实例。
 
-参数错误可能抛出TypeError、ValueError或[LLMException](LLMException.md)。
+参数错误可能抛出TypeError、ValueError或LLMException。
 
 ## 约束说明<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section28090371"></a>
 

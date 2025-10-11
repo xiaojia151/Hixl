@@ -107,7 +107,7 @@ TransferConfig(1, dst_addrs, range(0, 3), 1)
 
 参数错误可能抛出TypeError或ValueError。
 
-src\_layer\_range不合法会抛出[LLMException](LLMException.md)。
+src\_layer\_range不合法会抛出LLMException。
 
 ## 约束说明<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section28090371"></a>
 
