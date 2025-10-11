@@ -99,7 +99,7 @@ class LlmCacheManagerSt(unittest.TestCase):
         cache_mgr = self.llm_datadist.cache_manager
         mem_info = MemInfo(Memtype.MEM_TYPE_DEVICE, 1234, 1)
         mem_infos = [mem_info]
-        print(f"{mem_info=}")
+        print(f"mem_info={mem_info}")
         try:
             cache_mgr.remap_registered_memory(mem_info)
             cache_mgr.remap_registered_memory(mem_infos)
