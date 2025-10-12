@@ -49,7 +49,7 @@ find_path(_INCLUDE_DIR
     NO_CMAKE_SYSTEM_PATH
     NO_CMAKE_FIND_ROOT_PATH)
 
-find_library(ascend_hal_stub_SHARED_LIBRARY
+find_path(ascend_hal_LIBRARY_DIR
     NAMES libascend_hal.so
     PATH_SUFFIXES lib64/stub runtime/lib64/stub devlib
     NO_CMAKE_SYSTEM_PATH
@@ -61,7 +61,7 @@ find_package_handle_standard_args(ascend_hal
         ascend_hal_FOUND
     REQUIRED_VARS
         _INCLUDE_DIR
-        ascend_hal_stub_SHARED_LIBRARY
+        ascend_hal_LIBRARY_DIR
 )
 
 if(ascend_hal_FOUND)
@@ -69,23 +69,20 @@ if(ascend_hal_FOUND)
     include(CMakePrintHelpers)
     message(STATUS "Variables in ascend_hal module:")
     cmake_print_variables(ascend_hal_INCLUDE_DIR)
-    cmake_print_variables(ascend_hal_stub_SHARED_LIBRARY)
-
-    add_library(ascend_hal_stub SHARED IMPORTED)
-    set_target_properties(ascend_hal_stub PROPERTIES
-        INTERFACE_LINK_LIBRARIES "ascend_hal_headers"
-        IMPORTED_LOCATION "${ascend_hal_stub_SHARED_LIBRARY}"
-    )
 
     add_library(ascend_hal_headers INTERFACE IMPORTED)
     set_target_properties(ascend_hal_headers PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES "${ascend_hal_INCLUDE_DIR};${ascend_hal_INCLUDE_DIR}/ascend_hal;${ascend_hal_INCLUDE_DIR}/ascend_hal/driver"
     )
 
+    # 提供一个函数方便其他目标使用
+    function(target_link_ascend_hal target)
+        target_include_directories(${target} PRIVATE ${ascend_hal_INCLUDE_DIR})
+        target_link_options(${target} PRIVATE "-L${ascend_hal_LIBRARY_DIR}")
+        target_link_libraries(${target} PRIVATE "-lascend_hal")
+    endfunction()
+
     include(CMakePrintHelpers)
-    cmake_print_properties(TARGETS ascend_hal_stub
-        PROPERTIES INTERFACE_LINK_LIBRARIES IMPORTED_LOCATION
-    )
     cmake_print_properties(TARGETS ascend_hal_headers
         PROPERTIES INTERFACE_INCLUDE_DIRECTORIES
     )
@@ -93,3 +90,4 @@ endif()
 
 # Cleanup temporary variables.
 set(_INCLUDE_DIR)
+unset(ascend_hal_LIBRARY_DIR)
