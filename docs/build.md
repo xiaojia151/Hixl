@@ -54,9 +54,9 @@
     - \$\{arch\}：表示CPU架构，如aarch64、x86_64。
     - \$\{ascend\_install\_path\}：表示指定安装路径，可选，默认安装在`/usr/local/Ascend`目录，指定路径安装时，指定的路径权限需设置为755。
 
-4. **安装社区版CANN legacy包（运行态依赖）**
+4. **安装社区版CANN legacy包（可选）**
 
-    运行sample时必须安装本包，若仅编译源码，可跳过本操作。
+   运行python样例时需安装本包，若仅编译源码或运行C++样例，则跳过本操作。
 
     根据产品型号和环境架构，下载对应`cann-${soc_name}-ops-legacy_${cann_version}_linux-${arch}.run`包，下载链接如下：
 
@@ -70,6 +70,25 @@
     ./cann-${soc_name}-ops-legacy_${cann_version}_linux-${arch}.run --full --install-path=${ascend_install_path}
     ```
     - \$\{soc\_name\}：表示NPU型号名称，即\$\{soc\_version\}删除“ascend”后剩余的内容。
+    - \$\{ascend\_install\_path\}：表示指定安装路径，需要与toolkit包安装在相同路径，默认安装在`/usr/local/Ascend`目录。
+
+5. **安装社区版CANN ops-math包（可选）**
+
+   运行python样例时需安装本包，若仅编译源码或运行C++样例，则跳过本操作。
+
+   根据产品型号和环境架构，下载对应`cann-${soc_name}-ops-math_${cann_version}_linux-${arch}.run`包，下载链接如下：
+
+    - Atlas A2 训练系列产品/Atlas 800I A2 推理产品/A200I A2 Box 异构组件：[ops-math x86_64包](https://ascend-cann.obs.cn-north-4.myhuaweicloud.com/CANN/community/cann-910b-ops-math_8.5.0.alpha001_linux-x86_64.run)、[ops-math aarch64包](https://ascend-cann.obs.cn-north-4.myhuaweicloud.com/CANN/community/cann-910b-ops-math_8.5.0.alpha001_linux-aarch64.run)。
+    - Atlas A3 训练系列产品/Atlas A3 推理系列产品：[ops-math x86_64包](https://ascend-cann.obs.cn-north-4.myhuaweicloud.com/CANN/community/cann-910_93-ops-math_8.5.0.alpha001_linux-x86_64.run)、[ops-math aarch64包](https://ascend-cann.obs.cn-north-4.myhuaweicloud.com/CANN/community/cann-910_93-ops-math_8.5.0.alpha001_linux-aarch64.run)。
+
+    ```bash
+    # 确保安装包具有可执行权限
+    chmod +x cann-${soc_name}-ops-math_${cann_version}_linux-${arch}.run
+    # 安装命令
+    ./cann-${soc_name}-ops-math_${cann_version}_linux-${arch}.run --full --install-path=${ascend_install_path}
+    ```
+
+    - \$\{soc\_name\}：表示NPU型号名称，即${soc_version}删除“ascend”后剩余的内容。
     - \$\{ascend\_install\_path\}：表示指定安装路径，需要与toolkit包安装在相同路径，默认安装在`/usr/local/Ascend`目录。
    
 
