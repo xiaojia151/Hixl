@@ -66,7 +66,7 @@ source ${HOME}/Ascend/set_env.sh
     - 说明：
       本示例必须使用双机，参考[执行前准备](#执行前准备)，此用例适用于A2环境
 
-    分别在Prompt主机与Decoder主机，执行样例程序：
+    分别在Prompt主机与Decoder主机，执行样例程序，其中device_id为要使用的device_id，cluster_id为集群ID且在所有参与建链的范围内需要确保唯一：
     ```
     # Prompt主机:
     python pull_cache_sample.py --device_id 0 --cluster_id 1
@@ -77,7 +77,7 @@ source ${HOME}/Ascend/set_env.sh
     - 说明：
       本示例必须使用双机，参考[执行前准备](#执行前准备)，此用例适用于A2环境
 
-    分别在Prompt主机与Decoder主机，执行样例程序：
+    分别在Prompt主机与Decoder主机，执行样例程序，其中device_id为要使用的device_id，cluster_id为集群ID且在所有参与建链的范围内需要确保唯一：
     ```
     # Prompt主机:
     python pull_blocks_sample.py --device_id 0 --cluster_id 1
@@ -88,7 +88,7 @@ source ${HOME}/Ascend/set_env.sh
     - 说明：
       本示例必须使用双机，参考[执行前准备](#执行前准备)，此用例适用于A2环境
       
-    分别在Prompt主机与Decoder主机，执行样例程序：
+    分别在Prompt主机与Decoder主机，执行样例程序，其中device_id为要使用的device_id，cluster_id为集群ID且在所有参与建链的范围内需要确保唯一：
     ```
     # Prompt主机:
     python pull_from_cache_to_blocks.py --device_id 0 --cluster_id 1
@@ -96,7 +96,7 @@ source ${HOME}/Ascend/set_env.sh
     python pull_from_cache_to_blocks.py --device_id 0 --cluster_id 2
     ```
 - 执行push_blocks样例程序，此样例程序使用单侧建链方式，申请内存并注册blocks,  decoder发起建链并push blocks
-    分别在Prompt主机与Decoder主机，执行样例程序：
+    分别在Prompt主机与Decoder主机，执行样例程序，其中device_id为要使用的device_id，role为集群角色，local_host_ip为本地host的ip，remote_host_ip为对端host的ip：
     ```
     # Prompt主机:
     GLOO_SOCKET_IFNAME=enp67s0f5 HCCL_INTRA_ROCE_ENABLE=1 python push_blocks_sample.py --device_id 0 --role p --local_host_ip 10.170.10.0 --remote_host_ip 10.170.10.1
@@ -104,7 +104,7 @@ source ${HOME}/Ascend/set_env.sh
     GLOO_SOCKET_IFNAME=enp67s0f5 HCCL_INTRA_ROCE_ENABLE=1 python push_blocks_sample.py --device_id 1 --role d --local_host_ip 10.170.10.1 --remote_host_ip 10.170.10.0
     ```
 - 执行push_cache样例程序：此样例程序使用单侧建链方式，申请内存并注册cache,  decoder发起建链并push cache
-    分别在Prompt主机与Decoder主机，执行样例程序：
+    分别在Prompt主机与Decoder主机，执行样例程序，其中device_id为要使用的device_id，role为集群角色，local_host_ip为本地host的ip，remote_host_ip为对端host的ip：
     ```
     # Prompt主机:
     GLOO_SOCKET_IFNAME=enp67s0f5 HCCL_INTRA_ROCE_ENABLE=1 python push_cache_sample.py --device_id 0 --role p --local_host_ip 10.170.10.0 --remote_host_ip 10.170.10.1
@@ -112,7 +112,7 @@ source ${HOME}/Ascend/set_env.sh
     GLOO_SOCKET_IFNAME=enp67s0f5 HCCL_INTRA_ROCE_ENABLE=1 python push_cache_sample.py --device_id 1 --role d --local_host_ip 10.170.10.1 --remote_host_ip 10.170.10.0
     ```
 - 执行switch_role样例程序：此样例程序使用单侧建链方式，首先torch自行申请内存并注册blocks, decoder发起建链并pull blocks, 然后两侧切换角色, 并prompt发起建链， decoder进行push_blocks
-    分别在Prompt主机与Decoder主机，执行样例程序：
+    分别在Prompt主机与Decoder主机，执行样例程序，其中device_id为要使用的device_id，role为集群角色，local_host_ip为本地host的ip，remote_host_ip为对端host的ip：
     ```
     # Prompt主机:
     GLOO_SOCKET_IFNAME=enp67s0f5 HCCL_INTRA_ROCE_ENABLE=1 python switch_role_sample.py --device_id 0 --role p --local_host_ip 10.170.10.0 --remote_host_ip 10.170.10.1
@@ -137,7 +137,7 @@ source ${HOME}/Ascend/set_env.sh
     .  
     .  
     其中 {prompt_ip_list}由 **所有prompt侧的{$local\_ip:port$}** 组成，之间用 **;** 连接  
-    分别在Prompt主机与Decoder主机，执行样例程序：
+    分别在Prompt主机与Decoder主机，执行样例程序，其中device_id为要使用的device_id，role为集群角色，local_ip_port为本地host的ip和端口，remote_ip_port为对端host的ip和端口：
     ```
     # 任意个Prompt主机:
     GLOO_SOCKET_IFNAME=enp67s0f5 HCCL_INTRA_ROCE_ENABLE=1 python pull_blocks_xpyd_sample.py --device_id 0 --role p --local_ip_port 10.170.10.0:26000
