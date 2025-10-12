@@ -14,7 +14,7 @@
 
 ```
 ├── cpp
-|   ├── prompt_pull_cache_and_blocks.cpp              // pull cache和pull blocks的prompt侧实现
+|   ├── prompt_pull_cache_and_blocks.cpp               // pull cache和pull blocks的prompt侧实现
 |   ├── decoder_pull_cache_and_blocks.cpp              // pull cache和pull blocks的decoder侧实现
 |   ├── prompt_push_cache_and_blocks.cpp               // push cache和push blocks的prompt侧实现
 |   ├── decoder_push_cache_and_blocks.cpp              // push cache和push blocks的decoder侧实现
@@ -29,28 +29,22 @@
 
 -   操作系统及架构：Euleros x86系统、Euleros aarch64系统
 -   编译器：g++
--   芯片：Atlas 训练系列产品、Atlas 推理系列产品（配置Ascend 310P AI处理器）
+-   芯片：Atlas A3 训练/推理系列产品、Atlas 800I A2 推理产品/A200I A2 Box 异构组件
 -   已完成昇腾AI软件栈在运行环境上的部署
 
 ## 程序编译
 
-1. 设置环境变量ASCEND_INSTALL_PATH为ASCEND安装的路径
-    ```
-    export ASCEND_INSTALL_PATH=xxxx
-    ```
 
-2. 执行如下命令进行编译。
-参考[构建](../../docs/build.md)里的**编译执行**章节，利用build.sh进行编译。  
+1. 参考[构建](../../docs/build.md)里的**编译执行**章节，利用build.sh进行编译。
 
-
-3. 编译结束后，在**build/examples/cpp**目录下生成多个可执行文件。
+2. 编译结束后，在**build/examples/cpp**目录下生成多个可执行文件。
 
 ## 样例运行
 
 ### 1. prompt/decoder样例
  - 说明：
     - 所有样例需要成对运行，prompt侧和decoder侧执行间隔时间不要过长，样例中decoder侧设置WAIT_PROMPT_TIME为5s，prompt侧设置WAIT_TIME为10s，用户可根据实际情况自行修改这两个变量的值以保证用例成功运行。
-    - 下面所有样例是以prompt和decoder运行在不同机器上为前提编写，如果只有一台机器只需要将local_host_ip和remote_host_ip设为相同即可。
+    - 下面所有样例是以prompt和decoder运行在不同机器上为前提编写，如果只有一台机器只需要将local_ip和remote_ip设为相同即可。
 
  - 配置环境变量
     - 若运行环境上安装的“Ascend-cann-toolkit”包，环境变量设置如下：
@@ -75,7 +69,7 @@
 
     此样例介绍了decoder向prompt进行pull cache和pull blocks流程，其中link和pull的方向与角色无关，可以根据需求更改
 
-    - 执行prompt_pull_cache_and_blocks, 参数为device_id、local_ip和remote_ip, 其中device_id为prompt要使用的device_id, local_ip为prompt所在host的ip, 如:
+    - 执行prompt_pull_cache_and_blocks, 参数为device_id和local_ip, 其中device_id为prompt要使用的device_id, local_ip为prompt所在host的ip, 如:
         ```
         ./prompt_pull_cache_and_blocks 0 10.10.170.1
         ```
@@ -114,8 +108,8 @@
 
 ### 2. adxl_engine样例
   - 说明：
-    - 所有样例需要成对运行，client侧和server侧执行间隔时间不要过长，client-server用例中设置WAIT_REG_TIME为5s，WAIT_TRANS_TIME为10s，server-server用例中设置WAIT_TIME为5s，用户可根据实际情况自行修改这两个变量的值以保证用例成功运行。
-    - 下面所有用例都只能在单机上执行，local_engine和remote_engine设为相同即可；如果需要多机执行，需对用例进行改造。
+    - 所有样例需要成对运行，client侧和server侧执行间隔时间不要过长，client-server用例中设置WAIT_REG_TIME为5s，WAIT_TRANS_TIME为20s，server-server用例中设置WAIT_TIME为5s，用户可根据实际情况自行修改这两个变量的值以保证用例成功运行。
+    - 下面所有用例都只能在单机上执行，local_engine和remote_engine的ip部分设为相同即可，server侧engine为ip:port形式，client侧engine为ip形式。如果需要多机执行，需对用例进行改造。
 
   - 配置环境变量
     - 若运行环境上安装的“Ascend-cann-toolkit”包，环境变量设置如下：
