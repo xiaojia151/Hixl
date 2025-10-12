@@ -24,7 +24,13 @@
 
 ## 环境准备
 
-代码中使用了torchair将kv_cache的tensor地址转为torch tensor并赋值，所以需要安装torch_npu相关包。
+安装根目录下requirements.txt依赖（如果前面已经安装则跳过此步）：
+
+```bash
+pip3 install -r requirements.txt
+```
+根据实际环境，安装对应的**torch**与**torch_npu**包(建议使用大于等于2.1.0的版本)， [获取方法](https://gitcode.com/Ascend/pytorch)。
+
 
 ## 样例运行
 以下所有用例运行均需正确设置Ascend环境变量，所有双机示例需尽量保证同步执行。
@@ -39,11 +45,17 @@ source ${HOME}/Ascend/set_env.sh
     ```
     for i in {0..7}; do hccn_tool -i $i -ip -g; done
     ```
-    **注: 如果出现hccn_tool命令找不到的情况，可在CANN包安装目录下搜索hccn_tool，找到可执行文件执行。**
+    **注: 如果出现hccn_tool命令找不到的情况，可在CANN包安装目录下搜索hccn_tool，找到可执行文件执行。更多hccn_tool的用法请参考[hccn_tool接口文档](https://support.huawei.com/enterprise/zh/ascend-computing/ascend-hdk-pid-252764743?category=developer-documents&subcategory=interface-reference)。**
 - 更改脚本中的device信息
     - 将PROMPT_IP_LIST中的device_ip修改为Prompt主机的各device_ip。
     - 将DECODER_IP_LIST中的device_ip修改为Decoder主机的各device_ip。
     - 两台机器脚本保持一致。
+- 执行样例前检查设备之间网络是否连通（可选）：
+    ```
+    # 检查设备ID为0的设备是否能ping通其他设备ip x.x.x.x
+    hccn_tool -i 0 -ping -g address x.x.x.x
+    ```
+    **注: 其中-i后面为指定的设备ID；address后面为目的设备的ip地址。**
 
 ### 执行
 - 说明：所有python样例执行前请设置环境变量

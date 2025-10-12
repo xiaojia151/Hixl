@@ -7,68 +7,41 @@
 
 1. **安装依赖**
 
-   以下所列为源码编译用到的依赖：  
+   以下所列为源码编译用到的依赖，请注意版本要求。  
 
-   - GCC >= 7.5.0
+   - GCC >= 7.3.0
 
    - Python3 >= 3.7.5
 
-     如果需要本地查看tests覆盖率则需要额外安装coverage，并将Python3的bin路径添加到PATH环境变量中，命令示例如下：
-     
-     ```shell
-     pip3 install coverage
-     # 修改下面的PYTHON3_HOME为实际的PYTHON安装目录
-     export PATH=$PATH:$PYTHON3_HOME/bin
-     ```
-
-     执行tests需要numpy依赖(建议使用大于等于1.26.4的版本)
-     ```
-     pip install numpy
-     ```
-
-     执行python example时需要pyyaml依赖(建议使用大于等于6.0.1的版本)
-     ```
-     pip install pyyaml
-     ```
-
-     执行python example时需要torch-npu依赖(建议使用大于等于2.1.0的版本)，[获取方法](https://gitcode.com/Ascend/pytorch) 
-
-     执行example需要protobuf依赖(建议使用默认安装版本) 
-     ```
-     pip install protobuf
-     ```
-
-
-
-     
    - CMake >= 3.16.0  (建议使用3.20.0版本)
-
      ```shell
      # Ubuntu/Debian操作系统安装命令示例如下，其他操作系统请自行安装
      sudo apt-get install cmake
      ```
    - ccache
-     
+
      compile cache为编译器缓存优化工具，用于加快二次编译速度。
-     
+
      ```shell
      # Ubuntu/Debian操作系统安装命令示例如下，其他操作系统请自行安装
      sudo apt-get install ccache
      ```
 
    - bash >= 5.1.16
-     
+
      由于测试用例开启了地址消毒，代码中执行system函数会触发低版本的bash被地址消毒检查出内存泄露。
-     
+
      ```shell
      # Ubuntu/Debian操作系统安装命令示例如下，其他操作系统请自行安装
      sudo apt-get install bash
      ```
 
 2. **安装驱动与固件（运行态依赖）**  
-  运行样例时必须安装驱动与固件，安装指导详见[《CANN软件安装指南》](https://www.hiascend.com/document/redirect/CannCommunityInstSoftware)  
+
+    运行样例时必须安装驱动与固件，安装指导详见[《CANN软件安装指南》](https://www.hiascend.com/document/redirect/CannCommunityInstSoftware)  。
 
 3. **安装社区版CANN toolkit包**
+
     根据实际环境，下载对应`Ascend-cann-toolkit_${cann_version}_linux-${arch}.run`包，下载链接为[toolkit x86_64包](https://ascend-cann.obs.cn-north-4.myhuaweicloud.com/CANN/community/Ascend-cann-toolkit_8.3.RC1_linux-x86_64.run)、[toolkit aarch64包](https://ascend-cann.obs.cn-north-4.myhuaweicloud.com/CANN/community/Ascend-cann-toolkit_8.3.RC1_linux-aarch64.run)。
     
     ```bash
@@ -81,9 +54,9 @@
     - \$\{arch\}：表示CPU架构，如aarch64、x86_64。
     - \$\{ascend\_install\_path\}：表示指定安装路径，可选，默认安装在`/usr/local/Ascend`目录，指定路径安装时，指定的路径权限需设置为755。
 
-4. **安装社区版CANN legacy包（运行sample依赖）**
+4. **安装社区版CANN legacy包（运行态依赖）**
 
-    运行sample时必须安装本包。
+    运行sample时必须安装本包，若仅编译源码，可跳过本操作。
 
     根据产品型号和环境架构，下载对应`cann-${soc_name}-ops-legacy_${cann_version}_linux-${arch}.run`包，下载链接如下：
 
@@ -106,7 +79,7 @@
 ```bash
 git clone https://gitcode.com/cann/ops-dxl-dev.git
 ```
-- 注意：gitcode平台在使用HTTPS协议协议的时候要配置并使用个人访问令牌代替登录密码进行克隆，推送等操作
+- 注意：gitcode平台在使用HTTPS协议的时候要配置并使用个人访问令牌代替登录密码进行克隆，推送等操作
 
 ### 配置环境变量
 	
@@ -137,14 +110,31 @@ bash build.sh --ascend_install_path=${ascend_install_path}/latest
 
 
 ## 本地验证(tests)
-利用tests路径下的测试用例进行本地验证
-```bash
-# 默认路径安装，root用户默认路径是/usr/local/Ascend/，普通用户默认路径是${HOME}/Ascend
-bash tests/run_test.sh
-# 指定路径安装，安装路径是ascend_install_path
-bash tests/run_test.sh --ascend_install_path=${ascend_install_path}
-```
-- 更多执行选项可以用-h查看
+利用tests路径下的测试用例进行本地验证:
+
+- 安装依赖
+    ```bash
+    # 安装根目录下requirements.txt依赖
+    pip3 install -r requirements.txt
+    ```
+    如果需要本地查看tests覆盖率则需要额外安装coverage，并将Python3的bin路径添加到PATH环境变量中，命令示例如下：
+
+     ```shell
+     pip3 install coverage
+     # 修改下面的PYTHON3_HOME为实际的PYTHON安装目录
+     export PATH=$PATH:$PYTHON3_HOME/bin
+     ```
+
+- 执行测试用例：
+
+    ```bash
+    # 默认路径安装，root用户默认路径是/usr/local/Ascend/，普通用户默认路径是${HOME}/Ascend
+    bash tests/run_test.sh
+    # 指定路径安装，安装路径是ascend_install_path
+    bash tests/run_test.sh --ascend_install_path=${ascend_install_path}/latest
+    ```
+  
+- 更多执行选项可以用 -h 查看：
   ```
   bash tests/run_test.sh -h
   ```
