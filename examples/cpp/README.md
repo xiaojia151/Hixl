@@ -109,7 +109,7 @@
 ### 2. HIXL样例
   - 说明：
     - 所有样例需要成对运行，client侧和server侧执行间隔时间不要过长，client-server用例中设置WAIT_REG_TIME为5s，WAIT_TRANS_TIME为20s，server-server用例中设置WAIT_TIME为5s，用户可根据实际情况自行修改这两个变量的值以保证用例成功运行。
-    - 下面所有用例都只能在单机上执行，local_engine和remote_engine的ip部分设为相同即可，server侧engine为ip:port形式，client侧engine为ip形式。如果需要多机执行，需对用例进行改造。
+    - 下面所有用例都只能在单机上执行，local_engine和remote_engine的ip部分设为相同，server侧engine为ip:port形式，client侧engine为ip形式。如果需要多机执行，需对用例进行改造。
 
   - 配置环境变量
     - 若运行环境上安装的“Ascend-cann-toolkit”包，环境变量设置如下：
