@@ -7,10 +7,10 @@
 # THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
-ops-dxl-dev:
+hixl-dev:
   commiter:
     "zhujingjing"
-  team: "ops_dxl" ##组件名称
+  team: "hixl" ##组件名称
   src:
     release:
       - src
