@@ -15,8 +15,8 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: Origin（信息来源）
-      description: 请说明下是哪个部门/团队提出的需求，以便我们确定优先级
+      label: Origin（需求来源）
+      description: 请说明下该需求的来源，以便我们确定优先级
     validations:
       required: true
   - type: textarea

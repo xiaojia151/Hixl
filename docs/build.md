@@ -18,14 +18,6 @@
      # Ubuntu/Debian操作系统安装命令示例如下，其他操作系统请自行安装
      sudo apt-get install cmake
      ```
-   - ccache
-
-     compile cache为编译器缓存优化工具，用于加快二次编译速度。
-
-     ```shell
-     # Ubuntu/Debian操作系统安装命令示例如下，其他操作系统请自行安装
-     sudo apt-get install ccache
-     ```
 
    - bash >= 5.1.16
 
@@ -34,6 +26,15 @@
      ```shell
      # Ubuntu/Debian操作系统安装命令示例如下，其他操作系统请自行安装
      sudo apt-get install bash
+     ```
+
+   - ccache（可选）
+
+     compile cache为编译器缓存优化工具，用于加快二次编译速度。
+
+     ```shell
+     # Ubuntu/Debian操作系统安装命令示例如下，其他操作系统请自行安装
+     sudo apt-get install ccache
      ```
 
 2. **安装驱动与固件（运行态依赖）**  
