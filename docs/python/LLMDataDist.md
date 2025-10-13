@@ -465,7 +465,8 @@ link(comm_name: str, cluster_rank_info: Dict[int, int], rank_table: str) -> int
 -   不支持fork子进程方式调用。
 -   最多支持16条链路并发建链，超过16条底层会排队。
 -   需保证多通信域建链不出现循环依赖。
--   如果并发建链，建链使用的某个卡是down的状态，可能导致某些链路建链超时，如果需要非down状态的卡建链成功，则需要对所有涉及建链的卡配置命令：hccn\_tool -i $\{device\_id\} -tls -s enable 1
+-   如果并发建链，建链使用的某个卡是down的状态，可能导致某些链路建链超时，如果需要非down状态的卡建链成功，则需要对所有涉及建链的卡配置命令。
+    hccn\_tool -i $\{device\_id\} -tls -s enable 1
 ## unlink<a name="ZH-CN_TOPIC_0000002374411912"></a>
 **函数功能**
 

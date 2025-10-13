@@ -31,7 +31,7 @@ usage() {
   echo "    -v, --verbose  Display build command"
   echo "    -j<N>          Set the number of threads used for building Parser, default 8"
   echo "        --ascend_install_path=<PATH>"
-  echo "                   Set ascend package install path, default /usr/local/Ascend/ascend-toolkit/latest"
+  echo "                   Set ascend package install path, default /usr/local/Ascend/latest"
   echo "        --ascend_3rd_lib_path=<PATH>"
   echo "                   Set ascend third_party package install path, default ./build/third_party"
   echo ""
