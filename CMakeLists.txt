@@ -9,24 +9,24 @@
 # ----------------------------------------------------------------------------
 
 cmake_minimum_required(VERSION 3.16)
-project(ops_dxl VERSION 1.0.0)
+project(hixl VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-    message(STATUS "Build ops_dxl with dependency cann pkgs installed")
-    option(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG "Build ops_dxl with dependency cann pkgs installed" TRUE)
+    message(STATUS "Build hixl with dependency cann pkgs installed")
+    option(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG "Build hixl with dependency cann pkgs installed" TRUE)
 else()
-    message(STATUS "Build ops_dxl with cann source exist")
-    option(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG "Build ops_dxl need cann source code" FALSE)
+    message(STATUS "Build hixl with cann source exist")
+    option(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG "Build hixl need cann source code" FALSE)
 endif()
 
 set(OPEN_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../open_source")
 if(NOT EXISTS ${OPEN_SOURCE_DIR})
-    message(STATUS "Build ops_dxl with dependency communtiy cann pkgs installed")
-    option(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG_COMMUNITY "Build ops_dxl with dependency communtiy cann pkgs installed" TRUE)
+    message(STATUS "Build hixl with dependency communtiy cann pkgs installed")
+    option(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG_COMMUNITY "Build hixl with dependency communtiy cann pkgs installed" TRUE)
 else()
-    message(STATUS "Build ops_dxl with dependency communtiy cann pkgs not installed")
-    option(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG_COMMUNITY "Build ops_dxl with dependency communtiy cann pkgs not installed" FALSE)
+    message(STATUS "Build hixl with dependency communtiy cann pkgs not installed")
+    option(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG_COMMUNITY "Build hixl with dependency communtiy cann pkgs not installed" FALSE)
 endif()
 
 option(ENABLE_TEST "Enable test" OFF)

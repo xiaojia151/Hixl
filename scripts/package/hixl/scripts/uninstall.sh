@@ -17,8 +17,8 @@ DEFAULT_NORMAL_DIR="${HOME}/Ascend"   # 普通用户默认安装路径
 
 curpath="$(dirname $(readlink -f $0))" # 脚本目录
 common_func_path="${curpath}/common_func.inc"
-ops_dxl_func_path="${curpath}/ops_dxl_func.sh"
-UNINSTALL_SHELL="${curpath}/run_ops_dxl_uninstall.sh" # 卸载脚本路径
+hixl_func_path="${curpath}/hixl_func.sh"
+UNINSTALL_SHELL="${curpath}/run_hixl_uninstall.sh" # 卸载脚本路径
 install_path_param="$(dirname "${curpath}")"
 
 SCENE_INFO_FILE="$install_path_param/scene.info"
@@ -31,7 +31,7 @@ RUN_CMD_TYPE="Uninstall"   # 执行程序命令类型
 IS_QUIET="n"               # 静默模式默认为否
 
 . "${common_func_path}"
-. "${ops_dxl_func_path}"
+. "${hixl_func_path}"
 
 # 执行程序等级
 case "${RUN_CMD_TYPE}" in
@@ -71,7 +71,7 @@ log() {
     local cur_date="$(date +'%Y-%m-%d %H:%M:%S')"
     local log_type="$1"
     local log_msg="$2"
-    local log_format="[ops-dxl] [$cur_date] [$log_type]: $log_msg"
+    local log_format="[hixl] [$cur_date] [$log_type]: $log_msg"
     if [ "$log_type" = "INFO" ]; then
         echo "$log_format"
     elif [ "$log_type" = "WARNING" ]; then
@@ -117,7 +117,7 @@ log_operation() {
         touch "${OPERATION_LOG_FILE}"
         chmod 640 "${OPERATION_LOG_FILE}"
     fi
-    echo "${RUN_CMD_TYPE} ${LEVEL} ${RUN_USERNAME} ${cur_date} ${HOST} ops_dxl $2 installmode=${RUN_CMD}; cmdlist=--${RUN_CMD}" >> "${OPERATION_LOG_FILE}"
+    echo "${RUN_CMD_TYPE} ${LEVEL} ${RUN_USERNAME} ${cur_date} ${HOST} hixl $2 installmode=${RUN_CMD}; cmdlist=--${RUN_CMD}" >> "${OPERATION_LOG_FILE}"
 }
 
 ############### 错误函数 ###############
@@ -151,7 +151,7 @@ user_auth() {
     local run_user_id=$(id -u)
     if [ "${run_user_id}" -ne 0 ]; then
         if [ "${run_user_id}" -ne "${dir_user_id}" ]; then
-            err_no0x0093 "Current user is not supported to ${RUN_CMD} the ops_dxl package"
+            err_no0x0093 "Current user is not supported to ${RUN_CMD} the hixl package"
         fi
     fi
 }
@@ -164,7 +164,7 @@ get_install_param() {
     if [ ! -f "${_file}" ]; then
         exit 1
     fi
-    local install_info_key_array="Ops_DXL_Install_Type Ops_DXL_Feature_Type Ops_DXL_UserName Ops_DXL_UserGroup Ops_DXL_Install_Path_Param Ops_DXL_Arch_Linux_Path Ops_DXL_Hetero_Arch_Flag"
+    local install_info_key_array="HIXL_Install_Type HIXL_Feature_Type HIXL_UserName HIXL_UserGroup HIXL_Install_Path_Param HIXL_Arch_Linux_Path HIXL_Hetero_Arch_Flag"
     for key_param in ${install_info_key_array}; do
         if [ "${key_param}" = "${_key}" ]; then
             _param=$(grep -i "${_key}=" "${_file}" | cut -d"=" -f2-)
@@ -174,7 +174,7 @@ get_install_param() {
     echo "${_param}"
 }
 
-hetero_arch=$(get_install_param "Ops_DXL_Hetero_Arch_Flag" "${ASCEND_INSTALL_INFO_FILE}")
+hetero_arch=$(get_install_param "HIXL_Hetero_Arch_Flag" "${ASCEND_INSTALL_INFO_FILE}")
 export hetero_arch
 get_version_dir "version_dir" "$version_info_file"
 
@@ -236,32 +236,32 @@ uninstall_run() {
     chmod_start
     local num=0
     local operation="${RUN_CMD_TYPE}"
-    local ops_dxl_install_path_param="$(get_pkg_install_path_param)"
+    local hixl_install_path_param="$(get_pkg_install_path_param)"
     local install_top_path="$(get_install_top_path)"
 
     if [ -f "$ASCEND_INSTALL_INFO_FILE" ]; then
-        local ops_dxl_install_type=$(get_install_param "Ops_DXL_Install_Type" "${ASCEND_INSTALL_INFO_FILE}")
+        local hixl_install_type=$(get_install_param "HIXL_Install_Type" "${ASCEND_INSTALL_INFO_FILE}")
     elif [ -f "${ASCEND_INSTALL_INFO_OLD_FILE}" ]; then
-        num=$(grep -c -i ops_dxl_install_path_param "${ASCEND_INSTALL_INFO_OLD_FILE}")
+        num=$(grep -c -i hixl_install_path_param "${ASCEND_INSTALL_INFO_OLD_FILE}")
         if [ "${num}" != "0" ]; then
-            local ops_dxl_install_type="$(grep -iw ops_dxl_install_type "$ASCEND_INSTALL_INFO_OLD_FILE" | cut -d"=" -f2-)"
+            local hixl_install_type="$(grep -iw hixl_install_type "$ASCEND_INSTALL_INFO_OLD_FILE" | cut -d"=" -f2-)"
         fi
     else
         err_no0x0080 "please complete ${ASCEND_INSTALL_INFO_FILE} or ${ASCEND_INSTALL_INFO_OLD_FILE}"
     fi
     if [ $? -eq 0 ]; then
-        log "INFO" "${RUN_CMD} ${ops_dxl_install_path_param} ${ops_dxl_install_type}"
-        bash "${UNINSTALL_SHELL}" "${RUN_CMD}" "${ops_dxl_install_path_param}" "${ops_dxl_install_type}" "${IS_QUIET}" "n" "" "y"
+        log "INFO" "${RUN_CMD} ${hixl_install_path_param} ${hixl_install_type}"
+        bash "${UNINSTALL_SHELL}" "${RUN_CMD}" "${hixl_install_path_param}" "${hixl_install_type}" "${IS_QUIET}" "n" "" "y"
         if [ $? -eq 0 ]; then
             rm -f "${ASCEND_INSTALL_INFO_FILE}"
             rm -f "${version_info_file}"
             if [ $? -eq 0 ] && [ -f "${ASCEND_INSTALL_INFO_OLD_FILE}" ] && [ -w "${ASCEND_INSTALL_INFO_OLD_FILE}" ] && [ "${num}" != "0" ]; then
-                sed -i '/ops_dxl_install_path_param=/Id' "${ASCEND_INSTALL_INFO_OLD_FILE}"
-                sed -i '/ops_dxl_install_type=/Id' "${ASCEND_INSTALL_INFO_OLD_FILE}"
+                sed -i '/hixl_install_path_param=/Id' "${ASCEND_INSTALL_INFO_OLD_FILE}"
+                sed -i '/hixl_install_type=/Id' "${ASCEND_INSTALL_INFO_OLD_FILE}"
             fi
             remove_dir_recursive "$install_top_path" "$install_path_param"
-            new_echo "INFO" "ops-dxl package uninstalled successfully! Uninstallation takes effect immediately."
-            log "INFO" "ops-dxl package uninstalled successfully! Uninstallation takes effect immediately."
+            new_echo "INFO" "hixl package uninstalled successfully! Uninstallation takes effect immediately."
+            log "INFO" "hixl package uninstalled successfully! Uninstallation takes effect immediately."
             log_operation "${operation}" "succeeded"
             save_user_files_to_log "$install_path_param"
             save_user_files_to_log "$(dirname $install_path_param)/atc"
@@ -297,13 +297,13 @@ do
 done
 
 if [ "$hetero_arch" != "y" ]; then
-    arch_path="$(dirname "$install_path_param")/$arch_scripts_path_hetero/ops_dxl/script/uninstall.sh"
+    arch_path="$(dirname "$install_path_param")/$arch_scripts_path_hetero/hixl/script/uninstall.sh"
     ret=0
     if [ -f "$arch_path" ]; then
         bash "$arch_path"
         ret=$?
     elif [ "$in_hetero_arch" = "y" ]; then
-        log "WARNING" "no hetero arch ops_dxl package installed!"
+        log "WARNING" "no hetero arch hixl package installed!"
     fi
     if [ "$in_hetero_arch" = "y" ]; then
         exit $ret

@@ -11,9 +11,9 @@
 add_library(mmpa_stub SHARED src/mmpa_stub.cc)
 target_compile_options(mmpa_stub PRIVATE -g)
 target_include_directories(mmpa_stub PRIVATE
-    ${DXL_CODE_DIR}/inc
-    ${DXL_CODE_DIR}/include
-    ${DXL_CODE_DIR}/inc/framework
+    ${HIXL_CODE_DIR}/inc
+    ${HIXL_CODE_DIR}/include
+    ${HIXL_CODE_DIR}/inc/framework
 )
 target_link_libraries(mmpa_stub
     PRIVATE

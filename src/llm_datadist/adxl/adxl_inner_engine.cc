@@ -37,21 +37,34 @@ Status AdxlInnerEngine::Initialize(const std::map<AscendString, AscendString> &o
   return SUCCESS;
 }
 
+void AdxlInnerEngine::ParseBufferPool(const std::map<AscendString, AscendString> &options,
+                                      std::string &pool_config) {
+  const auto &pool_it = options.find(hixl::OPTION_BUFFER_POOL);
+  if (pool_it != options.cend()) {
+    pool_config = pool_it->second.GetString();
+  } else {
+    const auto &pool_it2 = options.find(adxl::OPTION_BUFFER_POOL);
+    if (pool_it2 != options.cend()) {
+      pool_config = pool_it2->second.GetString();
+    }
+  }
+}
+
 Status AdxlInnerEngine::InitBufferTransferService(const std::map<ge::AscendString, ge::AscendString> &options) {
-  auto it = options.find(OPTION_BUFFER_POOL);
+  std::string pool_config;
+  ParseBufferPool(options, pool_config);
   uint64_t buffer_num;
   uint64_t buffer_size;
-  if (it != options.cend()) {
-    if (it->second == kDisabledPoolConfig) {
+  if (!pool_config.empty()) {
+    if (pool_config == kDisabledPoolConfig) {
       LLMEVENT("Buffer pool is disabled.");
       return SUCCESS;
     }
-    auto pool_config = it->second.GetString();
-    LLMEVENT("Buffer pool config is:%s.", it->second.GetString());
+    LLMEVENT("Buffer pool config is:%s.", pool_config.c_str());
     const auto buffer_configs = llm::LLMUtils::Split(pool_config, ':');
     ADXL_CHK_BOOL_RET_STATUS(buffer_configs.size() == kBufferConfigSize, PARAM_INVALID,
-                             "Option adxl.BufferPool is invalid: %s, expect ${BUFFER_NUM}:${BUFFER_SIZE}.",
-                             pool_config);
+                             "Option BufferPool is invalid: %s, expect ${BUFFER_NUM}:${BUFFER_SIZE}.",
+                             pool_config.c_str());
     ADXL_CHK_LLM_RET(llm::LLMUtils::ToNumber(buffer_configs[0], buffer_num), "Buffer num is invalid, value = %s.",
                      buffer_configs[0].c_str());
     ADXL_CHK_BOOL_RET_STATUS(buffer_num > 0, PARAM_INVALID, "Buffer num should be bigger than 0.");

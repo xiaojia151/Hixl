@@ -13,5 +13,5 @@
 ## 开发样例
 |  **样例名称**  |  **样例介绍**  |  **开发语言**  |
 |---|---|---|
-| [cppSamples](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp) | C++样例 | C++ |
-| [pythonSamples](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python) | Python样例 | Python |
+| [cppSamples](https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp) | C++样例 | C++ |
+| [pythonSamples](https://gitcode.com/cann/hixl-dev/tree/master/examples/python) | Python样例 | Python |

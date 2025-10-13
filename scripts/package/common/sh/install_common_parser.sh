@@ -840,8 +840,8 @@ add_cann_uninstall_package() {
     get_package_dirpath "package_dirpath" "${package}"
     script_dir="${package_dirpath}/script"
 
-    # dxl_kernel包存在同时安装多种芯片包的场景
-    # 确保cann_uninstall.sh脚本中只有一个dxl_kernel的uninstall_package
+    # hixl_kernel包存在同时安装多种芯片包的场景
+    # 确保cann_uninstall.sh脚本中只有一个hixl_kernel的uninstall_package
     del_cann_uninstall_script_dir "${install_path}" "${script_dir}"
     ret="$?" && [ ${ret} -ne 0 ] && return ${ret}
 
@@ -1841,7 +1841,7 @@ formal_commands() {
         ret="$?" && [ $ret -ne 0 ] && return $ret
         ;;
     "uninstall")
-        # 统一使用full模式卸载文件。两个包共用部分block（如dxl），以不同的模式安装时（如：run/full）
+        # 统一使用full模式卸载文件。两个包共用部分block（如hixl），以不同的模式安装时（如：run/full）
         # full模式的包先卸载，run模式的包后卸载，确保能够完整卸载。
         do_uninstall "full" "${install_path}" "${filelist_path}" "${PACKAGE}" "${feature_param}" "${docker_root}"
         ret="$?" && [ $ret -ne 0 ] && return $ret

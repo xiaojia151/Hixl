@@ -152,7 +152,7 @@ pull_cache(cache_key: Union[CacheKey, CacheKeyByIdAndIndex],
 
 **调用示例**<a name="section17821439839"></a>
 
-请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python)。
+请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/python](https://gitcode.com/cann/hixl-dev/tree/master/examples/python)。
 
 **返回值**<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section45086037"></a>
 
@@ -269,7 +269,7 @@ pull_blocks(src_cache_key: Union[CacheKey, CacheKeyByIdAndIndex, BlocksCacheKey]
 
 **调用示例**<a name="section17821439839"></a>
 
-请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python)。
+请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/python](https://gitcode.com/cann/hixl-dev/tree/master/examples/python)。
 
 **返回值**<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section45086037"></a>
 
@@ -338,7 +338,7 @@ register_cache(cache_desc: CacheDesc, addrs: List[int], cache_keys: Union[Tuple[
 
 **调用示例**<a name="section17821439839"></a>
 
-请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python)。
+请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/python](https://gitcode.com/cann/hixl-dev/tree/master/examples/python)。
 
 **返回值**<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section45086037"></a>
 
@@ -414,7 +414,7 @@ register_blocks_cache(cache_desc: CacheDesc, addrs: List[int], blocks_cache_key:
 
 **调用示例**<a name="section17821439839"></a>
 
-请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python)。
+请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/python](https://gitcode.com/cann/hixl-dev/tree/master/examples/python)。
 
 **返回值**<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section45086037"></a>
 
@@ -610,7 +610,7 @@ push_blocks(self,
 
 **调用示例**<a name="section17821439839"></a>
 
-请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python)。
+请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/python](https://gitcode.com/cann/hixl-dev/tree/master/examples/python)。
 
 **返回值**<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section45086037"></a>
 
@@ -711,7 +711,7 @@ push_cache(self,
 
 **调用示例**<a name="section17821439839"></a>
 
-请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python)。
+请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/python](https://gitcode.com/cann/hixl-dev/tree/master/examples/python)。
 
 **返回值**<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section45086037"></a>
 
@@ -822,7 +822,7 @@ unregister_cache(cache_id: int) -> None
 
 **调用示例**<a name="section17821439839"></a>
 
-请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python)。
+请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/python](https://gitcode.com/cann/hixl-dev/tree/master/examples/python)。
 
 **返回值**<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section45086037"></a>
 

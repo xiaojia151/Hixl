@@ -18,7 +18,7 @@ common_func_path="${curpath}/common_func.inc"
 version_compat_func_path="${curpath}/version_compatiable.inc"
 common_func_v2_path="${curpath}/common_func_v2.inc"
 version_cfg_path="${curpath}/version_cfg.inc"
-ops_dxl_func_path="${curpath}/ops_dxl_func.sh"
+hixl_func_path="${curpath}/hixl_func.sh"
 pkg_version_path="${curpath}/../../version.info"
 install_info_old="/etc/ascend_install.info"
 run_dir="$(echo "$2" | cut -d'-' -f 3-)"
@@ -27,7 +27,7 @@ run_dir="$(echo "$2" | cut -d'-' -f 3-)"
 . "${version_compat_func_path}"
 . "${common_func_v2_path}"
 . "${version_cfg_path}"
-. "${ops_dxl_func_path}"
+. "${hixl_func_path}"
  
 if [ "$(id -u)" != "0" ]; then
     log_dir="${HOME}/var/log/ascend_seclog"
@@ -190,7 +190,7 @@ log() {
     local cur_date="$(date +'%Y-%m-%d %H:%M:%S')"
     local log_type="$1"
     local log_msg="$2"
-    local log_format="[ops-dxl] [$cur_date] [$log_type]: $log_msg"
+    local log_format="[hixl] [$cur_date] [$log_type]: $log_msg"
     if [ "$log_type" = "INFO" ]; then
         echo "$log_format"
     elif [ "$log_type" = "WARNING" ]; then
@@ -577,7 +577,7 @@ update_install_param() {
     if [ ! -f "${_file}" ]; then
         exit 1
     fi
-    local install_info_key_array="Ops_DXL_Install_Type Ops_DXL_Chip_Type Ops_DXL_Feature_Type Ops_DXL_UserName Ops_DXL_UserGroup Ops_DXL_Install_Path_Param Ops_DXL_Arch_Linux_Path Ops_DXL_Hetero_Arch_Flag"
+    local install_info_key_array="HIXL_Install_Type HIXL_Chip_Type HIXL_Feature_Type HIXL_UserName HIXL_UserGroup HIXL_Install_Path_Param HIXL_Arch_Linux_Path HIXL_Hetero_Arch_Flag"
     for key_param in ${install_info_key_array}; do
         if [ "${key_param}" = "${_key}" ]; then
             _param=$(grep -i "${_key}=" "${_file}")
@@ -599,7 +599,7 @@ get_install_param() {
     if [ ! -f "${_file}" ]; then
         exit 1
     fi
-    local install_info_key_array="Ops_DXL_Install_Type Ops_DXL_Chip_Type Ops_DXL_Feature_Type Ops_DXL_UserName Ops_DXL_UserGroup Ops_DXL_Install_Path_Param Ops_DXL_Arch_Linux_Path Ops_DXL_Hetero_Arch_Flag"
+    local install_info_key_array="HIXL_Install_Type HIXL_Chip_Type HIXL_Feature_Type HIXL_UserName HIXL_UserGroup HIXL_Install_Path_Param HIXL_Arch_Linux_Path HIXL_Hetero_Arch_Flag"
     for key_param in ${install_info_key_array}; do
         if [ "${key_param}" = "${_key}" ]; then
             _param=$(grep -i "${_key}=" "${_file}" | cut -d"=" -f2-)
@@ -612,21 +612,21 @@ get_install_param() {
 update_install_info_feature() {
     local operation="$1"
     if [ "$featuremode" = "all" ] || [ "$operation" = "Upgrade" ]; then
-        update_install_param "Ops_DXL_Feature_Type" "$featuremode" "$install_info"
+        update_install_param "HIXL_Feature_Type" "$featuremode" "$install_info"
         return
     fi
-    local current_featuremode=$(get_install_param "Ops_DXL_Feature_Type" "$install_info")
+    local current_featuremode=$(get_install_param "HIXL_Feature_Type" "$install_info")
     if [ -z "$current_featuremode" ] || [ "$current_featuremode" = "all" ]; then
-        update_install_param "Ops_DXL_Feature_Type" "$featuremode" "$install_info"
+        update_install_param "HIXL_Feature_Type" "$featuremode" "$install_info"
         return
     fi
     local version_in_runpkg="$(get_version_in_runpkg)"
     if [ "$version_in_runpkg" != "$version_installed" ]; then
-        update_install_param "Ops_DXL_Feature_Type" "$featuremode" "$install_info"
+        update_install_param "HIXL_Feature_Type" "$featuremode" "$install_info"
         return
     fi
     featuremode=$(echo "$current_featuremode,$featuremode" | tr ',' '\n' | sort -u | tr '\n' ',' | sed -e 's/^,\+\|,\+$//g')
-    update_install_param "Ops_DXL_Feature_Type" "$featuremode" "$install_info"
+    update_install_param "HIXL_Feature_Type" "$featuremode" "$install_info"
 }
  
 update_install_info() {
@@ -634,14 +634,14 @@ update_install_info() {
     if [ ! -f "$install_info" ]; then
         create_file "$install_info" "$username":"$usergroup" 640
     fi
-    update_install_param "Ops_DXL_Install_Type" "$installmode" "$install_info"
-    update_install_param "Ops_DXL_Chip_Type" "$chipmode" "$install_info"
+    update_install_param "HIXL_Install_Type" "$installmode" "$install_info"
+    update_install_param "HIXL_Chip_Type" "$chipmode" "$install_info"
     update_install_info_feature
-    update_install_param "Ops_DXL_UserName" "$username" "$install_info"
-    update_install_param "Ops_DXL_UserGroup" "$usergroup" "$install_info"
-    update_install_param "Ops_DXL_Install_Path_Param" "$install_path_param" "$install_info"
-    update_install_param "Ops_DXL_Arch_Linux_Path" "$arch_linux_path" "$install_info"
-    update_install_param "Ops_DXL_Hetero_Arch_Flag" "$hetero_arch" "$install_info"
+    update_install_param "HIXL_UserName" "$username" "$install_info"
+    update_install_param "HIXL_UserGroup" "$usergroup" "$install_info"
+    update_install_param "HIXL_Install_Path_Param" "$install_path_param" "$install_info"
+    update_install_param "HIXL_Arch_Linux_Path" "$arch_linux_path" "$install_info"
+    update_install_param "HIXL_Hetero_Arch_Flag" "$hetero_arch" "$install_info"
 }
  
 prompt_set_env() {
@@ -651,13 +651,13 @@ prompt_set_env() {
     fi
     if [ "$hetero_arch" = "y" ]; then
         echo "Please make sure that
-            - PATH includes ${install_path}/ops_dxl/bin
-            - LD_LIBRARY_PATH includes ${install_path}/ops_dxl/lib64"
+            - PATH includes ${install_path}/hixl/bin
+            - LD_LIBRARY_PATH includes ${install_path}/hixl/lib64"
     else
         echo "Please make sure that
-            - PATH includes ${install_path}/ops_dxl/bin
-            - LD_LIBRARY_PATH includes ${install_path}/ops_dxl/lib64
-            - PYTHONPATH includes ${install_path}/ops_dxl/python/site-packages"
+            - PATH includes ${install_path}/hixl/bin
+            - LD_LIBRARY_PATH includes ${install_path}/hixl/lib64
+            - PYTHONPATH includes ${install_path}/hixl/python/site-packages"
     fi
 }
  
@@ -689,32 +689,32 @@ concat_docker_install_path() {
 # 安装调用子脚本
 install_run() {
     local operation="Install"
-    local ops_dxl_install_path_param=""
+    local hixl_install_path_param=""
     update_install_path
     update_install_info
-    local ops_dxl_input_install_path=$(get_install_param "Ops_DXL_Install_Path_Param" "${install_info}")
-    local ops_dxl_install_type=$(get_install_param "Ops_DXL_Install_Type" "${install_info}")
+    local hixl_input_install_path=$(get_install_param "HIXL_Install_Path_Param" "${install_info}")
+    local hixl_install_type=$(get_install_param "HIXL_Install_Type" "${install_info}")
     if [ "$is_docker_install" = "y" ]; then
-        ops_dxl_install_path_param=$(concat_docker_install_path "${docker_root}" "${ops_dxl_input_install_path}")
+        hixl_install_path_param=$(concat_docker_install_path "${docker_root}" "${hixl_input_install_path}")
     else
-        ops_dxl_install_path_param="${ops_dxl_input_install_path}"
+        hixl_install_path_param="${hixl_input_install_path}"
     fi
     if [ "$1" = "install" ]; then
         unchattr_files
         chmod_start
-        new_echo "INFO" "install ${ops_dxl_install_path_param} ${ops_dxl_install_type}"
-        log "INFO" "install ${ops_dxl_install_path_param} ${ops_dxl_install_type}"
-        bash "${curpath}/run_ops_dxl_install.sh" "install" "${ops_dxl_input_install_path}" "${ops_dxl_install_type}" \
+        new_echo "INFO" "install ${hixl_install_path_param} ${hixl_install_type}"
+        log "INFO" "install ${hixl_install_path_param} ${hixl_install_type}"
+        bash "${curpath}/run_hixl_install.sh" "install" "${hixl_input_install_path}" "${hixl_install_type}" \
             "${is_quiet}" "${pylocal}" "${input_setenv}" "${docker_root}" "${in_install_for_all}"
         if [ $? -eq 0 ]; then
             update_version_info_version
-            log "INFO" "ops-dxl package installed successfully! The new version takes effect immediately."
+            log "INFO" "hixl package installed successfully! The new version takes effect immediately."
             log_operation "${operation}" "succeeded"
             chmod_end
             prompt_set_env "${install_path_param}"
         else
             chmod_end
-            log "ERROR" "ops-dxl package install failed, please retry after uninstall!"
+            log "ERROR" "hixl package install failed, please retry after uninstall!"
             log_operation "${operation}" "failed!"
             exit_install_log 1
         fi
@@ -725,38 +725,38 @@ install_run() {
 # 升级调用子脚本
 upgrade_run() {
     local operation="Upgrade"
-    local ops_dxl_install_path_param=""
+    local hixl_install_path_param=""
     update_install_info_feature "$operation"
     if [ -f "$install_info" ]; then
-        local ops_dxl_input_install_path=$(get_install_param "Ops_DXL_Install_Path_Param" "${install_info}")
-        local ops_dxl_install_type=$(get_install_param "Ops_DXL_Install_Type" "${install_info}")
-    elif [ -f "$install_info_old" ] && [ $(grep -c -i ops_dxl_install_path_param "$install_info_old") -ne 0 ]; then
-        local ops_dxl_input_install_path="$(grep -iw ops_dxl_install_path_param "$install_info_old" | cut -d"=" -f2-)"
-        local ops_dxl_install_type="$(grep -iw ops_dxl_install_type "$install_info_old" | cut -d"=" -f2-)"
+        local hixl_input_install_path=$(get_install_param "HIXL_Install_Path_Param" "${install_info}")
+        local hixl_install_type=$(get_install_param "HIXL_Install_Type" "${install_info}")
+    elif [ -f "$install_info_old" ] && [ $(grep -c -i hixl_install_path_param "$install_info_old") -ne 0 ]; then
+        local hixl_input_install_path="$(grep -iw hixl_install_path_param "$install_info_old" | cut -d"=" -f2-)"
+        local hixl_install_type="$(grep -iw hixl_install_type "$install_info_old" | cut -d"=" -f2-)"
     else
         log "ERROR" "ERR_NO:0x0080;ERR_DES:Installation information no longer exists, please complete ${install_info} or ${install_info_old}"
         exit_install_log 1
     fi
     if [ "$is_docker_install" = "y" ]; then
-        ops_dxl_install_path_param=$(concat_docker_install_path "${docker_root}" "${ops_dxl_input_install_path}")
+        hixl_install_path_param=$(concat_docker_install_path "${docker_root}" "${hixl_input_install_path}")
     else
-        ops_dxl_install_path_param="${ops_dxl_input_install_path}"
+        hixl_install_path_param="${hixl_input_install_path}"
     fi
     if [ "$1" = "upgrade" ]; then
         chmod_start
-        new_echo "INFO" "upgrade ${ops_dxl_install_path_param} ${ops_dxl_install_type}"
-        log "INFO" "upgrade ${ops_dxl_install_path_param} ${ops_dxl_install_type}"
-        bash "${curpath}/run_ops_dxl_upgrade.sh" "upgrade" "${ops_dxl_input_install_path}" "${ops_dxl_install_type}" \
+        new_echo "INFO" "upgrade ${hixl_install_path_param} ${hixl_install_type}"
+        log "INFO" "upgrade ${hixl_install_path_param} ${hixl_install_type}"
+        bash "${curpath}/run_hixl_upgrade.sh" "upgrade" "${hixl_input_install_path}" "${hixl_install_type}" \
             "${is_quiet}" "${pylocal}" "${input_setenv}" "${docker_root}" "${in_install_for_all}"
         if [ $? -eq 0 ]; then
             update_version_info_version
-            log "INFO" "ops-dxl package upgraded successfully! The new version takes effect immediately."
+            log "INFO" "hixl package upgraded successfully! The new version takes effect immediately."
             log_operation "${operation}" "succeeded"
             chmod_end
             prompt_set_env "${install_path_param}"
         else
             chmod_end
-            log "ERROR" "ops-dxl package upgrade failed, please retry after uninstall!"
+            log "ERROR" "hixl package upgrade failed, please retry after uninstall!"
             log_operation "${operation}" "failed!"
             exit_install_log 1
         fi
@@ -771,32 +771,32 @@ uninstall_run() {
     local upgrade_install_info="$4"
     [ -z "$upgrade_install_info" ] && upgrade_install_info="$install_info"
     local operation="Uninstall"
-    local ops_dxl_install_path_param=""
+    local hixl_install_path_param=""
     if [ -f "$upgrade_install_info" ]; then
-        local ops_dxl_input_install_path=$(get_install_param "Ops_DXL_Install_Path_Param" "${upgrade_install_info}")
-        local ops_dxl_install_type=$(get_install_param "Ops_DXL_Install_Type" "${upgrade_install_info}")
-    elif [ -f "$install_info_old" ] && [ $(grep -c -i ops_dxl_install_path_param "$install_info_old") -ne 0 ]; then
-        local ops_dxl_input_install_path="$(grep -iw ops_dxl_install_path_param "$install_info_old" | cut -d"=" -f2-)"
-        local ops_dxl_install_type="$(grep -iw ops_dxl_install_type "$install_info_old" | cut -d"=" -f2-)"
+        local hixl_input_install_path=$(get_install_param "HIXL_Install_Path_Param" "${upgrade_install_info}")
+        local hixl_install_type=$(get_install_param "HIXL_Install_Type" "${upgrade_install_info}")
+    elif [ -f "$install_info_old" ] && [ $(grep -c -i hixl_install_path_param "$install_info_old") -ne 0 ]; then
+        local hixl_input_install_path="$(grep -iw hixl_install_path_param "$install_info_old" | cut -d"=" -f2-)"
+        local hixl_install_type="$(grep -iw hixl_install_type "$install_info_old" | cut -d"=" -f2-)"
     else
         log "ERROR" "ERR_NO:0x0080;ERR_DES:Installation information no longer exists, please complete ${upgrade_install_info} or ${install_info_old}"
         exit_uninstall_log 1
     fi
     if [ "$is_docker_install" = "y" ]; then
-        ops_dxl_install_path_param=$(concat_docker_install_path "${docker_root}" "${ops_dxl_input_install_path}")
+        hixl_install_path_param=$(concat_docker_install_path "${docker_root}" "${hixl_input_install_path}")
     else
-        ops_dxl_install_path_param="${ops_dxl_input_install_path}"
+        hixl_install_path_param="${hixl_input_install_path}"
     fi
     local upgrade_default_dir="$(dirname $upgrade_install_info)"
-    if [ ! -f "$upgrade_default_dir/script/run_ops_dxl_uninstall.sh" ]; then
-        log "WARNING" "run_ops_dxl_uninstall.sh not found."
+    if [ ! -f "$upgrade_default_dir/script/run_hixl_uninstall.sh" ]; then
+        log "WARNING" "run_hixl_uninstall.sh not found."
         return $?
     fi
     if [ "$1" = "uninstall" ]; then
         chmod_start "$upgrade_default_dir"
-        new_echo "INFO" "uninstall ${ops_dxl_install_path_param} ${ops_dxl_install_type}"
-        log "INFO" "uninstall ${ops_dxl_install_path_param} ${ops_dxl_install_type}"
-        bash "$upgrade_default_dir/script/run_ops_dxl_uninstall.sh" "uninstall" "${ops_dxl_input_install_path}" "${ops_dxl_install_type}" "${is_quiet}" \
+        new_echo "INFO" "uninstall ${hixl_install_path_param} ${hixl_install_type}"
+        log "INFO" "uninstall ${hixl_install_path_param} ${hixl_install_type}"
+        bash "$upgrade_default_dir/script/run_hixl_uninstall.sh" "uninstall" "${hixl_input_install_path}" "${hixl_install_type}" "${is_quiet}" \
             "${is_docker_install}" "${docker_root}" "${is_recreate_softlink}"
         if [ $? -eq 0 ]; then
             if [ "$is_remove_info_files" = "y" ]; then
@@ -805,16 +805,16 @@ uninstall_run() {
             fi
             remove_dir_recursive "$install_top_path" "$upgrade_default_dir"
             if [ $(id -u) -eq 0 ]; then
-                if [ "$uninstall" = "y" ] && [ -f "$install_info_old" ] && [ $(grep -c -i ops_dxl_install_path_param "$install_info_old") -ne 0 ]; then
-                    sed -i '/ops_dxl_install_path_param=/Id' "$install_info_old" 2> /dev/null
-                    sed -i '/ops_dxl_install_type=/Id' "$install_info_old" 2> /dev/null
+                if [ "$uninstall" = "y" ] && [ -f "$install_info_old" ] && [ $(grep -c -i hixl_install_path_param "$install_info_old") -ne 0 ]; then
+                    sed -i '/hixl_install_path_param=/Id' "$install_info_old" 2> /dev/null
+                    sed -i '/hixl_install_type=/Id' "$install_info_old" 2> /dev/null
                 fi
             fi
-            new_echo "INFO" "ops-dxl package uninstalled successfully! Uninstallation takes effect immediately."
-            log "INFO" "ops-dxl package uninstalled successfully! Uninstallation takes effect immediately."
+            new_echo "INFO" "hixl package uninstalled successfully! Uninstallation takes effect immediately."
+            log "INFO" "hixl package uninstalled successfully! Uninstallation takes effect immediately."
             log_operation "${operation}" "succeeded"
         else
-            log "ERROR" "ops-dxl package uninstall failed!"
+            log "ERROR" "hixl package uninstall failed!"
             log_operation "${operation}" "failed!"
             exit_uninstall_log 1
         fi
@@ -857,7 +857,7 @@ judgmentpath() {
     . "${common_func_path}"
     check_install_path_valid "${1}"
     if [ $? -ne 0 ]; then
-        log "ERROR" "The ops-dxl install_path ${1} is invalid, only characters in [a-z,A-Z,0-9,-,_] are supported!"
+        log "ERROR" "The hixl install_path ${1} is invalid, only characters in [a-z,A-Z,0-9,-,_] are supported!"
         exit 1
     fi
 }
@@ -914,11 +914,11 @@ uninstall_none_multi_version() {
  
 migrate_user_assets_v2() {
     if [ "$pkg_is_multi_version" = "true" ] && [ "$hetero_arch" != "y" ]; then
-        get_package_last_installed_version_dir "last_installed_dir" "$pkg_install_path" "ops_dxl"
+        get_package_last_installed_version_dir "last_installed_dir" "$pkg_install_path" "hixl"
         if [ -n "$last_installed_dir" ]; then
             last_installed_dir="$pkg_install_path/$last_installed_dir"
             local current_installed_dir="${pkg_install_path}/$pkg_version_dir"
-            local data_dir="ops_dxl/data/fusion_strategy"
+            local data_dir="hixl/data/fusion_strategy"
             if [ -d "$last_installed_dir/$data_dir/custom" ] && [ "x$(ls -A $last_installed_dir/$data_dir/custom)" != "x" ]; then
                 mkdir -p "$current_installed_dir/$data_dir"
                 log "INFO" "cp -rpf $last_installed_dir/$data_dir/custom $current_installed_dir/$data_dir"
@@ -1172,7 +1172,7 @@ fi
  
 if [ "$docker_install" = "y" ]; then
     log "ERROR" "ERR_NO:0x0004;ERR_DES:Unsupported parameters, operation failed."
-    log "INFO" "--docker not uesd in ops_dxl"
+    log "INFO" "--docker not uesd in hixl"
     exit 1
 fi
  
@@ -1185,7 +1185,7 @@ fi
 if [ "$featuremode" != "all" ]; then
     contain_feature "ret" "$featuremode" "$curpath/filelist.csv"
     if [ "$ret" = "false" ]; then
-        log "WARNING" "ops-dxl package doesn't contain features $featuremode, skip installation."
+        log "WARNING" "hixl package doesn't contain features $featuremode, skip installation."
         exit 0
     fi
 fi
@@ -1236,9 +1236,9 @@ else
 fi
  
 if [ "$pkg_is_multi_version" = "true" ] && [ "$hetero_arch" != "y" ]; then
-    default_dir="${pkg_install_path}/$pkg_version_dir/ops_dxl"
+    default_dir="${pkg_install_path}/$pkg_version_dir/hixl"
 else
-    default_dir="${pkg_install_path}/ops_dxl"
+    default_dir="${pkg_install_path}/hixl"
 fi
 install_info="${default_dir}/ascend_install.info"
  
@@ -1254,12 +1254,12 @@ fi
  
 # 执行预检查
 if [ "$input_pre_check" = "y" ]; then
-    log "INFO" "ops-dxl do pre check started."
+    log "INFO" "hixl do pre check started."
     pre_check
     if [ $? -ne 0 ]; then
-        log "WARNING" "ops-dxl do pre check failed."
+        log "WARNING" "hixl do pre check failed."
     else
-        log "INFO" "ops-dxl do pre check finished."
+        log "INFO" "hixl do pre check finished."
     fi
     if [ "$full_install" = "n" ] && [ "$run_install" = "n" ] && [ "$devel_install" = "n" ] && [ "$upgrade" = "n" ]; then
         exit_install_log 0
@@ -1270,7 +1270,7 @@ fi
 if [ "$check" = "y" ]; then
     ver_check
     if [ -z "$pkg_version_dir" ]; then
-        preinstall_check --install-path="$install_path_param" --script-dir="$curpath" --package="ops_dxl" --logfile="$logfile" --docker-root="$docker_root"
+        preinstall_check --install-path="$install_path_param" --script-dir="$curpath" --package="hixl" --logfile="$logfile" --docker-root="$docker_root"
         if [ $? -ne 0 ]; then
             exit_install_log 1
         else
@@ -1283,7 +1283,7 @@ if [ "$check" = "y" ]; then
 elif [ "$full_install" = "y" ] || [ "$run_install" = "y" ] || [ "$devel_install" = "y" ] || [ "$upgrade" = "y" ]; then
     ver_check
     if [ -z "$pkg_version_dir" ]; then
-        preinstall_process --install-path="$install_path_param" --script-dir="$curpath" --package="ops_dxl" --logfile="$logfile" --docker-root="$docker_root"
+        preinstall_process --install-path="$install_path_param" --script-dir="$curpath" --package="hixl" --logfile="$logfile" --docker-root="$docker_root"
         if [ $? -ne 0 ]; then
             exit_install_log 1
         else
@@ -1318,7 +1318,7 @@ if [ "$input_install_for_all" = "n" ]; then
     fi
 fi
  
-uninstall_none_multi_version "$pkg_install_path/ops_dxl"
+uninstall_none_multi_version "$pkg_install_path/hixl"
 check_install_for_all
 create_default_install_dir_for_common_user
 log_base_version
@@ -1351,7 +1351,7 @@ if [ "x$version_installed" != "x" -a "$version_installed" != "none" ] || [ -f "$
             if [ "$hetero_arch" = "y" ]; then
                 get_package_upgrade_install_info_hetero "upgrade_install_info"
             else
-                get_package_upgrade_install_info "upgrade_install_info" "$pkg_install_path" "ops_dxl"
+                get_package_upgrade_install_info "upgrade_install_info" "$pkg_install_path" "hixl"
             fi
             if [ -z "$upgrade_install_info" ]; then
                 log "ERROR" "Can not find softlink for this package in latest directory, upgrade failed"
@@ -1372,7 +1372,7 @@ if [ "x$version_installed" != "x" -a "$version_installed" != "none" ] || [ -f "$
     elif [ "$run_install" = "y" ] || [ "$full_install" = "y" ] || [ "$devel_install" = "y" ]; then
         version_of_package=$(get_version_in_runpkg)
         if [ "$is_quiet" = "n" ]; then
-            log "INFO" "ops-dxl package has been installed on the path ${pkg_install_path}, the version is ${version_installed}, and the version of this package is ${version_of_package}, do you want to continue? [y/n]"
+            log "INFO" "hixl package has been installed on the path ${pkg_install_path}, the version is ${version_installed}, and the version of this package is ${version_of_package}, do you want to continue? [y/n]"
             while true
             do
                 read yn
@@ -1422,7 +1422,7 @@ else
             if [ "$hetero_arch" = "y" ]; then
                 get_package_upgrade_install_info_hetero "upgrade_install_info"
             else
-                get_package_upgrade_install_info "upgrade_install_info" "$pkg_install_path" "ops_dxl"
+                get_package_upgrade_install_info "upgrade_install_info" "$pkg_install_path" "hixl"
             fi
             if [ -f "$upgrade_install_info" ]; then
                 create_default_dir && cp "$upgrade_install_info" "$install_info"

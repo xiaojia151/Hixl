@@ -235,7 +235,7 @@ link_clusters(clusters: Union[List[LLMClusterInfo], Tuple[LLMClusterInfo]], time
 
 **调用示例**
 
-请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python)。
+请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/python](https://gitcode.com/cann/hixl-dev/tree/master/examples/python)。
 
 **返回值**
 
@@ -303,7 +303,7 @@ unlink_clusters(clusters: Union[List[LLMClusterInfo], Tuple[LLMClusterInfo]], ti
 
 **调用示例**
 
-请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python)。
+请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/python](https://gitcode.com/cann/hixl-dev/tree/master/examples/python)。
 
 **返回值**
 
@@ -359,7 +359,7 @@ switch_role(self, role: LLMRole, switch_options: Optional[Dict[str, str]] = None
 
 **调用示例**
 
-请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python)。
+请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/python](https://gitcode.com/cann/hixl-dev/tree/master/examples/python)。
 
 **返回值**
 
@@ -448,7 +448,7 @@ link(comm_name: str, cluster_rank_info: Dict[int, int], rank_table: str) -> int
 
 **调用示例**
 
-请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python)。
+请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/python](https://gitcode.com/cann/hixl-dev/tree/master/examples/python)。
 
 **返回值**
 
@@ -500,7 +500,7 @@ unlink(comm_id: int)
 
 **调用示例**
 
-请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python)。
+请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/python](https://gitcode.com/cann/hixl-dev/tree/master/examples/python)。
 
 **返回值**
 
@@ -547,7 +547,7 @@ query_register_mem_status(comm_id: int) -> RegisterMemStatus
 
 **调用示例**
 
-请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/python)。
+请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/python](https://gitcode.com/cann/hixl-dev/tree/master/examples/python)。
 
 **返回值**
 

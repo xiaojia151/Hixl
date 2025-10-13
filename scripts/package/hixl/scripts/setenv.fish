@@ -19,7 +19,7 @@ function get_install_param
     if not test -f "$_file"
         exit 1
     end
-    set -l install_info_key_array Ops_DXL_Install_Type Ops_DXL_Feature_Type Ops_DXL_UserName Ops_DXL_UserGroup Ops_DXL_Install_Path_Param Ops_DXL_Arch_Linux_Path Ops_DXL_Hetero_Arch_Flag
+    set -l install_info_key_array HIXL_Install_Type HIXL_Feature_Type HIXL_UserName HIXL_UserGroup HIXL_Install_Path_Param HIXL_Arch_Linux_Path HIXL_Hetero_Arch_Flag
     for key_param in $install_info_key_array
         if test "$key_param" = "$_key"
             grep -i "$_key=" "$_file" | cut --only-delimited -d"=" -f2-
@@ -30,12 +30,12 @@ end
 
 function get_install_dir
     set -l install_info "$curpath/../ascend_install.info"
-    set -l hetero_arch (get_install_param "Ops_DXL_Hetero_Arch_Flag" "$install_info")
+    set -l hetero_arch (get_install_param "HIXL_Hetero_Arch_Flag" "$install_info")
     if test "$param_mult_ver" = "multi_version"
         if test "$hetero_arch" = "y"
-            echo (realpath $curpath/../../../../../latest)/ops_dxl
+            echo (realpath $curpath/../../../../../latest)/hixl
         else
-            echo (realpath $curpath/../../../latest)/ops_dxl
+            echo (realpath $curpath/../../../latest)/hixl
         end
     else
         echo (realpath $curpath/..)

@@ -19,8 +19,10 @@ import torch
 import torch_npu
 import torchair
 
+PROMPT_HOST_IP = '10.0.0.0'
 PROMPT_IP_LIST = ['192.168.1.1', '192.168.1.2', '192.168.1.3', '192.168.1.4',
                   '192.168.1.5', '192.168.1.6', '192.168.1.7', '192.168.1.8']
+DECODER_HOST_IP = '10.0.0.1'
 DECODER_IP_LIST = ['192.168.2.1', '192.168.2.2', '192.168.2.3', '192.168.2.4',
                   '192.168.2.5', '192.168.2.6', '192.168.2.7', '192.168.2.8']
 
@@ -42,7 +44,7 @@ def link(datadist, device_id):
     rank_table_dict = {
         "server_count": "2",
         "status": "completed",
-        "version": "1.0",
+        "version": "1.2",
         "server_list": [
             {
                 "device": [
@@ -52,6 +54,7 @@ def link(datadist, device_id):
                         "rank_id": "0"
                     }
                 ],
+                "host_ip": PROMPT_HOST_IP,
                 "server_id": "1"
             },
             {
@@ -62,6 +65,7 @@ def link(datadist, device_id):
                         "rank_id": "1"
                     }
                 ],
+                "host_ip": DECODER_HOST_IP,
                 "server_id": "2"
             }
         ]
@@ -102,7 +106,7 @@ def run_decoder_sample(datadist, device_id: int):
     time.sleep(5)
     cache_key = CacheKey(prompt_cluster_id=1, req_id=0, model_id=0)
     cache_manager.pull_blocks(cache_key, cache, src_blocks=[], dst_blocks=[0])
-    logging.info(f"after pull, tensor={tensors[0]}")
+    logging.info(f"after pull, tensor={tensors[0].cpu()}")
 
     datadist.unlink(comm_id)
     datadist.finalize()
@@ -122,7 +126,7 @@ def run_prompt_sample(datadist, device_id: int):
     tensors = torchair.llm_datadist.create_npu_tensors(cache.cache_desc.shape, torch.float16, tensor_addrs)
     # 对cache进行赋值
     tensors[0].fill_(2)
-    logging.info(f"prompt tensor={tensors[0]}")
+    logging.info(f"prompt tensor={tensors[0].cpu()}")
 
     logging.info('wait for 30 seconds')
     time.sleep(30)

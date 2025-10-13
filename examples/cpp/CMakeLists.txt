@@ -11,7 +11,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 project(llm_datadist_sample)
 
-set(DXL_INC_DIR "${DXL_CODE_DIR}/include")
+set(HIXL_INC_DIR "${HIXL_CODE_DIR}/include")
 add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 
 # 只定义目标名称列表（与cpp文件名前缀相同）
@@ -33,7 +33,7 @@ foreach(target_name IN LISTS targets_list)
     if(NOT TARGET ${target_name})
         add_executable(${target_name} ${source_file})
         target_include_directories(${target_name} PRIVATE
-            ${DXL_INC_DIR}
+            ${HIXL_INC_DIR}
             ${ASCEND_INSTALL_PATH}/include
         )
         target_compile_options(${target_name} PRIVATE

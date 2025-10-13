@@ -33,9 +33,9 @@ def init_process_group(rank, world_size, master_ip, backend='gloo'):
     os.environ['MASTER_ADDR'] = master_ip
     os.environ['MASTER_PORT'] = '29500'
 
-    logging.info(f"init group begin, {rank=}, {world_size=}, {master_ip=}")
+    logging.info(f"init group begin, rank={rank}, world_size={world_size}, master_ip={master_ip}")
     dist.init_process_group(backend=backend, rank=rank, world_size=world_size, timeout=datetime.timedelta(seconds=30))
-    logging.info(f"init group success, {rank=}, {world_size=}, {master_ip=}")
+    logging.info(f"init group success")
 
 
 def init_llm_datadist(role: LLMRole, cluster_id, device_id: int, local_host_ip, remote_host_ip) -> LLMDataDist:
@@ -48,7 +48,7 @@ def init_llm_datadist(role: LLMRole, cluster_id, device_id: int, local_host_ip, 
         llm_config.listen_ip_info = f"{local_host_ip}:26000"
     llm_options = llm_config.generate_options()
     datadist.init(llm_options)
-    logging.info(f"init {role} success, {cluster_id=}")
+    logging.info(f"init {role} success, cluster_id={cluster_id}")
     return datadist
 
 
@@ -69,8 +69,8 @@ def run_prompt_sample(datadist):
     # 2. 等decoder pull blocks
     dist.barrier() # decoder push blocks end
 
-    logging.info(f'after decoder push, {tensor=}')
-    logging.info(f'after decoder push, {tensor2=}')
+    logging.info(f'after decoder push, tensor={tensor.cpu()}')
+    logging.info(f'after decoder push, tensor2={tensor2.cpu()}')
 
     # 3. 解链
     cluster = LLMClusterInfo()

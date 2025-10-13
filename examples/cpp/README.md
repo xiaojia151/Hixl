@@ -20,8 +20,8 @@
 |   ├── decoder_push_cache_and_blocks.cpp              // push cache和push blocks的decoder侧实现
 |   ├── prompt_switch_roles.cpp                        // switch_roles的prompt侧实现
 |   ├── decoder_switch_roles.cpp                       // switch_roles的decoder侧实现
-|   ├── client_server_h2d.cpp                          // adxl_engine的client-server模式, h2d场景样例
-|   ├── server_server_d2d.cpp                          // adxl_engine的server-server模式, d2d场景样例
+|   ├── client_server_h2d.cpp                          // HIXL的client-server模式, h2d场景样例
+|   ├── server_server_d2d.cpp                          // HIXL的server-server模式, d2d场景样例
 |   ├── CMakeLists.txt                                 // 编译脚本
 ```
 
@@ -106,7 +106,7 @@
         ```
         ./decoder_switch_roles 2 10.170.10.2 10.170.10.1
 
-### 2. adxl_engine样例
+### 2. HIXL样例
   - 说明：
     - 所有样例需要成对运行，client侧和server侧执行间隔时间不要过长，client-server用例中设置WAIT_REG_TIME为5s，WAIT_TRANS_TIME为20s，server-server用例中设置WAIT_TIME为5s，用户可根据实际情况自行修改这两个变量的值以保证用例成功运行。
     - 下面所有用例都只能在单机上执行，local_engine和remote_engine的ip部分设为相同即可，server侧engine为ip:port形式，client侧engine为ip形式。如果需要多机执行，需对用例进行改造。

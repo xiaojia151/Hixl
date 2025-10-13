@@ -62,7 +62,7 @@ log() {
     local cur_date="$(date +'%Y-%m-%d %H:%M:%S')"
     local log_type="$1"
     local log_msg="$2"
-    local log_format="[ops-dxl] [$cur_date] [$log_type]: $log_msg"
+    local log_format="[hixl] [$cur_date] [$log_type]: $log_msg"
     if [ "$log_type" = "INFO" ]; then
         echo "$log_format"
     elif [ "$log_type" = "WARNING" ]; then
@@ -174,24 +174,24 @@ remove_last_license() {
     fi
 }
 
-WHL_SOFTLINK_INSTALL_DIR_PATH="${common_parse_dir}/ops_dxl/python/site-packages"
+WHL_SOFTLINK_INSTALL_DIR_PATH="${common_parse_dir}/hixl/python/site-packages"
 WHL_INSTALL_DIR_PATH="${common_parse_dir}/python/site-packages"
-OPS_DXL_NAME="ops_dxl"
+HIXL_NAME="hixl"
 
 custom_uninstall() {
-    if [ -z "$common_parse_dir/ops_dxl" ]; then
-        log "ERROR" "ERR_NO:0x0001;ERR_DES:ops_dxl directory is empty"
+    if [ -z "$common_parse_dir/hixl" ]; then
+        log "ERROR" "ERR_NO:0x0001;ERR_DES:hixl directory is empty"
         exit 1
     fi
 
     if [ "$hetero_arch" != "y" ]; then
-        local arch_name="$(get_arch_name $common_parse_dir/ops_dxl)"
-        local ref_dir="$common_parse_dir/ops_dxl/lib64/stub/linux/$arch_name"
-        remove_stub_softlink "$ref_dir" "$common_parse_dir/ops_dxl/lib64/stub"
+        local arch_name="$(get_arch_name $common_parse_dir/hixl)"
+        local ref_dir="$common_parse_dir/hixl/lib64/stub/linux/$arch_name"
+        remove_stub_softlink "$ref_dir" "$common_parse_dir/hixl/lib64/stub"
     else
-        local arch_name="$(get_arch_name $common_parse_dir/ops_dxl)"
-        local ref_dir="$common_parse_dir/ops_dxl/lib64/stub/linux/$arch_name"
-        remove_stub_softlink "$ref_dir" "$common_parse_dir/ops_dxl/lib64/stub"
+        local arch_name="$(get_arch_name $common_parse_dir/hixl)"
+        local ref_dir="$common_parse_dir/hixl/lib64/stub/linux/$arch_name"
+        remove_stub_softlink "$ref_dir" "$common_parse_dir/hixl/lib64/stub"
     fi
 
     if [ "$hetero_arch" != "y" ]; then
@@ -199,13 +199,13 @@ custom_uninstall() {
         chmod +w -R "${WHL_INSTALL_DIR_PATH}/llm_datadist" 2> /dev/null
         chmod +w -R "${WHL_INSTALL_DIR_PATH}/llm_datadist-0.0.1.dist-info" 2> /dev/null
 
-        log "INFO" "uninstall ops_dxl tool begin..."
-        whl_uninstall_package "${OPS_DXL_NAME}" "${WHL_INSTALL_DIR_PATH}"
-        log "INFO" "ops_dxl tool uninstalled successfully!"
+        log "INFO" "uninstall hixl tool begin..."
+        whl_uninstall_package "${HIXL_NAME}" "${WHL_INSTALL_DIR_PATH}"
+        log "INFO" "hixl tool uninstalled successfully!"
     fi
 
     test -d "$WHL_SOFTLINK_INSTALL_DIR_PATH" && rm -rf "$WHL_SOFTLINK_INSTALL_DIR_PATH" > /dev/null 2>&1
-    remove_dir "${common_parse_dir}/ops_dxl/python"
+    remove_dir "${common_parse_dir}/hixl/python"
 
     if [ "$hetero_arch" != "y" ]; then
         if [ -d "${WHL_INSTALL_DIR_PATH}" ]; then

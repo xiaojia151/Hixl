@@ -13,13 +13,13 @@ get_pkg_arch_name() {
     local scene_info="$curpath/../scene.info"
     if [ ! -f "$scene_info" ]; then
         local cur_date="$(date +'%Y-%m-%d %H:%M:%S')"
-        echo "[ops-dxl] [$cur_date] [ERROR]: $scene_info file cannot be found!"
+        echo "[hixl] [$cur_date] [ERROR]: $scene_info file cannot be found!"
         exit 1
     fi
     local arch="$(grep -iw arch "$scene_info" | cut -d"=" -f2- | awk '{print tolower($0)}')"
     if [ -z "$arch" ]; then
         local cur_date="$(date +'%Y-%m-%d %H:%M:%S')"
-        echo "[ops-dxl] [$cur_date] [ERROR]: var arch cannot be found in file $scene_info!"
+        echo "[hixl] [$cur_date] [ERROR]: var arch cannot be found in file $scene_info!"
         exit 1
     fi
     echo $arch
@@ -27,9 +27,9 @@ get_pkg_arch_name() {
 
 get_installed_pkg_arch_name() {
     if [ "$pkg_is_multi_version" = "true" ]; then
-        local scene_info="$docker_root$input_install_path/$pkg_version_dir/ops_dxl/scene.info"
+        local scene_info="$docker_root$input_install_path/$pkg_version_dir/hixl/scene.info"
     else
-        local scene_info="$docker_root$input_install_path/ops_dxl/scene.info"
+        local scene_info="$docker_root$input_install_path/hixl/scene.info"
     fi
     if [ ! -f "$scene_info" ]; then
         return
@@ -80,7 +80,7 @@ get_package_upgrade_install_info_hetero() {
     local path_latest="$docker_root$input_install_path/latest"
     local path_hetero="$docker_root$input_install_path/latest/$arch_scripts_path"
     if [ -d "$path_latest" ] && [ -d "$path_hetero" ]; then
-        local install_info=$(find "$path_hetero" -type f -name 'ascend_install.info' | grep 'ops_dxl/ascend_install.info')
+        local install_info=$(find "$path_hetero" -type f -name 'ascend_install.info' | grep 'hixl/ascend_install.info')
         if [ -n "$install_info" ]; then
             install_info="$(realpath $install_info)"
             eval "${_outvar}=\"$install_info\""
@@ -93,11 +93,11 @@ get_package_upgrade_install_info_hetero() {
 is_hetero_arch_pkg_installed() {
     if [ "$is_pkg_hetero_arch" = "y" ]; then
         if [ "$pkg_is_multi_version" = "true" ]; then
-            local path_version="$docker_root$input_install_path/$pkg_version_dir/$arch_scripts_path/ops_dxl/version.info"
-            local path_install="$docker_root$input_install_path/$pkg_version_dir/$arch_scripts_path/ops_dxl/ascend_install.info"
+            local path_version="$docker_root$input_install_path/$pkg_version_dir/$arch_scripts_path/hixl/version.info"
+            local path_install="$docker_root$input_install_path/$pkg_version_dir/$arch_scripts_path/hixl/ascend_install.info"
         else
-            local path_version="$docker_root$input_install_path/$arch_scripts_path/ops_dxl/version.info"
-            local path_install="$docker_root$input_install_path/$arch_scripts_path/ops_dxl/ascend_install.info"
+            local path_version="$docker_root$input_install_path/$arch_scripts_path/hixl/version.info"
+            local path_install="$docker_root$input_install_path/$arch_scripts_path/hixl/ascend_install.info"
         fi
         if [ -f "$path_version" ] && [ -f "$path_install" ]; then
             echo "installed-hetero"
@@ -105,11 +105,11 @@ is_hetero_arch_pkg_installed() {
         fi
 
         if [ "$pkg_is_multi_version" = "true" ]; then
-            local path_version="$docker_root$input_install_path/$pkg_version_dir/ops_dxl/version.info"
-            local path_install="$docker_root$input_install_path/$pkg_version_dir/ops_dxl/ascend_install.info"
+            local path_version="$docker_root$input_install_path/$pkg_version_dir/hixl/version.info"
+            local path_install="$docker_root$input_install_path/$pkg_version_dir/hixl/ascend_install.info"
         else
-            local path_version="$docker_root$input_install_path/ops_dxl/version.info"
-            local path_install="$docker_root$input_install_path/ops_dxl/ascend_install.info"
+            local path_version="$docker_root$input_install_path/hixl/version.info"
+            local path_install="$docker_root$input_install_path/hixl/ascend_install.info"
         fi
         if [ -f "$path_version" ] && [ -f "$path_install" ] && [ "$(get_installed_pkg_arch_name)" = "$(get_pkg_arch_name)" ]; then
             echo "installed-normal"
@@ -122,7 +122,7 @@ is_hetero_arch_pkg_installed() {
                 echo "installed-hetero-to-be-upgraded"
                 return
             else
-                get_package_upgrade_install_info "ascend_install_info" "$docker_root$input_install_path" "ops_dxl"
+                get_package_upgrade_install_info "ascend_install_info" "$docker_root$input_install_path" "hixl"
                 if [ -f "${ascend_install_info}" ]; then
                     echo "installed-normal-to-be-upgraded"
                     return
@@ -141,9 +141,9 @@ update_install_info_hetero() {
     local pkg_version_dir=$2
     if [ -f "$install_info" ]; then
         chmod u+w "$(dirname $install_info)" "$install_info"
-        local new_install_path="$(grep -iw Ops_DXL_Install_Path_Param $install_info)"
+        local new_install_path="$(grep -iw HIXL_Install_Path_Param $install_info)"
         local new_install_path="$(echo $new_install_path | awk -v version=$pkg_version_dir 'BEGIN{FS=OFS="/"} {$(NF-2)=version; print}')"
-        sed -i -e "s:Ops_DXL_Install_Path_Param=.*:$new_install_path:" "$install_info"
+        sed -i -e "s:HIXL_Install_Path_Param=.*:$new_install_path:" "$install_info"
     fi
 }
 
@@ -156,7 +156,7 @@ replace_filelist() {
 
     function in_pkg_black_list() {
         relative_install_path = $4
-        if (relative_install_path ~ /^ops_dxl\/python/) { return 1 }
+        if (relative_install_path ~ /^hixl\/python/) { return 1 }
         return 0
     }
 

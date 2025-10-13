@@ -20,7 +20,7 @@ fi
 log() {
     local content=$(echo "$@" | cut -d" " -f2-)
     local cur_date="$(date +'%Y-%m-%d %H:%M:%S')"
-    echo -e "[ops-dxl] [$cur_date] [$1]: $content"
+    echo -e "[hixl] [$cur_date] [$1]: $content"
 }
 
 input_check() {

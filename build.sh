@@ -118,7 +118,7 @@ mk_dir() {
 }
 
 build() {
-  echo "create build directory and build ops-dxl";
+  echo "create build directory and build hixl";
   mk_dir "${BUILD_PATH}"
   cd "${BUILD_PATH}"
   cmake -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
@@ -138,11 +138,11 @@ build() {
   if [ -f _CPack_Packages/makeself_staging/cann*.run ];then
     mv _CPack_Packages/makeself_staging/cann*.run ${OUTPUT_PATH}
   else
-    echo "package ops_dxl run failed"
+    echo "package hixl run failed"
     return 1
   fi
 
-  echo "ops-dxl package success!"
+  echo "hixl package success!"
 }
 
 main() {

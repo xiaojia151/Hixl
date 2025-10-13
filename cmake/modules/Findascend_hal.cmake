@@ -75,7 +75,6 @@ if(ascend_hal_FOUND)
         INTERFACE_INCLUDE_DIRECTORIES "${ascend_hal_INCLUDE_DIR};${ascend_hal_INCLUDE_DIR}/ascend_hal;${ascend_hal_INCLUDE_DIR}/ascend_hal/driver"
     )
 
-    # 提供一个函数方便其他目标使用
     function(target_link_ascend_hal target)
         target_include_directories(${target} PRIVATE ${ascend_hal_INCLUDE_DIR})
         target_link_options(${target} PRIVATE "-L${ascend_hal_LIBRARY_DIR}")

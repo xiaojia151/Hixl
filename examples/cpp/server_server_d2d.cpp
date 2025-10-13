@@ -15,9 +15,9 @@
 #include <fstream>
 #include <string.h>
 #include "acl/acl.h"
-#include "adxl/adxl_engine.h"
+#include "hixl/hixl.h"
 
-using namespace adxl;
+using namespace hixl;
 namespace {
 constexpr int32_t kWaitTime = 5;
 constexpr int32_t kExpectedArgCnt = 4;
@@ -35,9 +35,9 @@ constexpr uint32_t kMaxEngineNameLen = 30;
   } while (0)
 }  // namespace
 
-int Initialize(AdxlEngine &adxl_engine, const char *local_engine) {
+int Initialize(Hixl &hixl_engine, const char *local_engine) {
   std::map<AscendString, AscendString> options;
-  auto ret = adxl_engine.Initialize(local_engine, options);
+  auto ret = hixl_engine.Initialize(local_engine, options);
   if (ret != SUCCESS) {
     printf("[ERROR] Initialize failed, ret = %u\n", ret);
     return -1;
@@ -46,8 +46,8 @@ int Initialize(AdxlEngine &adxl_engine, const char *local_engine) {
   return 0;
 }
 
-int Connect(AdxlEngine &adxl_engine, const char *remote_engine) {
-  auto ret = adxl_engine.Connect(remote_engine);
+int Connect(Hixl &hixl_engine, const char *remote_engine) {
+  auto ret = hixl_engine.Connect(remote_engine);
   if (ret != SUCCESS) {
     printf("[ERROR] Connect failed, ret = %u\n", ret);
     return -1;
@@ -56,7 +56,7 @@ int Connect(AdxlEngine &adxl_engine, const char *remote_engine) {
   return 0;
 }
 
-int32_t Transfer(AdxlEngine &adxl_engine, uint8_t *&buffer, uint8_t *&buffer2, const char *local_engine,
+int32_t Transfer(Hixl &hixl_engine, uint8_t *&buffer, uint8_t *&buffer2, const char *local_engine,
                  const char *remote_engine) {
   uintptr_t remote_addr;
   uintptr_t remote_addr2;
@@ -68,7 +68,7 @@ int32_t Transfer(AdxlEngine &adxl_engine, uint8_t *&buffer, uint8_t *&buffer2, c
     printf("[INFO] Local engine test write, write value:%s\n", local_engine);
     CHECK_ACL(aclrtMemcpy(buffer, kMaxEngineNameLen, local_engine, strlen(local_engine), ACL_MEMCPY_HOST_TO_DEVICE));
     TransferOpDesc desc{reinterpret_cast<uintptr_t>(buffer), remote_addr, strlen(local_engine)};
-    auto ret = adxl_engine.TransferSync(remote_engine, WRITE, {desc});
+    auto ret = hixl_engine.TransferSync(remote_engine, WRITE, {desc});
     if (ret != SUCCESS) {
       printf("[ERROR] TransferSync write failed, remote_addr:%p, ret = %u\n", reinterpret_cast<void *>(remote_addr), ret);
       return -1;
@@ -95,7 +95,7 @@ int32_t Transfer(AdxlEngine &adxl_engine, uint8_t *&buffer, uint8_t *&buffer2, c
     }
 
     TransferOpDesc desc{reinterpret_cast<uintptr_t>(buffer2), remote_addr2, strlen(remote_engine)};
-    auto ret = adxl_engine.TransferSync(remote_engine, READ, {desc});
+    auto ret = hixl_engine.TransferSync(remote_engine, READ, {desc});
     if (ret != SUCCESS) {
       printf("[ERROR] TransferSync read failed, remote_addr:%p, ret = %u\n", reinterpret_cast<void *>(remote_addr2), ret);
       return -1;
@@ -115,9 +115,9 @@ int32_t Transfer(AdxlEngine &adxl_engine, uint8_t *&buffer, uint8_t *&buffer2, c
   return 0;
 }
 
-void Finalize(AdxlEngine &adxl_engine, bool connected, const char *remote_engine, const std::vector<MemHandle> handles) {
+void Finalize(Hixl &hixl_engine, bool connected, const char *remote_engine, const std::vector<MemHandle> handles) {
   if (connected) {
-    auto ret = adxl_engine.Disconnect(remote_engine);
+    auto ret = hixl_engine.Disconnect(remote_engine);
     if (ret != 0) {
       printf("[ERROR] Disconnect failed, ret = %d\n", ret);
     } else {
@@ -128,22 +128,22 @@ void Finalize(AdxlEngine &adxl_engine, bool connected, const char *remote_engine
   }
 
   for (auto handle : handles) {
-    auto ret = adxl_engine.DeregisterMem(handle);
+    auto ret = hixl_engine.DeregisterMem(handle);
     if (ret != 0) {
       printf("[ERROR] DeregisterMem failed, ret = %u\n", ret);
     } else {
       printf("[INFO] DeregisterMem success\n");
     }
   }
-  adxl_engine.Finalize();
+  hixl_engine.Finalize();
 }
 
 int32_t Run(const char *local_engine, const char *remote_engine) {
   printf("[INFO] run start\n");
   // 1. 初始化
-  AdxlEngine adxl_engine;
-  if (Initialize(adxl_engine, local_engine) != 0) {
-    printf("[ERROR] Initialize AdxlEngine failed\n");
+  Hixl hixl_engine;
+  if (Initialize(hixl_engine, local_engine) != 0) {
+    printf("[ERROR] Initialize Hixl failed\n");
     return -1;
   }
   // 2. 注册内存地址
@@ -157,18 +157,18 @@ int32_t Run(const char *local_engine, const char *remote_engine) {
   desc.len = kMaxEngineNameLen;
   MemHandle handle = nullptr;
   bool connected = false;
-  auto ret = adxl_engine.RegisterMem(desc, MEM_DEVICE, handle);
+  auto ret = hixl_engine.RegisterMem(desc, MEM_DEVICE, handle);
   if (ret != SUCCESS) {
     printf("[ERROR] RegisterMem failed, ret = %u\n", ret);
-    Finalize(adxl_engine, connected, remote_engine, {});
+    Finalize(hixl_engine, connected, remote_engine, {});
     return -1;
   }
   MemHandle handle2 = nullptr;
   desc.addr = reinterpret_cast<uintptr_t>(buffer2);
-  ret = adxl_engine.RegisterMem(desc, MEM_DEVICE, handle2);
+  ret = hixl_engine.RegisterMem(desc, MEM_DEVICE, handle2);
   if (ret != SUCCESS) {
     printf("[ERROR] RegisterMem failed, ret = %u\n", ret);
-    Finalize(adxl_engine, connected, remote_engine, {handle});
+    Finalize(hixl_engine, connected, remote_engine, {handle});
     return -1;
   }
   // RegisterMem成功后，将地址保存到本地文件中等待对端读取
@@ -182,20 +182,20 @@ int32_t Run(const char *local_engine, const char *remote_engine) {
   std::this_thread::sleep_for(std::chrono::seconds(kWaitTime));
 
   // 3. 与对端server建链
-  if (Connect(adxl_engine, remote_engine) != 0) {
-    Finalize(adxl_engine, connected, remote_engine, {handle, handle2});
+  if (Connect(hixl_engine, remote_engine) != 0) {
+    Finalize(hixl_engine, connected, remote_engine, {handle, handle2});
     return -1;
   }
   connected = true;
 
   // 4. 测试d2d write和read
-  if (Transfer(adxl_engine, buffer, buffer2, local_engine, remote_engine) != 0) {
-    Finalize(adxl_engine, connected, remote_engine, {handle, handle2});
+  if (Transfer(hixl_engine, buffer, buffer2, local_engine, remote_engine) != 0) {
+    Finalize(hixl_engine, connected, remote_engine, {handle, handle2});
     return -1;
   }
 
   // 5. 释放Cache与llmDataDist
-  Finalize(adxl_engine, connected, remote_engine, {handle, handle2});
+  Finalize(hixl_engine, connected, remote_engine, {handle, handle2});
   printf("[INFO] run Sample end\n");
   return 0;
 }

@@ -33,7 +33,7 @@ endif()
 # 生成安装配置文件
 set(CSV_OUTPUT ${CPACK_CMAKE_BINARY_DIR}/filelist.csv)
 execute_process(
-    COMMAND python3 ${CPACK_CMAKE_SOURCE_DIR}/scripts/package/package.py --pkg_name ops_dxl --os_arch linux-${CPACK_ARCH}
+    COMMAND python3 ${CPACK_CMAKE_SOURCE_DIR}/scripts/package/package.py --pkg_name hixl --os_arch linux-${CPACK_ARCH}
     WORKING_DIRECTORY ${CPACK_CMAKE_BINARY_DIR}
     OUTPUT_VARIABLE result
     ERROR_VARIABLE error
@@ -55,20 +55,20 @@ set(SCENE_OUT_PUT
 )
 configure_file(
     ${SCENE_OUT_PUT}
-    ${STAGING_DIR}/ops_dxl/
+    ${STAGING_DIR}/hixl/
     COPYONLY
 )
 set(OPS_VERSION_OUT_PUT
-    ${CPACK_CMAKE_BINARY_DIR}/ops_dxl_version.h
+    ${CPACK_CMAKE_BINARY_DIR}/hixl_version.h
 )
 configure_file(
     ${OPS_VERSION_OUT_PUT}
-    ${STAGING_DIR}/ops_dxl/
+    ${STAGING_DIR}/hixl/
     COPYONLY
 )
 configure_file(
     ${CSV_OUTPUT}
-    ${STAGING_DIR}/ops_dxl/script
+    ${STAGING_DIR}/hixl/script
     COPYONLY
 )
 # makeself打包
@@ -80,8 +80,8 @@ message(STATUS "makeself: ${makeself_param_string}")
 
 execute_process(COMMAND bash ${MAKESELF_EXE}
         --header ${MAKESELF_HEADER_EXE}
-        --help-header ops_dxl/script/help.info
-        ${makeself_param_string} ops_dxl/script/install.sh
+        --help-header hixl/script/help.info
+        ${makeself_param_string} hixl/script/install.sh
         WORKING_DIRECTORY ${STAGING_DIR}
         RESULT_VARIABLE EXEC_RESULT
         ERROR_VARIABLE  EXEC_ERROR

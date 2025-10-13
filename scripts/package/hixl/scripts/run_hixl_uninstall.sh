@@ -53,8 +53,8 @@ else
 fi
 logfile="${log_dir}/ascend_install.log"
 
-SOURCE_INSTALL_COMMON_PARSER_FILE="${common_parse_dir}/ops_dxl/script/install_common_parser.sh"
-SOURCE_FILELIST_FILE="${common_parse_dir}/ops_dxl/script/filelist.csv"
+SOURCE_INSTALL_COMMON_PARSER_FILE="${common_parse_dir}/hixl/script/install_common_parser.sh"
+SOURCE_FILELIST_FILE="${common_parse_dir}/hixl/script/filelist.csv"
 
 get_install_param() {
     local _key="$1"
@@ -64,7 +64,7 @@ get_install_param() {
     if [ ! -f "${_file}" ]; then
         exit 1
     fi
-    local install_info_key_array="Ops_DXL_Install_Type Ops_DXL_Feature_Type Ops_DXL_UserName Ops_DXL_UserGroup Ops_DXL_Install_Path_Param Ops_DXL_Arch_Linux_Path Ops_DXL_Hetero_Arch_Flag"
+    local install_info_key_array="HIXL_Install_Type HIXL_Feature_Type HIXL_UserName HIXL_UserGroup HIXL_Install_Path_Param HIXL_Arch_Linux_Path HIXL_Hetero_Arch_Flag"
     for key_param in ${install_info_key_array}; do
         if [ "${key_param}" = "${_key}" ]; then
             _param=$(grep -i "${_key}=" "${_file}" | cut -d"=" -f2-)
@@ -74,9 +74,9 @@ get_install_param() {
     echo "${_param}"
 }
 
-install_info="${common_parse_dir}/ops_dxl/ascend_install.info"
+install_info="${common_parse_dir}/hixl/ascend_install.info"
 if [ -f "$install_info" ]; then
-    hetero_arch=$(get_install_param "Ops_DXL_Hetero_Arch_Flag" "${install_info}")
+    hetero_arch=$(get_install_param "HIXL_Hetero_Arch_Flag" "${install_info}")
 fi
 
 # 写日志
@@ -84,7 +84,7 @@ log() {
     local cur_date="$(date +'%Y-%m-%d %H:%M:%S')"
     local log_type="$1"
     local log_msg="$2"
-    local log_format="[ops-dxl] [$cur_date] [$log_type]: $log_msg"
+    local log_format="[hixl] [$cur_date] [$log_type]: $log_msg"
     if [ "$log_type" = "INFO" ]; then
         echo "$log_format"
     elif [ "$log_type" = "WARNING" ]; then
@@ -98,22 +98,22 @@ log() {
 }
 
 ##########################################################################
-log "INFO" "step into run_ops_dxl_uninstall.sh ......"
+log "INFO" "step into run_hixl_uninstall.sh ......"
 log "INFO" "uninstall target dir $common_parse_dir, type $common_parse_type."
 
-if [ ! -d "$common_parse_dir/ops_dxl" ]; then
-    log "ERROR" "ERR_NO:0x0001;ERR_DES:path $common_parse_dir/ops_dxl is not exist."
+if [ ! -d "$common_parse_dir/hixl" ]; then
+    log "ERROR" "ERR_NO:0x0001;ERR_DES:path $common_parse_dir/hixl is not exist."
     exit 1
 fi
 
 new_uninstall() {
-    if [ -f "${common_parse_dir}/ops_dxl/data/version.info" ]; then
+    if [ -f "${common_parse_dir}/hixl/data/version.info" ]; then
         log "INFO" "need to uninstall costmodel files."
-        bash "${common_parse_dir}/ops_dxl/data/script/install.sh" -- -- --uninstall --install-path="${common_parse_dir}"
+        bash "${common_parse_dir}/hixl/data/script/install.sh" -- -- --uninstall --install-path="${common_parse_dir}"
     fi
 
-    if [ ! -d "${common_parse_dir}/ops_dxl" ]; then
-        log "INFO" "no need to uninstall ops_dxl files."
+    if [ ! -d "${common_parse_dir}/hixl" ]; then
+        log "INFO" "no need to uninstall hixl files."
         return 0
     fi
 
@@ -127,7 +127,7 @@ new_uninstall() {
             local arch_path="$(basename $linux_path)"
             local latest_path="$(realpath $linux_path/../..)/latest"
             local pkgs="$(cut -d'|' -f2 $package_db_info | sort -u)"
-            if [ "$pkgs" = "ops_dxl" ]; then
+            if [ "$pkgs" = "hixl" ]; then
                 if [ -L "$latest_path/$arch_path" ] && [ "$(realpath $linux_path)" = "$(realpath $latest_path/$arch_path)" ]; then
                     rm -f "$latest_path/$arch_path"
                 fi
@@ -141,7 +141,7 @@ new_uninstall() {
 
     # 执行卸载
     custom_options="--custom-options=--common-parse-dir=$common_parse_dir,--logfile=$logfile,--stage=uninstall,--quiet=$is_quiet,--hetero-arch=$hetero_arch"
-    sh "$SOURCE_INSTALL_COMMON_PARSER_FILE" --package="ops_dxl" --uninstall --username="$username" --usergroup="$usergroup" ${recreate_softlink_option} \
+    sh "$SOURCE_INSTALL_COMMON_PARSER_FILE" --package="hixl" --uninstall --username="$username" --usergroup="$usergroup" ${recreate_softlink_option} \
         --version=$pkg_version --version-dir=$pkg_version_dir \
         --docker-root="$docker_root" $custom_options "$common_parse_type" "$input_install_dir" "$SOURCE_FILELIST_FILE"
     if [ $? -ne 0 ]; then

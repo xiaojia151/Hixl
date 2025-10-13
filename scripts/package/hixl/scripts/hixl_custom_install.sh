@@ -9,7 +9,7 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
-sourcedir="$PWD/ops_dxl"
+sourcedir="$PWD/hixl"
 curpath=$(dirname $(readlink -f "$0"))
 common_func_path="${curpath}/common_func.inc"
 unset PYTHONPATH
@@ -72,11 +72,11 @@ log() {
     local log_type="$1"
     shift
     if [ "$log_type" = "INFO" -o "$log_type" = "WARNING" -o "$log_type" = "ERROR" ]; then
-        echo -e "[ops-dxl] [$cur_date] [$log_type]: $*"
+        echo -e "[hixl] [$cur_date] [$log_type]: $*"
     else
-        echo "[ops-dxl] [$cur_date] [$log_type]: $*" 1> /dev/null
+        echo "[hixl] [$cur_date] [$log_type]: $*" 1> /dev/null
     fi
-    echo "[ops-dxl] [$cur_date] [$log_type]: $*" >> "$logfile"
+    echo "[hixl] [$cur_date] [$log_type]: $*" >> "$logfile"
 }
 
 get_arch_name() {
@@ -98,7 +98,7 @@ create_stub_softlink() {
     cd $pwdbak
 }
 
-ops_dxl_install_package() {
+hixl_install_package() {
     local _package="$1"
     local _pythonlocalpath="$2"
     log "INFO" "install python module package in ${_package}"
@@ -271,7 +271,7 @@ migrate_user_assets() {
         for src in $path_list
         do
             dst=${src##*$pkg_name/}
-            dst="$common_parse_dir/ops_dxl/$dst"
+            dst="$common_parse_dir/hixl/$dst"
 
             if [ "$dst" = "$(realpath "$src")" ]; then
                 log "INFO" "file '$src' and '$dst' are the same file, no need copy."
@@ -319,27 +319,27 @@ clear_kernel_cache_dir() {
 }
 
 WHL_INSTALL_DIR_PATH="${common_parse_dir}/python/site-packages"
-WHL_SOFTLINK_INSTALL_DIR_PATH="${common_parse_dir}/ops_dxl/python/site-packages"
-PYTHON_OPS_DXL_WHL="${sourcedir}/lib/llm_datadist-0.0.1-py3-none-any.whl"
+WHL_SOFTLINK_INSTALL_DIR_PATH="${common_parse_dir}/hixl/python/site-packages"
+PYTHON_HIXL_WHL="${sourcedir}/lib/llm_datadist-0.0.1-py3-none-any.whl"
 
 custom_install() {
-    if [ -z "$common_parse_dir/ops_dxl" ]; then
-        log "ERROR" "ERR_NO:0x0001;ERR_DES:ops_dxl directory is empty"
+    if [ -z "$common_parse_dir/hixl" ]; then
+        log "ERROR" "ERR_NO:0x0001;ERR_DES:hixl directory is empty"
         exit 1
     fi
 
     if [ "$hetero_arch" != "y" ]; then
-        local arch_name="$(get_arch_name $common_parse_dir/ops_dxl)"
-        create_stub_softlink "$common_parse_dir/ops_dxl/lib64/stub" "linux/$arch_name"
+        local arch_name="$(get_arch_name $common_parse_dir/hixl)"
+        create_stub_softlink "$common_parse_dir/hixl/lib64/stub" "linux/$arch_name"
     else
-        local arch_name="$(get_arch_name $common_parse_dir/ops_dxl)"
-        create_stub_softlink "$common_parse_dir/ops_dxl/lib64/stub" "linux/$arch_name"
+        local arch_name="$(get_arch_name $common_parse_dir/hixl)"
+        create_stub_softlink "$common_parse_dir/hixl/lib64/stub" "linux/$arch_name"
     fi
 
     if [ "$hetero_arch" != "y" ]; then
-        log "INFO" "install ops_dxl extension module begin..."
-        ops_dxl_install_package "${PYTHON_OPS_DXL_WHL}" "${WHL_INSTALL_DIR_PATH}"
-        log "INFO" "the ops_dxl extension module installed successfully!"
+        log "INFO" "install hixl extension module begin..."
+        hixl_install_package "${PYTHON_HIXL_WHL}" "${WHL_INSTALL_DIR_PATH}"
+        log "INFO" "the hixl extension module installed successfully!"
 
         mkdir -p "$WHL_SOFTLINK_INSTALL_DIR_PATH"
         if [ "${pylocal}" = "y" ]; then
@@ -350,11 +350,11 @@ custom_install() {
         if [ "${pylocal}" = "y" ]; then
             log "INFO" "please make sure PYTHONPATH include ${WHL_INSTALL_DIR_PATH}."
         else
-            log "INFO" "The package te is already installed in python default path. It is recommended to install it using the '--pylocal' parameter, install the package ops_dxl in the ${WHL_INSTALL_DIR_PATH}."
+            log "INFO" "The package te is already installed in python default path. It is recommended to install it using the '--pylocal' parameter, install the package hixl in the ${WHL_INSTALL_DIR_PATH}."
         fi
 
         if [ "x$stage" = "xinstall" ]; then
-            log "INFO" "ops_dxl do migrate user assets."
+            log "INFO" "hixl do migrate user assets."
             migrate_user_assets atc
             migrate_user_assets fwkacllib
             if [ $? -ne 0 ]; then

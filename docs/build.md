@@ -96,7 +96,7 @@
 
 开发者可通过如下命令下载本仓源码：
 ```bash
-git clone https://gitcode.com/cann/ops-dxl-dev.git
+git clone https://gitcode.com/cann/hixl-dev.git
 ```
 - 注意：gitcode平台在使用HTTPS协议的时候要配置并使用个人访问令牌代替登录密码进行克隆，推送等操作
 
@@ -119,7 +119,7 @@ bash build.sh
 # 指定路径安装，安装路径是ascend_install_path
 bash build.sh --ascend_install_path=${ascend_install_path}/latest
 ```
-成功编译后会在build_out目录下生成`cann-ops-dxl_${cann_version}_linux_${arch}.run`，同时会将C++用例一同编译，在build/examples/cpp路径下生成编译后的二进制文件。  
+成功编译后会在build_out目录下生成`cann-hixl_${cann_version}_linux_${arch}.run`，同时会将C++用例一同编译，在build/examples/cpp路径下生成编译后的二进制文件。  
 - ${cann_version}表示cann版本号。
 - ${arch}表示表示CPU架构，如aarch64、x86_64。 
 - 更多执行选项可以用-h查看 
@@ -164,7 +164,7 @@ bash build.sh --ascend_install_path=${ascend_install_path}/latest
 - 说明，此处的指定路径默认路径需与前面安装toolkit包时的路径保持一致
 ```bash
 # 如果需要指定安装路径则加上--install-path=${ascend_install_path}
-./cann-ops-dxl_${cann_version}_linux-${arch}.run --full --quiet --pylocal
+./cann-hixl_${cann_version}_linux-${arch}.run --full --quiet --pylocal
 ```
 - --full 全量模式安装
 - --quiet 静默安装，跳过人机交互环节

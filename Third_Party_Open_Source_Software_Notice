@@ -268,7 +268,7 @@ Software: tensorflow 43812c0
 
 Official Repository: https://gitee.com/ascend/tensorflow
 
-Usage: "scripts/package/ops_dxl/scripts/run_ops_dxl_upgrade.sh"
+Usage: "scripts/package/hixl/scripts/run_hixl_upgrade.sh"
 
 Copyright Notice: Copyright 2019-2020 Huawei Technologies Co., Ltd.
 

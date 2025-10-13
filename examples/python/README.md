@@ -48,7 +48,9 @@ source ${HOME}/Ascend/set_env.sh
     **注: 如果出现hccn_tool命令找不到的情况，可在CANN包安装目录下搜索hccn_tool，找到可执行文件执行。更多hccn_tool的用法请参考[hccn_tool接口文档](https://support.huawei.com/enterprise/zh/ascend-computing/ascend-hdk-pid-252764743?category=developer-documents&subcategory=interface-reference)。**
 - 更改脚本中的device信息
     - 将PROMPT_IP_LIST中的device_ip修改为Prompt主机的各device_ip。
+    - 将PROMPT_HOST_IP修改为Prompt主机的host_ip。
     - 将DECODER_IP_LIST中的device_ip修改为Decoder主机的各device_ip。
+    - 将DECODER_HOST_IP修改为Decoder主机的host_ip。
     - 两台机器脚本保持一致。
 - 执行样例前检查设备之间网络是否连通（可选）：
     ```
@@ -58,42 +60,38 @@ source ${HOME}/Ascend/set_env.sh
     **注: 其中-i后面为指定的设备ID；address后面为目的设备的ip地址。**
 
 ### 执行
-- 说明：所有python样例执行前请设置环境变量
-    ```
-    export HCCL_INTRA_ROCE_ENABLE=1
-    ```
 - 执行pull cache样例程序，此样例程序展示了配置内存池场景下，使用allocate_cache，双向建链，并从远端pull_cache
     - 说明：
-      本示例必须使用双机，参考[执行前准备](#执行前准备)，此用例适用于A2环境
+      本示例必须使用双机，参考[执行前准备](#执行前准备)
 
     分别在Prompt主机与Decoder主机，执行样例程序，其中device_id为要使用的device_id，cluster_id为集群ID且在所有参与建链的范围内需要确保唯一：
     ```
     # Prompt主机:
-    python pull_cache_sample.py --device_id 0 --cluster_id 1
+    HCCL_INTRA_ROCE_ENABLE=1 python pull_cache_sample.py --device_id 0 --cluster_id 1
     # Decoder主机:
-    python pull_cache_sample.py --device_id 0 --cluster_id 2
+    HCCL_INTRA_ROCE_ENABLE=1 python pull_cache_sample.py --device_id 0 --cluster_id 2
     ```
 - 执行pull blocks样例程序，此样例程序使用torch自行申请内存，双向建链，并从远端pull_cache
     - 说明：
-      本示例必须使用双机，参考[执行前准备](#执行前准备)，此用例适用于A2环境
+      本示例必须使用双机，参考[执行前准备](#执行前准备)
 
     分别在Prompt主机与Decoder主机，执行样例程序，其中device_id为要使用的device_id，cluster_id为集群ID且在所有参与建链的范围内需要确保唯一：
     ```
     # Prompt主机:
-    python pull_blocks_sample.py --device_id 0 --cluster_id 1
+    HCCL_INTRA_ROCE_ENABLE=1 python pull_blocks_sample.py --device_id 0 --cluster_id 1
     # Decoder主机:
-    python pull_blocks_sample.py --device_id 0 --cluster_id 2
+    HCCL_INTRA_ROCE_ENABLE=1 python pull_blocks_sample.py --device_id 0 --cluster_id 2
     ```
 - 执行pull_from_cache_to_blocks样例程序：
     - 说明：
-      本示例必须使用双机，参考[执行前准备](#执行前准备)，此用例适用于A2环境
+      本示例必须使用双机，参考[执行前准备](#执行前准备)
       
     分别在Prompt主机与Decoder主机，执行样例程序，其中device_id为要使用的device_id，cluster_id为集群ID且在所有参与建链的范围内需要确保唯一：
     ```
     # Prompt主机:
-    python pull_from_cache_to_blocks.py --device_id 0 --cluster_id 1
+    HCCL_INTRA_ROCE_ENABLE=1 python pull_from_cache_to_blocks.py --device_id 0 --cluster_id 1
     # Decoder主机:
-    python pull_from_cache_to_blocks.py --device_id 0 --cluster_id 2
+    HCCL_INTRA_ROCE_ENABLE=1 python pull_from_cache_to_blocks.py --device_id 0 --cluster_id 2
     ```
 - 执行push_blocks样例程序，此样例程序使用单侧建链方式，申请内存并注册blocks,  decoder发起建链并push blocks
     分别在Prompt主机与Decoder主机，执行样例程序，其中device_id为要使用的device_id，role为集群角色，local_host_ip为本地host的ip，remote_host_ip为对端host的ip：

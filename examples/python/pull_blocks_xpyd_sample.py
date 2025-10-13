@@ -67,7 +67,7 @@ def run_prompt_sample(datadist, args):
     cache = cache_manager.register_blocks_cache(cache_desc, [addr],
                                                 BlocksCacheKey(ip_port_to_int(args.local_ip_port), 0))
     logging.info('register_blocks_cache success')
-    logging.info(f'before decoder pull, tensor={tensor}')
+    logging.info(f'before decoder pull, tensor={tensor.cpu()}')
 
     time.sleep(30)
     cache_manager.unregister_cache(cache.cache_id)
@@ -106,7 +106,7 @@ def run_decoder_sample(datadist, args):
     for i, remote in enumerate(remote_list):
         cache_manager.pull_blocks(BlocksCacheKey(ip_port_to_int(remote), 0),
                                   cache, src_blocks=[0, 1], dst_blocks=[0, 2])
-        logging.info(f'after decoder pull from {ip_port_to_int(remote)}, tensor={tensor}')
+        logging.info(f'after decoder pull from {ip_port_to_int(remote)}, tensor={tensor.cpu()}')
 
     # 4. 断链
     ret, _ = datadist.unlink_clusters(cluster_list, 5000)

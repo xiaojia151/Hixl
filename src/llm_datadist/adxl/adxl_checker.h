@@ -12,6 +12,7 @@
 #define CANN_GRAPH_ENGINE_RUNTIME_LLM_DATADIST_V2_ADXL_CHECKER_H
 
 #include "adxl/adxl_types.h"
+#include "hixl/hixl_types.h"
 #include "adxl_utils.h"
 #include "base/err_msg.h"
 #include "common/llm_log.h"

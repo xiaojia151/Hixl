@@ -13,12 +13,12 @@ set CURFILE=`readlink -f ${1}`
 set CURPATH=`dirname ${CURFILE}`
 
 set install_info="$CURPATH/../ascend_install.info"
-set hetero_arch=`grep -i "Ops_DXL_Hetero_Arch_Flag=" "$install_info" | cut --only-delimited -d"=" -f2`
+set hetero_arch=`grep -i "HIXL_Hetero_Arch_Flag=" "$install_info" | cut --only-delimited -d"=" -f2`
 if ( "$2" == "multi_version" ) then
     if ( "$hetero_arch" == "y" ) then
-        set INSTALL_DIR="`realpath ${CURPATH}/../../../../../latest`/ops_dxl"
+        set INSTALL_DIR="`realpath ${CURPATH}/../../../../../latest`/hixl"
     else
-        set INSTALL_DIR="`realpath ${CURPATH}/../../../latest`/ops_dxl"
+        set INSTALL_DIR="`realpath ${CURPATH}/../../../latest`/hixl"
     endif
 else
     set INSTALL_DIR="`realpath ${CURPATH}/..`"

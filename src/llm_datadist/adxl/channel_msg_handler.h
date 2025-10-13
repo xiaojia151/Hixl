@@ -86,6 +86,8 @@ class ChannelMsgHandler {
   static Status Serialize(const T &msg, std::string &msg_str);
   template<typename T>
   static Status Deserialize(const std::vector<char> &msg_str, T &msg);
+  Status ParseTrafficClass(const std::map<AscendString, AscendString> &options);
+  Status ParseServiceLevel(const std::map<AscendString, AscendString> &options);
 
   std::string listen_info_;
   ChannelManager *channel_manager_;

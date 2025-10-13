@@ -28,9 +28,9 @@ set(ARCH_LINUX_PATH "${ARCH}-linux")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/third_party/makeself-fetch.cmake)
 
-set(script_prefix ${CMAKE_CURRENT_SOURCE_DIR}/scripts/package/ops_dxl/scripts)
+set(script_prefix ${CMAKE_CURRENT_SOURCE_DIR}/scripts/package/hixl/scripts)
 install(DIRECTORY ${script_prefix}/
-    DESTINATION ops_dxl/script
+    DESTINATION hixl/script
     FILE_PERMISSIONS
     OWNER_READ OWNER_WRITE OWNER_EXECUTE  # 文件权限
     GROUP_READ GROUP_EXECUTE
@@ -50,7 +50,7 @@ set(SCRIPTS_FILES
 )
 
 install(FILES ${SCRIPTS_FILES}
-    DESTINATION ops_dxl/script
+    DESTINATION hixl/script
 )
 set(COMMON_FILES
     ${CMAKE_SOURCE_DIR}/scripts/package/common/sh/install_common_parser.sh
@@ -77,10 +77,10 @@ install(FILES ${CMAKE_SOURCE_DIR}/version.info
     DESTINATION .
 )
 install(FILES ${CONF_FILES}
-    DESTINATION ops_dxl/conf
+    DESTINATION hixl/conf
 )
 install(FILES ${PACKAGE_FILES}
-    DESTINATION ops_dxl/script
+    DESTINATION hixl/script
 )
 install(FILES ${LATEST_MANGER_FILES}
     DESTINATION latest_manager
@@ -89,26 +89,26 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/scripts/package/latest_manager/scripts/
     DESTINATION latest_manager
 )
 set(BIN_FILES
-    ${CMAKE_SOURCE_DIR}/scripts/package/ops_dxl/scripts/prereq_check.bash
-    ${CMAKE_SOURCE_DIR}/scripts/package/ops_dxl/scripts/prereq_check.csh
-    ${CMAKE_SOURCE_DIR}/scripts/package/ops_dxl/scripts/prereq_check.fish
-    ${CMAKE_SOURCE_DIR}/scripts/package/ops_dxl/scripts/setenv.bash
-    ${CMAKE_SOURCE_DIR}/scripts/package/ops_dxl/scripts/setenv.csh
-    ${CMAKE_SOURCE_DIR}/scripts/package/ops_dxl/scripts/setenv.fish
+    ${CMAKE_SOURCE_DIR}/scripts/package/hixl/scripts/prereq_check.bash
+    ${CMAKE_SOURCE_DIR}/scripts/package/hixl/scripts/prereq_check.csh
+    ${CMAKE_SOURCE_DIR}/scripts/package/hixl/scripts/prereq_check.fish
+    ${CMAKE_SOURCE_DIR}/scripts/package/hixl/scripts/setenv.bash
+    ${CMAKE_SOURCE_DIR}/scripts/package/hixl/scripts/setenv.csh
+    ${CMAKE_SOURCE_DIR}/scripts/package/hixl/scripts/setenv.fish
 )
 install(FILES ${BIN_FILES}
-    DESTINATION ops_dxl/bin
+    DESTINATION hixl/bin
 )
 
-set(dxl_include ${CMAKE_SOURCE_DIR}/include)
-install(DIRECTORY ${dxl_include}/
-    DESTINATION ops_dxl/include
+set(hixl_include ${CMAKE_SOURCE_DIR}/include)
+install(DIRECTORY ${hixl_include}/
+    DESTINATION hixl/include
     FILE_PERMISSIONS
     OWNER_READ OWNER_WRITE
     GROUP_READ GROUP_EXECUTE
 )
 install(TARGETS llm_datadist
-        LIBRARY DESTINATION ops_dxl/lib)
+        LIBRARY DESTINATION hixl/lib)
 
 # ============= CPack =============
 set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")

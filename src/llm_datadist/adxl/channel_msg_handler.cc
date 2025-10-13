@@ -113,6 +113,52 @@ Status ChannelMsgHandler::RecvMsg(int32_t fd, ChannelMsgType msg_type, T &msg) {
   return SUCCESS;
 }
 
+Status ChannelMsgHandler::ParseTrafficClass(const std::map<AscendString, AscendString> &options) {
+  std::string traffic_class_str;
+  const auto &traffic_it = options.find(hixl::OPTION_RDMA_TRAFFIC_CLASS);
+  if (traffic_it != options.cend()) {
+    traffic_class_str = traffic_it->second.GetString();
+  } else {
+    const auto &traffic_it2 = options.find(adxl::OPTION_RDMA_TRAFFIC_CLASS);
+    if (traffic_it2 != options.cend()) {
+      traffic_class_str = traffic_it2->second.GetString();
+    }
+  }
+
+  if (!traffic_class_str.empty()) {
+    uint32_t traffic_class = 0U;
+    ADXL_CHK_LLM_RET(llm::LLMUtils::ToNumber(traffic_class_str, traffic_class),
+                     "%s is invalid, value = %s",
+                     hixl::OPTION_RDMA_TRAFFIC_CLASS, traffic_class_str.c_str());
+    comm_config_.hcclRdmaTrafficClass = traffic_class;
+    LLMLOGI("set rdma traffic class to %u.", traffic_class);
+  }
+  return SUCCESS;
+}
+
+Status ChannelMsgHandler::ParseServiceLevel(const std::map<AscendString, AscendString> &options) {
+  std::string service_level_str;
+  const auto &service_it = options.find(hixl::OPTION_RDMA_SERVICE_LEVEL);
+  if (service_it != options.cend()) {
+    service_level_str = service_it->second.GetString();
+  } else {
+    const auto &service_it2 = options.find(adxl::OPTION_RDMA_SERVICE_LEVEL);
+    if (service_it2 != options.cend()) {
+      service_level_str = service_it2->second.GetString();
+    }
+  }
+
+  if (!service_level_str.empty()) {
+    uint32_t service_level = 0U;
+    ADXL_CHK_LLM_RET(llm::LLMUtils::ToNumber(service_level_str, service_level),
+                     "%s is invalid, value = %s",
+                     hixl::OPTION_RDMA_SERVICE_LEVEL, service_level_str.c_str());
+    comm_config_.hcclRdmaServiceLevel = service_level;
+    LLMLOGI("set rdma service level to %u.", service_level);
+  }
+  return SUCCESS;
+}
+
 Status ChannelMsgHandler::Initialize(const std::map<AscendString, AscendString> &options, SegmentTable *segment_table) {
   ADXL_CHECK_NOTNULL(channel_manager_);
   ADXL_CHK_ACL_RET(rtGetDevice(&device_id_));
@@ -121,24 +167,8 @@ Status ChannelMsgHandler::Initialize(const std::map<AscendString, AscendString> 
                    "Failed to generate local comm res, local_ip:%s, device_id:%d",
                    local_ip_.c_str(), device_id_);
   llm::HcclAdapter::GetInstance().HcclCommConfigInit(&comm_config_);
-  const auto &traffic_it = options.find(adxl::OPTION_RDMA_TRAFFIC_CLASS);
-  if (traffic_it != options.cend()) {
-    uint32_t traffic_class = 0U;
-    ADXL_CHK_LLM_RET(llm::LLMUtils::ToNumber(traffic_it->second.GetString(), traffic_class),
-                     "%s is invalid, value = %s",
-                     adxl::OPTION_RDMA_TRAFFIC_CLASS, traffic_it->second.GetString());
-    comm_config_.hcclRdmaTrafficClass = traffic_class;
-    LLMLOGI("set rdma traffic class to %u.", traffic_class);
-  }
-  const auto &service_it = options.find(adxl::OPTION_RDMA_SERVICE_LEVEL);
-  if (service_it != options.cend()) {
-    uint32_t service_level = 0U;
-    ADXL_CHK_LLM_RET(llm::LLMUtils::ToNumber(service_it->second.GetString(), service_level),
-                     "%s is invalid, value = %s",
-                     adxl::OPTION_RDMA_SERVICE_LEVEL, service_it->second.GetString());
-    comm_config_.hcclRdmaServiceLevel = service_level;
-    LLMLOGI("set rdma service level to %u.", service_level);
-  }
+  ADXL_CHK_STATUS_RET(ParseTrafficClass(options), "Failed to parse traffic class");
+  ADXL_CHK_STATUS_RET(ParseServiceLevel(options), "Failed to parse service level");
   if (listen_port_ > 0) {
     ADXL_CHK_STATUS_RET(StartDaemon(listen_port_), "Failed to start listen deamon, port = %u", listen_port_);
     LLMEVENT("start daemon success, listen on port:%u", listen_port_);

@@ -16,8 +16,8 @@ if (NOT ENABLE_TEST)
     target_include_directories(llm_datadist_wrapper PRIVATE
             ${HI_PYTHON_INC}
             ${pybind11_INCLUDE_DIR}
-            ${DXL_CODE_DIR}/include
-            ${DXL_CODE_DIR}/src/llm_datadist
+            ${HIXL_CODE_DIR}/include
+            ${HIXL_CODE_DIR}/src/llm_datadist
     )
 
     target_link_libraries(llm_datadist_wrapper PRIVATE

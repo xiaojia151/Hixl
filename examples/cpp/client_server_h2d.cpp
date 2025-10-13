@@ -14,9 +14,9 @@
 #include <iostream>
 #include <fstream>
 #include "acl/acl.h"
-#include "adxl/adxl_engine.h"
+#include "hixl/hixl.h"
 
-using namespace adxl;
+using namespace hixl;
 namespace {
 constexpr int32_t kWaitRegTime = 5;
 constexpr int32_t kWaitTransTime = 20;
@@ -36,9 +36,9 @@ constexpr int32_t kSrcValue = 2;
   } while (0)
 }  // namespace
 
-int Initialize(AdxlEngine &adxl_engine, const char *local_engine) {
+int Initialize(Hixl &hixl_engine, const char *local_engine) {
   std::map<AscendString, AscendString> options;
-  auto ret = adxl_engine.Initialize(local_engine, options);
+  auto ret = hixl_engine.Initialize(local_engine, options);
   if (ret != SUCCESS) {
     printf("[ERROR] Initialize failed, ret = %u\n", ret);
     return -1;
@@ -47,8 +47,8 @@ int Initialize(AdxlEngine &adxl_engine, const char *local_engine) {
   return 0;
 }
 
-int Connect(AdxlEngine &adxl_engine, const char *remote_engine) {
-  auto ret = adxl_engine.Connect(remote_engine);
+int Connect(Hixl &hixl_engine, const char *remote_engine) {
+  auto ret = hixl_engine.Connect(remote_engine);
   if (ret != SUCCESS) {
     printf("[ERROR] Connect failed, ret = %u\n", ret);
     return -1;
@@ -57,8 +57,8 @@ int Connect(AdxlEngine &adxl_engine, const char *remote_engine) {
   return 0;
 }
 
-int Disconnect(AdxlEngine &adxl_engine, const char *remote_engine) {
-  auto ret = adxl_engine.Disconnect(remote_engine);
+int Disconnect(Hixl &hixl_engine, const char *remote_engine) {
+  auto ret = hixl_engine.Disconnect(remote_engine);
   if (ret != SUCCESS) {
     printf("[ERROR] Disconnect failed, ret = %u\n", ret);
     return -1;
@@ -67,12 +67,12 @@ int Disconnect(AdxlEngine &adxl_engine, const char *remote_engine) {
   return 0;
 }
 
-int32_t Transfer(AdxlEngine &adxl_engine, int32_t &src, const char *remote_engine) {
+int32_t Transfer(Hixl &hixl_engine, int32_t &src, const char *remote_engine) {
   uintptr_t dst_addr;
   std::ifstream("./tmp") >> std::hex >> dst_addr;
 
   TransferOpDesc desc{reinterpret_cast<uintptr_t>(&src), reinterpret_cast<uintptr_t>(dst_addr), sizeof(int32_t)};
-  auto ret = adxl_engine.TransferSync(remote_engine, READ, {desc});
+  auto ret = hixl_engine.TransferSync(remote_engine, READ, {desc});
   if (ret != SUCCESS) {
     printf("[ERROR] TransferSync read failed, ret = %u\n", ret);
     return -1;
@@ -80,7 +80,7 @@ int32_t Transfer(AdxlEngine &adxl_engine, int32_t &src, const char *remote_engin
   printf("[INFO] TransferSync read success, src = %d\n", src);
 
   src = kSrcValue;
-  ret = adxl_engine.TransferSync(remote_engine, WRITE, {desc});
+  ret = hixl_engine.TransferSync(remote_engine, WRITE, {desc});
   if (ret != SUCCESS) {
     printf("[ERROR] TransferSync write failed, ret = %u\n", ret);
     return -1;
@@ -89,10 +89,10 @@ int32_t Transfer(AdxlEngine &adxl_engine, int32_t &src, const char *remote_engin
   return 0;
 }
 
-void ClientFinalize(AdxlEngine &adxl_engine, bool connected, const char *remote_engine,
+void ClientFinalize(Hixl &hixl_engine, bool connected, const char *remote_engine,
                     const std::vector<MemHandle> handles, const std::vector<void *> host_buffers = {}) {
   if (connected) {
-    auto ret = Disconnect(adxl_engine, remote_engine);
+    auto ret = Disconnect(hixl_engine, remote_engine);
     if (ret != 0) {
       printf("[ERROR] Disconnect failed, ret = %d\n", ret);
     } else {
@@ -101,7 +101,7 @@ void ClientFinalize(AdxlEngine &adxl_engine, bool connected, const char *remote_
   }
 
   for (auto handle : handles) {
-    auto ret = adxl_engine.DeregisterMem(handle);
+    auto ret = hixl_engine.DeregisterMem(handle);
     if (ret != 0) {
       printf("[ERROR] DeregisterMem failed, ret = %u\n", ret);
     } else {
@@ -111,13 +111,13 @@ void ClientFinalize(AdxlEngine &adxl_engine, bool connected, const char *remote_
   for (auto buffer : host_buffers) {
     aclrtFreeHost(buffer);
   }
-  adxl_engine.Finalize();
+  hixl_engine.Finalize();
 }
 
-void ServerFinalize(AdxlEngine &adxl_engine, const std::vector<MemHandle> handles,
+void ServerFinalize(Hixl &hixl_engine, const std::vector<MemHandle> handles,
                     const std::vector<void *> dev_buffers = {}) {
   for (auto handle : handles) {
-    auto ret = adxl_engine.DeregisterMem(handle);
+    auto ret = hixl_engine.DeregisterMem(handle);
     if (ret != 0) {
       printf("[ERROR] DeregisterMem failed, ret = %u\n", ret);
     } else {
@@ -127,15 +127,15 @@ void ServerFinalize(AdxlEngine &adxl_engine, const std::vector<MemHandle> handle
   for (auto buffer : dev_buffers) {
     aclrtFree(buffer);
   }
-  adxl_engine.Finalize();
+  hixl_engine.Finalize();
 }
 
 int32_t RunClient(const char *local_engine, const char *remote_engine) {
   printf("[INFO] client start\n");
   // 1. 初始化
-  AdxlEngine adxl_engine;
-  if (Initialize(adxl_engine, local_engine) != 0) {
-    printf("[ERROR] Initialize AdxlEngine failed\n");
+  Hixl hixl_engine;
+  if (Initialize(hixl_engine, local_engine) != 0) {
+    printf("[ERROR] Initialize Hixl failed\n");
     return -1;
   }
   // 2. 注册内存地址
@@ -146,10 +146,10 @@ int32_t RunClient(const char *local_engine, const char *remote_engine) {
   desc.addr = reinterpret_cast<uintptr_t>(src);
   desc.len = sizeof(int32_t);
   MemHandle handle = nullptr;
-  auto ret = adxl_engine.RegisterMem(desc, MEM_HOST, handle);
+  auto ret = hixl_engine.RegisterMem(desc, MEM_HOST, handle);
   if (ret != SUCCESS) {
     printf("[ERROR] RegisterMem failed, ret = %u\n", ret);
-    ClientFinalize(adxl_engine, connected, remote_engine, {handle}, {src});
+    ClientFinalize(hixl_engine, connected, remote_engine, {handle}, {src});
     return -1;
   }
   printf("[INFO] RegisterMem success\n");
@@ -158,20 +158,20 @@ int32_t RunClient(const char *local_engine, const char *remote_engine) {
   std::this_thread::sleep_for(std::chrono::seconds(kWaitRegTime));
 
   // 3. 与server建链
-  if (Connect(adxl_engine, remote_engine) != 0) {
-    ClientFinalize(adxl_engine, connected, remote_engine, {handle}, {src});
+  if (Connect(hixl_engine, remote_engine) != 0) {
+    ClientFinalize(hixl_engine, connected, remote_engine, {handle}, {src});
     return -1;
   }
   connected = true;
 
   // 4. 从server get内存，并向server put内存
-  if (Transfer(adxl_engine, *src, remote_engine) != 0) {
-    ClientFinalize(adxl_engine, connected, remote_engine, {handle}, {src});
+  if (Transfer(hixl_engine, *src, remote_engine) != 0) {
+    ClientFinalize(hixl_engine, connected, remote_engine, {handle}, {src});
     return -1;
   }
 
   // 5. 释放Cache与llmDataDist
-  ClientFinalize(adxl_engine, connected, remote_engine, {handle}, {src});
+  ClientFinalize(hixl_engine, connected, remote_engine, {handle}, {src});
   printf("[INFO] Finalize success\n");
   printf("[INFO] Prompt Sample end\n");
   return 0;
@@ -180,9 +180,9 @@ int32_t RunClient(const char *local_engine, const char *remote_engine) {
 int32_t RunServer(const char *local_engine) {
   printf("[INFO] server start\n");
   // 1. 初始化
-  AdxlEngine adxl_engine;
-  if (Initialize(adxl_engine, local_engine) != 0) {
-    printf("[ERROR] Initialize AdxlEngine failed\n");
+  Hixl hixl_engine;
+  if (Initialize(hixl_engine, local_engine) != 0) {
+    printf("[ERROR] Initialize Hixl failed\n");
     return -1;
   }
   // 2. 注册内存地址
@@ -196,10 +196,10 @@ int32_t RunServer(const char *local_engine) {
   desc.addr = reinterpret_cast<uintptr_t>(buffer);
   desc.len = sizeof(int32_t);
   MemHandle handle = nullptr;
-  auto ret = adxl_engine.RegisterMem(desc, MEM_DEVICE, handle);
+  auto ret = hixl_engine.RegisterMem(desc, MEM_DEVICE, handle);
   if (ret != SUCCESS) {
     printf("[ERROR] RegisterMem failed, ret = %u\n", ret);
-    ServerFinalize(adxl_engine, {handle}, {buffer});
+    ServerFinalize(hixl_engine, {handle}, {buffer});
     return -1;
   }
   // 3. RegisterMem成功后，将地址保存到本地文件中等待client读取
@@ -216,7 +216,7 @@ int32_t RunServer(const char *local_engine) {
   printf("[INFO] After transfer, dst value:%d\n", dst);
 
   // 5. 释放Cache与llmDataDist
-  ServerFinalize(adxl_engine, {handle}, {buffer});
+  ServerFinalize(hixl_engine, {handle}, {buffer});
   printf("[INFO] Finalize success\n");
   printf("[INFO] server Sample end\n");
   return 0;
