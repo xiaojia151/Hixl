@@ -1,4 +1,4 @@
-# ADXL错误码<a name="ZH-CN_TOPIC_0000002413184460"></a>
+# hixl错误码<a name="ZH-CN_TOPIC_0000002413184460"></a>
 
 错误码是通过如下定义的，类型为uint32\_t。
 

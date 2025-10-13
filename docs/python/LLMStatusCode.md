@@ -28,7 +28,7 @@ LLMException中status\_code对应的枚举类，枚举值及解决方法如下�
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p56940282403"><a name="p56940282403"></a><a name="p56940282403"></a>否</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p1993462415105"><a name="p1993462415105"></a><a name="p1993462415105"></a>重启机器或容器；</p>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p1993462415105"><a name="p1993462415105"></a><a name="p1993462415105"></a>重启机器或容器。</p>
 <p id="p585113454013"><a name="p585113454013"></a><a name="p585113454013"></a>保留现场，获取Host/Device日志，并备份。</p>
 </td>
 </tr>
@@ -106,7 +106,7 @@ LLMException中status\_code对应的枚举类，枚举值及解决方法如下�
 </tr>
 <tr id="row1035323914230"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p103531139182316"><a name="p103531139182316"></a><a name="p103531139182316"></a>LLM_CLUSTER_NUM_EXCEED_LIMIT</p>
 </td>
-<td class="cellrowborder" valign="top" width="18.421842184218423%" headers="mcps1.1.5.1.2 "><p id="p123541439162312"><a name="p123541439162312"></a><a name="p123541439162312"></a>集群数量超过限制</p>
+<td class="cellrowborder" valign="top" width="18.421842184218423%" headers="mcps1.1.5.1.2 "><p id="p123541439162312"><a name="p123541439162312"></a><a name="p123541439162312"></a>集群数量超过限制。</p>
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p10695102884016"><a name="p10695102884016"></a><a name="p10695102884016"></a>是</p>
 </td>
@@ -142,7 +142,7 @@ LLMException中status\_code对应的枚举类，枚举值及解决方法如下�
 </tr>
 <tr id="row1532815012305"><td class="cellrowborder" valign="top" width="34.26342634263426%" headers="mcps1.1.5.1.1 "><p id="p1132850133016"><a name="p1132850133016"></a><a name="p1132850133016"></a>LLM_EXIST_LINK</p>
 </td>
-<td class="cellrowborder" valign="top" width="18.421842184218423%" headers="mcps1.1.5.1.2 "><p id="p183282010302"><a name="p183282010302"></a><a name="p183282010302"></a>switch_role时，存在未释放的链接</p>
+<td class="cellrowborder" valign="top" width="18.421842184218423%" headers="mcps1.1.5.1.2 "><p id="p183282010302"><a name="p183282010302"></a><a name="p183282010302"></a>switch_role时，存在未释放的链接。</p>
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p20328100163011"><a name="p20328100163011"></a><a name="p20328100163011"></a>是</p>
 </td>
@@ -155,7 +155,7 @@ LLMException中status\_code对应的枚举类，枚举值及解决方法如下�
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p189827283010"><a name="p189827283010"></a><a name="p189827283010"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p46501596328"><a name="p46501596328"></a><a name="p46501596328"></a>检查初始化LLMDataDist时是否传入了必要option:</p>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p46501596328"><a name="p46501596328"></a><a name="p46501596328"></a>检查初始化LLMDataDist时是否传入了必要option。</p>
 <p id="p16269144333317"><a name="p16269144333317"></a><a name="p16269144333317"></a>如果是切换当前LLMDataDist的角色时抛出该异常，排查初始化时LLMConfig是否设置了enable_switch_role = True。</p>
 </td>
 </tr>
@@ -185,7 +185,7 @@ LLMException中status\_code对应的枚举类，枚举值及解决方法如下�
 </td>
 <td class="cellrowborder" valign="top" width="14.151415141514152%" headers="mcps1.1.5.1.3 "><p id="p2294952415"><a name="p2294952415"></a><a name="p2294952415"></a>是</p>
 </td>
-<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p1675154613254"><a name="p1675154613254"></a><a name="p1675154613254"></a>检查内存池是否足够容纳申请的KV大小；</p>
+<td class="cellrowborder" valign="top" width="33.16331633163316%" headers="mcps1.1.5.1.4 "><p id="p1675154613254"><a name="p1675154613254"></a><a name="p1675154613254"></a>检查内存池是否足够容纳申请的KV大小。</p>
 <p id="p12114932415"><a name="p12114932415"></a><a name="p12114932415"></a>检查申请的内存是否没有释放。</p>
 </td>
 </tr>
