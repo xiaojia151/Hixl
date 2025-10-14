@@ -11,7 +11,7 @@
 
    - GCC >= 7.3.0
 
-   - Python3 >= 3.9.0
+   - Python3 3.9或3.11(当前仅支持这两个版本)
 
    - CMake >= 3.16.0  (建议使用3.20.0版本)
      ```shell
@@ -39,7 +39,7 @@
 
 2. **安装驱动与固件（运行态依赖）**  
 
-    运行样例时必须安装驱动与固件，安装指导详见[《CANN软件安装指南》](https://www.hiascend.com/document/redirect/CannCommunityInstSoftware)  。
+    运行样例时必须安装驱动与固件，安装指导详见[《CANN软件安装指南》](https://www.hiascend.com/document/redirect/CannCommunityInstSoftware)。  
 
 3. **安装社区版CANN toolkit包**
 
@@ -99,7 +99,7 @@
 ```bash
 git clone https://gitcode.com/cann/hixl-dev.git
 ```
-- 注意：gitcode平台在使用HTTPS协议的时候要配置并使用个人访问令牌代替登录密码进行克隆，推送等操作
+- 注意：gitcode平台在使用HTTPS协议的时候要配置并使用个人访问令牌代替登录密码进行克隆，推送等操作。  
 
 ### 配置环境变量
 	
@@ -123,7 +123,7 @@ bash build.sh --ascend_install_path=${ascend_install_path}/latest
 成功编译后会在build_out目录下生成`cann-hixl_${cann_version}_linux-${arch}.run`，同时会将C++用例一同编译，在build/examples/cpp路径下生成编译后的二进制文件。  
 - ${cann_version}表示cann版本号。
 - ${arch}表示表示CPU架构，如aarch64、x86_64。 
-- 更多执行选项可以用-h查看 
+- 更多执行选项可以用-h查看。  
   ```
   bash build.sh -h
   ```
@@ -161,15 +161,17 @@ bash build.sh --ascend_install_path=${ascend_install_path}/latest
 
 ## 安装
 
-将[编译执行](#编译执行)环节生成的run包进行安装  
-- 说明，此处的安装路径（无论默认还是指定）需与前面安装toolkit包时的路径保持一致
+将[编译执行](#编译执行)环节生成的run包进行安装。  
+- 说明，此处的安装路径（无论默认还是指定）需与前面安装toolkit包时的路径保持一致。  
 ```bash
 # 如果需要指定安装路径则加上--install-path=${ascend_install_path}
 ./cann-hixl_${cann_version}_linux-${arch}.run --full --quiet --pylocal
 ```
-- --full 全量模式安装
-- --quiet 静默安装，跳过人机交互环节
-- --pylocal 安装python packages
-- 更多安装选项请用--help选项查看
+- --full 全量模式安装。  
+- --quiet 静默安装，跳过人机交互环节。  
+- --pylocal 安装HIXL软件包时，是否将.whl安装到HIXL安装路径。  
+  - 若选择该参数，则.whl安装在${ascend_install_path}/latest/python/site-packages路径。
+  - 若不选择该参数，则.whl安装在本地python路径，例如/usr/local/python3.7.5/lib/python3.7/site-packages。
+- 更多安装选项请用--help选项查看。  
 
-**安装完成后可参考[样例运行](../examples/README.md)尝试运行样例**
+**安装完成后可参考[样例运行](../examples/README.md)尝试运行样例**。  
