@@ -12,7 +12,7 @@ HIXL（Huawei Xfer Library）是一个灵活、高效的昇腾单边通信库，
 - **屏蔽硬件差异，兼容多链路实现跨设备高速互联**：HIXL屏蔽了昇腾系列芯片的底层硬件差异，用户无需针对不同芯片架构进行代码适配。在通信链路层面，该技术原生支持RDMA，HCCS等多种高速互联协议，通信带宽最高可达119GB/s，可实现跨架构设备（如A2系列与A3系列昇腾芯片）的无缝高速互联，满足低时延、 高吞吐的需求。
 - **极简API设计，深度适配开源生态框架**：HIXL采用极简式API接口设计，接口数量精简至10余个核心调用，降低开发者集成门槛，同时提供完善的C++/Python语言接口支持。目前已实现与Mooncake、DeepLink等开源框架的深度集成，vLLM、SGLang等主流推理引擎也可以直接调用HIXL API完成KV Cache的跨设备高效传输，将大模型推理过程中的内存访问延迟降低20%，显著提升推理吞吐。
 
-<img src="docs/figures/hixl_architecture.png" alt="架构图">
+<img src="docs/figures/architecture.png" alt="架构图">
 
 
 **核心组件**
@@ -25,7 +25,10 @@ HIXL（Huawei Xfer Library）是一个灵活、高效的昇腾单边通信库，
 
 在昇腾A3芯片上传输128M数据场景下：
 - 通过HCCS链路进行传输，HIXL传输引擎的带宽可达119G/s
-- 通过RDMA链路进行传输，HIXL传输引擎的带宽可达22G/s
+- 通过RDMA链路进行传输，HIXL传输引擎的带宽可达22G/s 
+
+<img src="docs/figures/perf.png" alt="性能数据图">
+
 
 ## 🔍目录结构
 

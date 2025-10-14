@@ -1,12 +1,12 @@
-# LLM-DataDist接口参考（C++）
+# 接口参考（C++）
 ## 简介
--   LLM-DataDist：大模型分布式集群和数据加速组件，提供了集群KV数据管理能力，以支持全量图和增量图分离部署。
+-   LLM-DataDist
     -   LLM-DataDist相关接口存放在："INSTALL\_DIR\/include/llm\_datadist/llm\_datadist.h"。INSTALL\_DIR请替换为CANN软件安装后文件存储路径。若安装的Ascend-cann-toolkit软件包，以root安装举例，则安装后文件存储路径为：/usr/local/Ascend/latest。
     -   LLM-DataDist接口对应的库文件是：libllm\_datadist.so。
 
--   hixl：huawei xfer library，提供高性能、零拷贝的点对点数据传输的能力，并通过简易API开放给用户。
-    -   hixl相关接口存放在："INSTALL\_DIR/include/hixl/hixl.h"。INSTALL\_DIR请替换为CANN软件安装后文件存储路径。若安装的Ascend-cann-toolkit软件包，以root安装举例，则安装后文件存储路径为：/usr/local/Ascend/latest。
-    -   hixl接口对应的库文件是：hixl.so。
+-   HIXL：Huawei Xfer Library
+    -   HIXL相关接口存放在："INSTALL\_DIR/include/hixl/hixl.h"。INSTALL\_DIR请替换为CANN软件安装后文件存储路径。若安装的Ascend-cann-toolkit软件包，以root安装举例，则安装后文件存储路径为：/usr/local/Ascend/latest。
+    -   HIXL接口对应的库文件是：hixl.so。
 
 支持的产品形态如下：
 
@@ -17,8 +17,8 @@
 -  [LLM-DataDist接口](LLM-DataDist接口.md)
 -  [LLM-DataDist数据结构](LLM-DataDist数据结构.md)
 -  [LLM-DataDist错误码](LLM-DataDist错误码.md)
--   [hixl接口](hixl接口.md)
--  [hixl数据结构](hixl数据结构.md)
--  [hixl错误码](hixl错误码.md)
+-   [HIXL接口](HIXL接口.md)
+-  [HIXL数据结构](HIXL数据结构.md)
+-  [HIXL错误码](HIXL错误码.md)
 -   [不支持的接口](不支持的接口.md)
 

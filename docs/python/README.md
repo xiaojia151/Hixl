@@ -1,4 +1,4 @@
-# LLM-DataDist接口参考（Python）
+# 接口参考（Python）
 -   [LLMDataDist](LLMDataDist.md)
 -   [LLMConfig](LLMConfig.md)
 -   [CacheManager](CacheManager.md)

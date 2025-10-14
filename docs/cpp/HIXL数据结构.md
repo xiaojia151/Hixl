@@ -1,4 +1,4 @@
-# hixl数据结构<a name="ZH-CN_TOPIC_0000002413024580"></a>
+# HIXL数据结构<a name="ZH-CN_TOPIC_0000002413024580"></a>
 ## MemDesc<a name="ZH-CN_TOPIC_0000002446623669"></a>
 
 内存的描述信息。

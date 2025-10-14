@@ -1,4 +1,4 @@
-# hixl接口<a name="ZH-CN_TOPIC_0000002446743577"></a>
+# HIXL接口<a name="ZH-CN_TOPIC_0000002446743577"></a>
 ## 产品支持情况<a name="section8178181118225"></a>
 
 <a name="table38301303189"></a>
@@ -41,11 +41,11 @@
 </tbody>
 </table>
 
-## Hixl构造函数<a name="ZH-CN_TOPIC_0000002446623653"></a>
+## HIXL构造函数<a name="ZH-CN_TOPIC_0000002446623653"></a>
 
 **函数功能**
 
-创建Hixl对象。
+创建HIXL对象。
 
 **函数原型**
 
@@ -71,7 +71,7 @@ Hixl()
 ## \~Hixl\(\)<a name="ZH-CN_TOPIC_0000002413024568"></a>
 **函数功能**
 
-Hixl对象析构函数。
+HIXL对象析构函数。
 
 **函数原型**
 
@@ -93,7 +93,7 @@ Hixl对象析构函数。
 ## Initialize<a name="ZH-CN_TOPIC_0000002413184440"></a>
 **函数功能**
 
-初始化Hixl，在调用其他接口前需要先调用该接口。
+初始化HIXL，在调用其他接口前需要先调用该接口。
 
 **函数原型**
 
@@ -116,8 +116,8 @@ Status Initialize(const AscendString &local_engine, const std::map<AscendString,
 </td>
 <td class="cellrowborder" valign="top" width="27.900000000000002%" headers="mcps1.1.4.1.2 "><p id="p433774524012"><a name="p433774524012"></a><a name="p433774524012"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="44.47%" headers="mcps1.1.4.1.3 "><p id="p10528111164114"><a name="p10528111164114"></a><a name="p10528111164114"></a>Hixl标识，在所有参与建链的范围内需要确保唯一。格式为host_ip:host_port或host_ip，不建议配置为回环IP，在多个Hixl交互场景，回环IP容易冲突。</p>
-<p id="p8528111134120"><a name="p8528111134120"></a><a name="p8528111134120"></a>当设置host_port且host_port&gt;0时代表当前Hixl作为Server端，需要对配置端口进行侦听。如果没设置host_port或者host_port&lt;=0代表是Client，不启动侦听。</p>
+<td class="cellrowborder" valign="top" width="44.47%" headers="mcps1.1.4.1.3 "><p id="p10528111164114"><a name="p10528111164114"></a><a name="p10528111164114"></a>HIXL标识，在所有参与建链的范围内需要确保唯一。格式为host_ip:host_port或host_ip，不建议配置为回环IP，在多个HIXL交互场景，回环IP容易冲突。</p>
+<p id="p8528111134120"><a name="p8528111134120"></a><a name="p8528111134120"></a>当设置host_port且host_port&gt;0时代表当前HIXL作为Server端，需要对配置端口进行侦听。如果没设置host_port或者host_port&lt;=0代表是Client，不启动侦听。</p>
 </td>
 </tr>
 <tr id="zh-cn_topic_0000001461072801_row17754717144"><td class="cellrowborder" valign="top" width="27.63%" headers="mcps1.1.4.1.1 "><p id="zh-cn_topic_0000001461072801_p16786142181615"><a name="zh-cn_topic_0000001461072801_p16786142181615"></a><a name="zh-cn_topic_0000001461072801_p16786142181615"></a>options</p>
@@ -178,7 +178,7 @@ Status Initialize(const AscendString &local_engine, const std::map<AscendString,
 
 **调用示例**
 
-请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp](https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp)。
+请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp)。
 
 **返回值**
 
@@ -197,7 +197,7 @@ Status Initialize(const AscendString &local_engine, const std::map<AscendString,
 ## Finalize<a name="ZH-CN_TOPIC_0000002446743581"></a>
 **函数功能**
 
-Hixl资源清理函数。
+HIXL资源清理函数。
 
 **函数原型**
 
@@ -211,7 +211,7 @@ void Finalize()
 
 **调用示例**
 
-请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp](https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp)。
+请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp)。
 
 **返回值**
 
@@ -231,7 +231,7 @@ void Finalize()
 ## RegisterMem<a name="ZH-CN_TOPIC_0000002446623657"></a>
 **函数功能**
 
-注册内存地址。用于TransferSync调用指定本地内存地址和远端内存地址，TransferSync指定的地址可以为注册的地址子集，其中本地内存地址需在当前Hixl进行注册，远端内存地址需要在远端Hixl进行注册。
+注册内存地址。用于TransferSync调用指定本地内存地址和远端内存地址，TransferSync指定的地址可以为注册的地址子集，其中本地内存地址需在当前HIXL进行注册，远端内存地址需要在远端HIXL进行注册。
 
 **函数原型**
 
@@ -276,7 +276,7 @@ Status RegisterMem(const MemDesc &mem, MemType type, MemHandle &mem_handle)
 
 **调用示例**
 
-请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp](https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp)。
+请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp)。
 
 **返回值**
 
@@ -330,7 +330,7 @@ Status DeregisterMem(MemHandle mem_handle)
 
 **调用示例**
 
-请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp](https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp)。
+请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp)。
 
 **返回值**
 
@@ -349,7 +349,7 @@ Status DeregisterMem(MemHandle mem_handle)
 ## Connect<a name="ZH-CN_TOPIC_0000002413184444"></a>
 **函数功能**
 
-与远端Hixl进行建链。
+与远端HIXL进行建链。
 
 **函数原型**
 
@@ -372,7 +372,7 @@ Status Connect(const AscendString &remote_engine, int32_t timeout_in_millis = 10
 </td>
 <td class="cellrowborder" valign="top" width="14.84%" headers="mcps1.1.4.1.2 "><p id="p54816445176"><a name="p54816445176"></a><a name="p54816445176"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="57.53%" headers="mcps1.1.4.1.3 "><p id="p8481444141719"><a name="p8481444141719"></a><a name="p8481444141719"></a>远端Hixl的唯一标识。remote_engine对应的Hixl需要是同一个Server。</p>
+<td class="cellrowborder" valign="top" width="57.53%" headers="mcps1.1.4.1.3 "><p id="p8481444141719"><a name="p8481444141719"></a><a name="p8481444141719"></a>远端HIXL的唯一标识。remote_engine对应的HIXL需要是同一个Server。</p>
 </td>
 </tr>
 <tr id="row1073144320343"><td class="cellrowborder" valign="top" width="27.63%" headers="mcps1.1.4.1.1 "><p id="p548044410177"><a name="p548044410177"></a><a name="p548044410177"></a>timeout_in_millis</p>
@@ -387,7 +387,7 @@ Status Connect(const AscendString &remote_engine, int32_t timeout_in_millis = 10
 
 **调用示例**
 
-请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp](https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp)。
+请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp)。
 
 **返回值**
 
@@ -418,7 +418,7 @@ Status Connect(const AscendString &remote_engine, int32_t timeout_in_millis = 10
 ## Disconnect<a name="ZH-CN_TOPIC_0000002446743585"></a>
 **函数功能**
 
-与远端Hixl进行断链。
+与远端HIXL进行断链。
 
 **函数原型**
 ```
@@ -440,7 +440,7 @@ Status Disconnect(const AscendString &remote_engine, int32_t timeout_in_millis =
 </td>
 <td class="cellrowborder" valign="top" width="35.89%" headers="mcps1.1.4.1.2 "><p id="p54816445176"><a name="p54816445176"></a><a name="p54816445176"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="41.89%" headers="mcps1.1.4.1.3 "><p id="p8481444141719"><a name="p8481444141719"></a><a name="p8481444141719"></a>远端Hixl的唯一标识。</p>
+<td class="cellrowborder" valign="top" width="41.89%" headers="mcps1.1.4.1.3 "><p id="p8481444141719"><a name="p8481444141719"></a><a name="p8481444141719"></a>远端HIXL的唯一标识。</p>
 </td>
 </tr>
 <tr id="row4531052105216"><td class="cellrowborder" valign="top" width="22.220000000000002%" headers="mcps1.1.4.1.1 "><p id="p548044410177"><a name="p548044410177"></a><a name="p548044410177"></a>timeout_in_millis</p>
@@ -455,7 +455,7 @@ Status Disconnect(const AscendString &remote_engine, int32_t timeout_in_millis =
 
 **调用示例**
 
-请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp](https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp)。
+请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp)。
 
 **返回值**
 
@@ -471,7 +471,7 @@ Status Disconnect(const AscendString &remote_engine, int32_t timeout_in_millis =
 ## TransferSync<a name="ZH-CN_TOPIC_0000002446623661"></a>
 **函数功能**
 
-与远端Hixl进行内存传输。
+与远端HIXL进行内存传输。
 
 **函数原型**
 
@@ -497,7 +497,7 @@ Status TransferSync(const AscendString &remote_engine,
 </td>
 <td class="cellrowborder" valign="top" width="35.89%" headers="mcps1.1.4.1.2 "><p id="p18215541182113"><a name="p18215541182113"></a><a name="p18215541182113"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="41.89%" headers="mcps1.1.4.1.3 "><p id="p11215124113212"><a name="p11215124113212"></a><a name="p11215124113212"></a>远端Hixl的唯一标识。</p>
+<td class="cellrowborder" valign="top" width="41.89%" headers="mcps1.1.4.1.3 "><p id="p11215124113212"><a name="p11215124113212"></a><a name="p11215124113212"></a>远端HIXL的唯一标识。</p>
 </td>
 </tr>
 <tr id="row4531052105216"><td class="cellrowborder" valign="top" width="22.220000000000002%" headers="mcps1.1.4.1.1 "><p id="p19214141152111"><a name="p19214141152111"></a><a name="p19214141152111"></a>operation</p>
@@ -526,7 +526,7 @@ Status TransferSync(const AscendString &remote_engine,
 
 **调用示例**
 
-请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp](https://gitcode.com/cann/hixl-dev/tree/master/examples/cpp)。
+请参考[https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp](https://gitcode.com/cann/ops-dxl-dev/tree/master/examples/cpp)。
 
 **返回值**
 
