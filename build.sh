@@ -20,6 +20,7 @@ BUILD_PATH="${BASEPATH}/${BUILD_RELATIVE_PATH}/"
 usage() {
   echo "Usage:"
   echo "  sh build.sh [-h | --help] [-v | --verbose] [-j<N>]"
+  echo "              [--pkg]"
   echo "              [--build_type=<Release|Debug>]"
   echo "              [--cann_3rd_lib_path=<PATH>] [--output_path=<PATH>]"
   echo ""
@@ -33,6 +34,7 @@ usage() {
   echo "                      Set ascend third_party package install path, default ./third_party"
   echo "    --output_path=<PATH>"
   echo "                      Set output path, default ./build_out"
+  echo "    --pkg             Build run package, reserved parameter"
   echo ""
 }
 
@@ -57,7 +59,7 @@ checkopts() {
   CMAKE_BUILD_TYPE="Release"
 
   # Process the options
-  parsed_args=$(getopt -a -o j:hv -l help,verbose,cann_3rd_lib_path:,output_path:,build_type: -- "$@") || {
+  parsed_args=$(getopt -a -o j:hv -l help,verbose,pkg,cann_3rd_lib_path:,output_path:,build_type: -- "$@") || {
     usage
     exit 1
   }
@@ -90,6 +92,9 @@ checkopts() {
         check_build_type "$2" build_type
         CMAKE_BUILD_TYPE="$2"
         shift 2
+        ;;
+      --pkg)
+        shift
         ;;
       --)
         shift
