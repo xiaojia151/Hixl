@@ -105,12 +105,8 @@ else ()
 
     else ()
         set(COMMON_COMPILE_OPTION -fvisibility=hidden -O2 -Werror -fno-common -Wextra -Wfloat-equal)
-        set(CMAKE_SKIP_BUILD_RPATH TRUE)
-        set(CMAKE_SKIP_INSTALL_RPATH TRUE)
     endif ()
 endif ()
 message("common compile options ${COMMON_COMPILE_OPTION}")
 message("common link options ${COMMON_LINK_OPTION}")
-message("common rpath options ${CMAKE_SKIP_BUILD_RPATH}")
-message("common rpath options ${CMAKE_SKIP_INSTALL_RPATH}")
 
