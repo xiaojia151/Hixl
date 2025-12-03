@@ -50,10 +50,10 @@ class AdxlInnerEngine {
                       int32_t timeout_in_millis);
 
   Status TransferAsync(const AscendString &remote_engine,
-                                      TransferOp operation,
-                                      const std::vector<TransferOpDesc> &op_descs,
-                                      const TransferArgs &optional_args,
-                                      TransferReq &req);
+                       TransferOp operation,
+                       const std::vector<TransferOpDesc> &op_descs,
+                       const TransferArgs &optional_args,
+                       TransferReq &req);
 
   Status GetTransferStatus(const TransferReq &req, TransferStatus &status);
  private:
@@ -77,8 +77,8 @@ class AdxlInnerEngine {
   std::unique_ptr<SegmentTable> segment_table_ = nullptr;
   bool user_config_buffer_pool_{false};
   rtContext_t rt_context_{nullptr};
+  std::map<uint64_t, AscendString> req2channel_;
   std::atomic<uint64_t> next_req_id_{1};
-  std::map<uint64_t, std::function<TransferStatus()>> transfer_reqs_;
   void *statistic_timer_handle_{nullptr};
 };
 }  // namespace adxl
