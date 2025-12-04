@@ -378,6 +378,7 @@ Status BufferTransferService::HandleBufferD2D(const ChannelPtr &channel, BufferR
 Status BufferTransferService::D2DTransfer(const ChannelPtr &channel, TransferOp transfer_op,
                                           const std::vector<TransferOpDesc> &op_descs, uint64_t timeout,
                                           const std::chrono::steady_clock::time_point &start) {
+  std::lock_guard<std::mutex> lock(channel->GetTransferMutex());
   auto &stream = channel->GetStream();
   ADXL_CHK_STATUS_RET(channel->TransferAsyncWithTimeout(transfer_op, op_descs, stream, timeout), "transfer failed.");
   uint64_t time_cost =
@@ -512,6 +513,7 @@ Status BufferTransferService::ProcessCopyWithBatch(const SliceInfo &slice_info, 
 Status BufferTransferService::ProcessCopyWithAsync(const ChannelPtr &channel, const std::vector<uintptr_t> &src_addrs,
                                                    const std::vector<uintptr_t> &dst_addrs, std::vector<size_t> &sizes,
                                                    CopyExtraInfo extra_info) {
+  std::lock_guard<std::mutex> lock(channel->GetTransferMutex());
   auto &timeout = extra_info.second;
   auto &stream = channel->GetStream();
   auto start = std::chrono::steady_clock::now();
