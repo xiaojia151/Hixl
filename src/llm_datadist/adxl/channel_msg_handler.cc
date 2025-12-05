@@ -334,8 +334,8 @@ Status ChannelMsgHandler::ProcessConnectRequest(int32_t fd, const std::vector<ch
     ret = ConnectInfoProcess(peer_connect_info, peer_connect_info.timeout, false);
   }
   if (ret == SUCCESS) {
-    LLMLOGI("Success to process connect info, local engine:%s, remote engine:%s, timeout:%d ms.",
-           listen_info_.c_str(), peer_connect_info.channel_id.c_str(), peer_connect_info.timeout);
+    LLMEVENT("Success to process connect info, local engine:%s, remote engine:%s, timeout:%d ms.", listen_info_.c_str(),
+             peer_connect_info.channel_id.c_str(), peer_connect_info.timeout);
   }
   ADXL_CHK_STATUS(ret, "Failed to process connect info, local engine:%s, remote engine:%s, timeout:%d ms.",
                   listen_info_.c_str(), peer_connect_info.channel_id.c_str(), peer_connect_info.timeout);

@@ -98,7 +98,9 @@ Status Channel::Finalize() {
         ret = FAILED;
       }
     }
+    stream_ = nullptr;
 
+    std::lock_guard<std::mutex> transfer_reqs_lock(transfer_reqs_mutex_);
     for (const auto &transfer_req : transfer_reqs_) {
       rtEvent_t event = transfer_req.second;
       if (event != nullptr) {
@@ -175,6 +177,7 @@ Status Channel::GetTransferStatus(const TransferReq &req, TransferStatus &status
 
 Status Channel::TransferAsync(TransferOp operation, const std::vector<TransferOpDesc> &op_descs,
                               rtStream_t stream) {
+  ADXL_CHK_BOOL_RET_STATUS(stream_ != nullptr, FAILED, "Channel is finalized.");
   auto trans_func = [this, operation, &stream](HcclOneSideOpDesc *descs, uint32_t desc_num) -> Status {
     HcclResult ret = HCCL_SUCCESS;
     if (operation == READ) {

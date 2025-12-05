@@ -380,6 +380,7 @@ Status BufferTransferService::D2DTransfer(const ChannelPtr &channel, TransferOp 
                                           const std::chrono::steady_clock::time_point &start) {
   std::lock_guard<std::mutex> lock(channel->GetTransferMutex());
   auto &stream = channel->GetStream();
+  ADXL_CHK_BOOL_RET_STATUS(stream != nullptr, FAILED, "Channel is finalized.");
   ADXL_CHK_STATUS_RET(channel->TransferAsyncWithTimeout(transfer_op, op_descs, stream, timeout), "transfer failed.");
   uint64_t time_cost =
       std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
@@ -516,6 +517,7 @@ Status BufferTransferService::ProcessCopyWithAsync(const ChannelPtr &channel, co
   std::lock_guard<std::mutex> lock(channel->GetTransferMutex());
   auto &timeout = extra_info.second;
   auto &stream = channel->GetStream();
+  ADXL_CHK_BOOL_RET_STATUS(stream != nullptr, FAILED, "Channel is finalized.");
   auto start = std::chrono::steady_clock::now();
   for (size_t i = 0; i < src_addrs.size(); ++i) {
     ADXL_CHK_ACL_RET(rtMemcpyAsync(llm::ValueToPtr(dst_addrs[i]), sizes[i], llm::ValueToPtr(src_addrs[i]), sizes[i],
