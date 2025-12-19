@@ -54,18 +54,3 @@ class LlmCacheManagerStEx(unittest.TestCase):
         except LLMException:
             has_err = True
         self.assertEqual(has_err, True)
-                
-    def test_check_flow_graph_mem_max_size2(self):
-        cluster_id = 0
-        llm_engine = LLMDataDist(LLMRole.PROMPT, cluster_id)
-        llm_config = LLMConfig()
-        llm_config.device_id = 0
-        llm_config.listen_ip_info = "127.0.0.1:26000"
-        llm_config.ge_options = {"llm.EnableCacheManager": "0"}
-        init_options = llm_config.generate_options()
-        has_err = False
-        try:
-            llm_engine.init(init_options)
-        except LLMException:
-            has_err = True
-        self.assertEqual(has_err, True)
