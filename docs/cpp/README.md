@@ -14,7 +14,7 @@
 -   Ascend 910C：该场景下采用HCCS传输协议时，不支持Host内存作为远端Cache。
 
 ## 接口列表
-接口列表如下。
+接口列表如下：
 -  [LLM-DataDist接口](LLM-DataDist接口.md)
 -  [LLM-DataDist数据结构](LLM-DataDist数据结构.md)
 -  [LLM-DataDist错误码](LLM-DataDist错误码.md)

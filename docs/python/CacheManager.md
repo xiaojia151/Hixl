@@ -483,9 +483,9 @@ transfer_cache_async(self,
 
 **调用示例**<a name="section17821439839"></a>
 
-
-请参考[https://gitcode.com/cann/hixl-dev/tree/master/examples/python](https://gitcode.com/cann/hixl-dev/tree/master/examples/python)。
-
+```
+cache_task = cache_manager.transfer_cache_async(cache, LayerSynchronizerImpl(), transfer_configs)
+```
 
 **返回值**<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section45086037"></a>
 
@@ -713,7 +713,7 @@ layer\_range参数异常会抛出LLMException异常。
 
 **函数功能**<a name="zh-cn_topic_0000001481404214_zh-cn_topic_0000001488949573_zh-cn_topic_0000001357384997_zh-cn_topic_0000001312399929_section3870635"></a>
 
-大模型推理过程中，如果发生内存UCE故障，即返回错误码ACL\_ERROR\_RT\_DEVICE\_MEM\_ERROR，上层框架需要先判断发生该故障的内存是否为KV Cache内存，如果不是，请参考[PyTorch](https://www.hiascend.com/developer/software/ai-frameworks/pytorch)的torch\_npu.npu.restart\_device接口获取并修复内存UCE的错误虚拟地址。如果是KV Cache内存，还需要再调用该接口修复注册给网卡的KV Cache内存。
+大模型推理过程中，如果发生内存UCE故障，即返回错误码ACL\_ERROR\_RT\_DEVICE\_MEM\_ERROR，上层框架需要先判断发生该故障的内存是否为KV Cache内存，如果不是，请参考[PyTorch](https://www.hiascend.com/developer/software/ai-frameworks/pytorch)的torch\_npu.npu.restart\_device接口的说明获取并修复内存UCE的错误虚拟地址。如果是KV Cache内存，还需要再调用该接口修复注册给网卡的KV Cache内存。
 
 >![](public_sys-resources/icon-note.gif) **说明：** 
 >本接口为预留接口，暂不支持。
