@@ -188,7 +188,7 @@ run() {
       cp ${BUILD_PATH}/tests/depends/python/metadef_wrapper.so ${BASEPATH}/src/python/llm_datadist/llm_datadist/
       cp -r ${BASEPATH}/tests/python ./
       PYTHON_ORIGINAL_PATH=$PYTHONPATH
-      export PYTHONPATH=${BASEPATH}/src/python/llm_datadist/:$PYTHON_ORIGINAL_PATH
+      export PYTHONPATH=${BASEPATH}/src/python/llm_datadist/
 
       echo "----------st start----------"
       if [[ "X$ENABLE_ASAN" = "XON" ]]; then
@@ -207,6 +207,7 @@ run() {
       if [[ "X$ENABLE_ASAN" = "XON" ]]; then
         unset LD_PRELOAD
       fi
+      export PYTHONPATH=$PYTHON_ORIGINAL_PATH
   fi
 
   if [[ "X$ENABLE_GCOV" = "XON" ]]; then
