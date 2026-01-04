@@ -74,7 +74,7 @@ enum class TransferStatus {
   COMPLETED,
   TIMEOUT, //暂不支持
   FAILED
-};
+}
 ```
 
 ## NotifyDesc
