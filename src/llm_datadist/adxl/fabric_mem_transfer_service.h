@@ -53,7 +53,9 @@ class FabricMemTransferService {
   void RemoveChannel(const std::string &channel_id);
 
  private:
-  Status TryGetStreamOnce(std::vector<rtStream_t> &streams);
+  static Status IsTransferDone(const std::vector<AsyncResource> &async_resources, uint64_t req_id,
+                               TransferStatus &status, bool &completed);
+  Status TryGetStreamOnce(std::vector<rtStream_t> &streams, size_t stream_num);
   Status TryGetStream(std::vector<rtStream_t> &streams, uint64_t timeout);
   static Status ProcessCopyWithAsync(const std::vector<rtStream_t> &streams, TransferOp operation,
                                      const std::vector<TransferOpDesc> &op_descs);

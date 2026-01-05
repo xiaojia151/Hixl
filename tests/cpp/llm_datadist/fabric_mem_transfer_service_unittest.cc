@@ -395,8 +395,8 @@ TEST_F(FabricMemTransferServiceUTest, TestTransferAsync_StreamPoolFull) {
   desc.remote_addr = kRemoteAddr;
   desc.len = kTransferLen;
 
-  // kStreamPoolMaxNum=256, kTaskStreamNum=4 -> 64 concurrent reqs will occupy all streams.
-  constexpr size_t kMaxConcurrentReq = 64;
+  // kStreamPoolMaxNum=256, kTaskStreamNum=5 -> 51 concurrent reqs will occupy all streams.
+  constexpr size_t kMaxConcurrentReq = 52;
   for (size_t i = 0; i < kMaxConcurrentReq; ++i) {
     TransferReq req = llm::ValueToPtr(kReqBase + i);
     EXPECT_EQ(service_->TransferAsync(channel, TransferOp::WRITE, {desc}, req), SUCCESS);

@@ -23,7 +23,8 @@
 namespace adxl {
 namespace {
 constexpr uint64_t kMillisToMicros = 1000;
-constexpr size_t kTaskStreamNum = 4;
+constexpr size_t kTaskStreamNum = 4U;
+constexpr size_t kAsyncTaskStreamNum = 5U;
 constexpr uint64_t DISABLE_PID_VALIDATION_FLAG = 1UL;
 }  // namespace
 Status FabricMemTransferService::Initialize(size_t max_stream_num) {
@@ -147,17 +148,24 @@ Status FabricMemTransferService::Transfer(const ChannelPtr &channel, TransferOp 
   uint64_t transfer_cost =
       std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
   StatisticManager::GetInstance().UpdateFabricMemTransferCost(channel->GetChannelId(), transfer_cost);
-  LLMLOGI("Transfer time cost:%lu us", transfer_cost);
+  LLMLOGI("Transfer time cost:%lu us, real cost:%lu us.", transfer_cost, real_copy_cost);
   return SUCCESS;
 }
 
 Status FabricMemTransferService::TransferAsync(const ChannelPtr &channel, TransferOp operation,
                                                const std::vector<TransferOpDesc> &op_descs, TransferReq &req) {
+  auto start = std::chrono::steady_clock::now();
   std::vector<rtStream_t> streams;
-  streams.reserve(kTaskStreamNum);
-  ADXL_CHK_STATUS_RET(TryGetStreamOnce(streams), "Failed to get stream.");
+  streams.reserve(kAsyncTaskStreamNum);
+  ADXL_CHK_STATUS_RET(TryGetStreamOnce(streams, kAsyncTaskStreamNum), "Failed to get stream.");
   auto real_copy_start = std::chrono::steady_clock::now();
-  ADXL_CHK_STATUS_RET(DoTransfer(streams, channel, operation, op_descs, real_copy_start), "Failed to transfer.");
+  std::vector<rtStream_t> copy_streams(kTaskStreamNum, nullptr);
+  for (size_t i = 0U; i < kTaskStreamNum; ++i) {
+    copy_streams[i] = streams[i + 1U];
+  }
+  // TryGetStreamOnce make sure streams is not empty.
+  rtStream_t record_stream = streams[0U];
+  ADXL_CHK_STATUS_RET(DoTransfer(copy_streams, channel, operation, op_descs, real_copy_start), "Failed to transfer.");
   std::vector<AsyncResource> async_resources;
   LLM_DISMISSABLE_GUARD(fail_guard, ([this, &async_resources, &streams]() {
                           for (auto &async_resource : async_resources) {
@@ -172,11 +180,14 @@ Status FabricMemTransferService::TransferAsync(const ChannelPtr &channel, Transf
                             }
                           }
                         }));
-  for (auto &stream : streams) {
+  async_resources.reserve(streams.size());
+  async_resources.emplace_back(record_stream, nullptr);
+  for (auto &stream : copy_streams) {
     rtEvent_t event = nullptr;
-    LLM_CHK_ACL_RET(rtEventCreate(&event));
+    ADXL_CHK_ACL_RET(rtEventCreate(&event));
     async_resources.emplace_back(stream, event);
-    LLM_CHK_ACL_RET(rtEventRecord(event, stream));
+    ADXL_CHK_ACL_RET(rtEventRecord(event, record_stream));
+    ADXL_CHK_ACL_RET(rtStreamWaitEvent(stream, event));
   }
   {
     std::lock_guard<std::mutex> lock(channel_2_req_mutex_);
@@ -184,44 +195,63 @@ Status FabricMemTransferService::TransferAsync(const ChannelPtr &channel, Transf
   }
   {
     std::lock_guard<std::mutex> lock(async_req_mutex_);
-    req_2_async_record_[llm::PtrToValue(req)] = AsyncRecord{async_resources, real_copy_start};
+    req_2_async_record_[llm::PtrToValue(req)] = AsyncRecord{std::move(async_resources), real_copy_start};
   }
-  LLMLOGI("Transfer async call end, channel:%s, req:%lu.", channel->GetChannelId().c_str(), llm::PtrToValue(req));
+  auto cost = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
+  LLMLOGI("Transfer async call end, channel:%s, req:%lu, time cost:%lu us.", channel->GetChannelId().c_str(),
+          llm::PtrToValue(req), cost);
   LLM_DISMISS_GUARD(fail_guard);
+  return SUCCESS;
+}
+
+Status FabricMemTransferService::IsTransferDone(const std::vector<AsyncResource> &async_resources, uint64_t req_id,
+                                                TransferStatus &status, bool &completed) {
+  status = TransferStatus::WAITING;
+  for (auto &async_resource : async_resources) {
+    if (async_resource.second != nullptr) {
+      rtEventStatus_t event_status{};
+      auto ret = rtEventQueryStatus(async_resource.second, &event_status);
+      if (ret != RT_ERROR_NONE) {
+        LLMLOGE(FAILED, "Call rtEventQueryStatus failed for req:%llu, ret:%d.", req_id, ret);
+        status = TransferStatus::FAILED;
+        return FAILED;
+      }
+      completed = completed && (event_status == RT_EVENT_RECORDED);
+    }
+  }
   return SUCCESS;
 }
 
 Status FabricMemTransferService::GetTransferStatus(const ChannelPtr &channel, const TransferReq &req,
                                                    TransferStatus &status) {
-  std::lock_guard<std::mutex> lock(async_req_mutex_);
+  AsyncRecord async_record;
   auto req_id = llm::PtrToValue(req);
-  auto async_record_it = req_2_async_record_.find(req_id);
-  ADXL_CHK_BOOL_RET_STATUS(async_record_it != req_2_async_record_.end(), FAILED, "Request:%lu not found.", req_id);
-  const auto &async_record = async_record_it->second;
+  {
+    std::lock_guard<std::mutex> lock(async_req_mutex_);
+    auto async_record_it = req_2_async_record_.find(req_id);
+    ADXL_CHK_BOOL_RET_STATUS(async_record_it != req_2_async_record_.end(), FAILED, "Request:%lu not found.", req_id);
+    // copy in case map rehash
+    async_record = async_record_it->second;
+  }
   const auto &async_resources = async_record.async_resources;
-  LLM_DISMISSABLE_GUARD(fail_guard, ([this, &channel, &async_record_it, &async_resources]() {
+  LLM_DISMISSABLE_GUARD(fail_guard, ([this, &channel, &async_resources, req_id]() {
                           DestroyAsyncResources(async_resources);
-                          RemoveChannelReqRelation(channel->GetChannelId(), async_record_it->first);
-                          req_2_async_record_.erase(async_record_it);
+                          RemoveChannelReqRelation(channel->GetChannelId(), req_id);
+                          {
+                            std::lock_guard<std::mutex> lock(async_req_mutex_);
+                            req_2_async_record_.erase(req_id);
+                          }
                         }));
   bool completed = true;
-  status = TransferStatus::WAITING;
-  for (auto &async_resource : async_resources) {
-    rtEventStatus_t event_status{};
-    auto ret = rtEventQueryStatus(async_resource.second, &event_status);
-    if (ret != RT_ERROR_NONE) {
-      LLMLOGE(FAILED, "Call rtEventQueryStatus failed for req:%llu, ret:%d.", req_id, ret);
-      status = TransferStatus::FAILED;
-      return FAILED;
-    }
-    completed = completed && (event_status == RT_EVENT_RECORDED);
-  }
+  ADXL_CHK_STATUS_RET(IsTransferDone(async_resources, req_id, status, completed), "Failed to get transfer status.");
   if (completed) {
     SynchronizeStream(async_resources, req_id, status);
     ADXL_CHK_BOOL_RET_SPECIAL_STATUS(status == TransferStatus::FAILED, FAILED, "Synchronize stream failed.");
     // free event.
     for (auto &async_resource : async_resources) {
-      LLM_CHK_ACL(rtEventDestroy(async_resource.second));
+      if (async_resource.second != nullptr) {
+        LLM_CHK_ACL(rtEventDestroy(async_resource.second));
+      }
     }
     // release streams
     std::vector<rtStream_t> streams;
@@ -231,11 +261,15 @@ Status FabricMemTransferService::GetTransferStatus(const ChannelPtr &channel, co
     }
     ReleaseStreams(streams);
     RemoveChannelReqRelation(channel->GetChannelId(), req_id);
+    {
+      std::lock_guard<std::mutex> lock(async_req_mutex_);
+      req_2_async_record_.erase(req_id);
+    }
     auto end = std::chrono::steady_clock::now();
     uint64_t cost = std::chrono::duration_cast<std::chrono::microseconds>(end - async_record.real_start).count();
     StatisticManager::GetInstance().UpdateFabricMemTransferCost(channel->GetChannelId(), cost);
-    req_2_async_record_.erase(async_record_it);
-    LLMLOGI("Transfer async request completed, channel:%s, req:%lu.", channel->GetChannelId().c_str(), req_id);
+    LLMLOGI("Transfer async request completed, channel:%s, req:%lu, cost:%lu us.", channel->GetChannelId().c_str(),
+            req_id, cost);
   }
   LLM_DISMISS_GUARD(fail_guard);
   return SUCCESS;
@@ -246,11 +280,13 @@ void FabricMemTransferService::SynchronizeStream(const std::vector<AsyncResource
   // call sync in case error happens
   status = TransferStatus::COMPLETED;
   for (auto &async_resource : async_resources) {
-    auto ret = rtStreamSynchronize(async_resource.first);
-    if (ret != RT_ERROR_NONE) {
-      LLMLOGE(FAILED, "Call rtStreamSynchronize failed for req:%lu, ret:%d.", req_id, ret);
-      status = TransferStatus::FAILED;
-      continue;
+    if (async_resource.second != nullptr) {
+      auto ret = rtStreamSynchronize(async_resource.first);
+      if (ret != RT_ERROR_NONE) {
+        LLMLOGE(FAILED, "Call rtStreamSynchronize failed for req:%lu, ret:%d.", req_id, ret);
+        status = TransferStatus::FAILED;
+        continue;
+      }
     }
   }
 }
@@ -305,30 +341,30 @@ Status FabricMemTransferService::TryGetStream(std::vector<rtStream_t> &streams, 
   auto start = std::chrono::steady_clock::now();
   streams.reserve(kTaskStreamNum);
   while (true) {
-    ADXL_CHK_BOOL_RET_SPECIAL_STATUS(TryGetStreamOnce(streams) == SUCCESS, SUCCESS, "Success to get stream.");
+    ADXL_CHK_BOOL_RET_SPECIAL_STATUS(TryGetStreamOnce(streams, kTaskStreamNum) == SUCCESS, SUCCESS, "Success to get stream.");
     uint64_t time_cost =
         std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count();
     ADXL_CHK_BOOL_RET_STATUS(time_cost < timeout, TIMEOUT, "Get stream timeout.");
   }
 }
 
-Status FabricMemTransferService::TryGetStreamOnce(std::vector<rtStream_t> &streams) {
-  {
-    std::lock_guard<std::mutex> lock(stream_pool_mutex_);
-    for (auto &stream_stat : stream_pool_) {
-      if (stream_stat.second) {
-        stream_stat.second = false;
-        streams.emplace_back(stream_stat.first);
-        if (streams.size() >= kTaskStreamNum) {
-          return SUCCESS;
-        }
+Status FabricMemTransferService::TryGetStreamOnce(std::vector<rtStream_t> &streams, size_t stream_num) {
+  std::lock_guard<std::mutex> lock(stream_pool_mutex_);
+  for (auto &stream_stat : stream_pool_) {
+    if (stream_stat.second) {
+      stream_stat.second = false;
+      streams.emplace_back(stream_stat.first);
+      if (streams.size() >= stream_num) {
+        return SUCCESS;
       }
     }
   }
-  while (streams.size() < kTaskStreamNum) {
+  while (streams.size() < stream_num) {
     if (stream_pool_.size() >= max_stream_num_) {
       LLMEVENT("Stream pool is full, current stream pool size:%zu.", stream_pool_.size());
-      ReleaseStreams(streams);
+      for (auto &stream : streams) {
+        LLM_CHK_ACL(rtStreamDestroy(stream));
+      }
       return FAILED;
     }
     rtStream_t stream = nullptr;
@@ -337,7 +373,6 @@ Status FabricMemTransferService::TryGetStreamOnce(std::vector<rtStream_t> &strea
     streams.emplace_back(stream);
     LLMEVENT("Create new stream, current stream pool size:%zu.", stream_pool_.size());
   }
-  std::lock_guard<std::mutex> lock(stream_pool_mutex_);
   for (const auto &stream : streams) {
     stream_pool_[stream] = false;
   }
