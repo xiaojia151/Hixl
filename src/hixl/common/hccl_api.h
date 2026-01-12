@@ -132,10 +132,6 @@ HcclResult HcommMemUnreg(void *handle, void *mem_handle);
 
 HcclResult HcommMemExport(void *handle, const void *mem_handle, void **mem_desc, uint32_t *desc_len);
 
-HcclResult HcommEndPointCreate(const EndPointInfo *end_point, void **end_point_handle);
-
-HcclResult HcommEndPointDestroy(void *end_point_handle);
-
 HcclResult HcommMemImport(void *end_point_handle, const void *mem_desc, uint32_t desc_len, HcommBuf *out_buf);
 
 HcclResult HcommMemClose(void *endPointHandle, const HcommBuf *buf);

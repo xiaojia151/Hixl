@@ -169,7 +169,7 @@ EntityCommInfo::EntityCommInfo(const HcclComm &comm, std::vector<void *> mem_han
 ge::Status EntityCommInfo::Initialize() {
   std::lock_guard<std::mutex> lock(mutex_);
   if (!comm_inited_) {
-    std::lock_guard<std::mutex> lock(g_mutex_);
+    std::lock_guard<std::mutex> g_lock(g_mutex_);
     HcclResult ret = HcclAdapter::GetInstance().HcclCommInitClusterInfoMemConfig(params_.rank_table.c_str(),
                                                                                  params_.rank_id,
                                                                                  &params_.comm_config,

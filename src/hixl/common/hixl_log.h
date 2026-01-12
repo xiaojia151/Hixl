@@ -13,15 +13,16 @@
 
 #include <cinttypes>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
-#include "dlog_pub.h"
-#include "base/err_msg.h"
 #ifdef __GNUC__
 #include <unistd.h>
 #include <sys/syscall.h>
 #else
 #include "mmpa/mmpa_api.h"
 #endif
+#include "dlog_pub.h"
+#include "base/err_msg.h"
 
 #ifdef __cplusplus
 extern "C" {

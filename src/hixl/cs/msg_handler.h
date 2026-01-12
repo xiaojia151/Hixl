@@ -29,7 +29,7 @@ class MsgHandler {
 
  private:
   void HandleMsg();
-  Status HandleMsg(int32_t fd, CtrlMsgPtr msg, MsgProcessor proc);
+  static Status HandleMsg(int32_t fd, CtrlMsgPtr msg, MsgProcessor proc);
 
   std::mutex req_mutex_;
   std::queue<std::pair<int32_t, CtrlMsgPtr>> req_queue_;

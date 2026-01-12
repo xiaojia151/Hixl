@@ -12,7 +12,6 @@
 #define CANN_HIXL_SRC_HIXL_COMMON_HIXL_UTILS_H_
 
 #include <memory>
-#include <utility>
 #include "hccl/hccl_types.h"
 #include "hixl/hixl_types.h"
 #include "hixl_cs.h"
