@@ -41,9 +41,13 @@ inline typename MakeUniq<T>::invalid_type MakeUnique(Args &&...) = delete;
 
 Status HcclError2Status(HcclResult ret);
 
+std::vector<std::string, std::allocator<std::string>> Split(const std::string &str, const char delim);
+
 Status ConvertToEndPointInfo(const EndPointConfig &endpoint_config, EndPointInfo &endpoint);
 
 Status ParseIpAddress(const std::string &ip_str, CommAddr &addr);
+
+Status ParseEidAddress(const std::string &eid_str, CommAddr &addr);
 
 Status SerializeEndPointConfigList(const std::vector<EndPointConfig> &list, std::string &msg_str);
 }  // namespace hixl

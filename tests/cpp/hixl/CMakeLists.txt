@@ -15,6 +15,8 @@ set(HIXL_TEST_FILES
         cs/hixl_cs_client_basic_ut.cc
         cs/hixl_cs_client_ut.cc
         engine/hixl_server_unittest.cc
+        engine/hixl_client_unittest.cc
+        engine/hixl_utils_unittest.cc
         )
 
 file(GLOB HIXL_SRC_LIST
@@ -60,6 +62,7 @@ target_include_directories(hixl_test PRIVATE
         ${HIXL_CODE_DIR}/src/llm_datadist
         ${HIXL_CODE_DIR}/src/hixl/cs
         ${HIXL_CODE_DIR}/src/hixl/engine
+        ${HIXL_CODE_DIR}/tests
         )
 
 set_target_properties(hixl_test PROPERTIES CXX_STANDARD 17)
