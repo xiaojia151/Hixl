@@ -130,6 +130,18 @@ void HcommReadNbi(ChannelHandle channel, void *dst, void *src, uint64_t len) {
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
   memcpy_s(dst, len, src, len);
 }
+HcclResult HcommThreadAlloc(CommEngine engine, uint32_t threadNum, uint32_t notifyNumPerThread, ThreadHandle *thread) {
+  (void) engine;
+  (void) threadNum;
+  (void) notifyNumPerThread;
+  (void) thread;
+  return HCCL_SUCCESS;
+}
+
+HcclResult HcommThreadFree(ThreadHandle thread) {
+  (void)thread;
+  return HCCL_SUCCESS;
+}
 
 #ifdef __cplusplus
 }
