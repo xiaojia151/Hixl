@@ -154,13 +154,15 @@ int32_t Transfer(HixlClientHandle client_handle, uint8_t *local_addr, const std:
     int32_t status = kStatus;
     while (true) {
       ret = HixlCSClientQueryCompleteStatus(client_handle, complete_handle, &status);
-      if (ret == HIXL_SUCCESS) {
-        break;
-      } else if (ret == HIXL_NOT_READY) {
-        continue;
-      } else {
+      if (ret != HIXL_SUCCESS) {
         (void)printf("[ERROR] HixlCSClientQueryCompleteStatus failed, ret = %u\n", ret);
         return -1;
+      }
+      if (status == BatchTransferStatus::WAITING) {
+        continue;
+      }
+      if (status == BatchTransferStatus::COMPLETED) {
+        break;
       }
     }
     auto time_cost =
